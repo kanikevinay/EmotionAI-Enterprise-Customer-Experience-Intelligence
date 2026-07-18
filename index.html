@@ -253,47 +253,91 @@
           <div class="stats-grid-4">
             <div class="stat-card glass glow-card">
               <div class="stat-header">
-                <span>Revenue Impact (Saved)</span>
+                <span>Customer Satisfaction</span>
+                <i data-lucide="smile" style="color: var(--success);"></i>
+              </div>
+              <div class="stat-main">
+                <span class="stat-num" id="exec-metric-csat">4.82/5.0</span>
+                <span class="stat-trend up"><i data-lucide="trending-up"></i> +2.1%</span>
+              </div>
+              <p class="stat-footer">Weighted average aggregate score</p>
+            </div>
+            <div class="stat-card glass glow-card">
+              <div class="stat-header">
+                <span>Customer Retention</span>
+                <i data-lucide="users" style="color: var(--accent-blue);"></i>
+              </div>
+              <div class="stat-main">
+                <span class="stat-num" id="exec-metric-retention">98.4%</span>
+                <span class="stat-trend up"><i data-lucide="trending-up"></i> +1.8%</span>
+              </div>
+              <p class="stat-footer">Accounts actively saved by AI</p>
+            </div>
+            <div class="stat-card glass glow-card">
+              <div class="stat-header">
+                <span>Revenue Saved</span>
                 <i data-lucide="banknote" style="color: var(--success);"></i>
               </div>
               <div class="stat-main">
-                <span class="stat-num">$142,580</span>
+                <span class="stat-num" id="exec-metric-revenue">$142,580</span>
                 <span class="stat-trend up"><i data-lucide="trending-up"></i> +14.2%</span>
               </div>
-              <p class="stat-footer">Protected churn-risk revenue</p>
+              <p class="stat-footer">Protected churn-risk contracts</p>
             </div>
             <div class="stat-card glass glow-card">
               <div class="stat-header">
-                <span>Customer Trust Score</span>
-                <i data-lucide="heart" style="color: var(--accent-purple);"></i>
+                <span>Support Cost Reduced</span>
+                <i data-lucide="trending-down" style="color: var(--accent-purple);"></i>
               </div>
               <div class="stat-main">
-                <span class="stat-num" id="exec-trust-score">94.2%</span>
-                <span class="stat-trend up"><i data-lucide="trending-up"></i> +2.1%</span>
+                <span class="stat-num" id="exec-metric-cost">24.5%</span>
+                <span class="stat-trend up"><i data-lucide="trending-up"></i> +5.4%</span>
               </div>
-              <p class="stat-footer">Real-time aggregate sentiment</p>
+              <p class="stat-footer">Tier-1 human delegation offset</p>
             </div>
             <div class="stat-card glass glow-card">
               <div class="stat-header">
-                <span>Brand Reputation Index</span>
-                <i data-lucide="award" style="color: var(--accent-blue);"></i>
+                <span>Average Resolution Time</span>
+                <i data-lucide="clock" style="color: var(--warning);"></i>
               </div>
               <div class="stat-main">
-                <span class="stat-num">A+</span>
-                <span class="stat-trend up"><i data-lucide="plus"></i> Stable</span>
+                <span class="stat-num" id="exec-metric-time">1.4m</span>
+                <span class="stat-trend down"><i data-lucide="trending-down"></i> -12.4%</span>
               </div>
-              <p class="stat-footer">Social and ticket telemetry</p>
+              <p class="stat-footer">Avg time to close support tickets</p>
             </div>
             <div class="stat-card glass glow-card">
               <div class="stat-header">
-                <span>Business Health Index</span>
+                <span>High Risk Customers</span>
+                <i data-lucide="alert-triangle" style="color: var(--danger);"></i>
+              </div>
+              <div class="stat-main">
+                <span class="stat-num" id="exec-metric-risk">14</span>
+                <span class="stat-trend up"><i data-lucide="minus"></i> Stable</span>
+              </div>
+              <p class="stat-footer">Flagged billing or quota warnings</p>
+            </div>
+            <div class="stat-card glass glow-card">
+              <div class="stat-header">
+                <span>AI Accuracy</span>
+                <i data-lucide="shield-check" style="color: var(--accent-blue);"></i>
+              </div>
+              <div class="stat-main">
+                <span class="stat-num" id="exec-metric-accuracy">96.8%</span>
+                <span class="stat-trend up"><i data-lucide="trending-up"></i> +0.8%</span>
+              </div>
+              <p class="stat-footer">Correct intent classifications</p>
+            </div>
+            <div class="stat-card glass glow-card">
+              <div class="stat-header">
+                <span>Business Health</span>
                 <i data-lucide="activity" style="color: var(--warning);"></i>
               </div>
               <div class="stat-main">
-                <span class="stat-num">98.1</span>
-                <span class="stat-trend up"><i data-lucide="trending-up"></i> +0.4%</span>
+                <span class="stat-num" id="exec-metric-health">98.1</span>
+                <span class="stat-trend up"><i data-lucide="plus"></i> Stable</span>
               </div>
-              <p class="stat-footer">Average SLA & resolution health</p>
+              <p class="stat-footer">Global systems health index</p>
             </div>
           </div>
 
@@ -507,14 +551,13 @@
                   <i data-lucide="chevron-down" style="width:16px;"></i>
                 </summary>
                 <div class="explain-body-content" style="padding:0 1.25rem 1.25rem 1.25rem; border-top: 1px solid rgba(255,255,255,0.03); padding-top:1rem;">
-                  <div class="explain-flowchart">
-                    <div class="explain-node"><i data-lucide="search" style="width:14px; color:var(--accent-blue);"></i> Trigger words: <span id="explain-keywords" style="color:white; font-weight:500;">declined, cancel, broken</span></div>
-                    <div class="explain-arrow">↓</div>
-                    <div class="explain-node"><i data-lucide="brain-circuit" style="width:14px; color:var(--accent-purple);"></i> Sentiment reasoning: <span id="explain-sentiment" style="color:white; font-weight:500;">Repeated card failures with migration threat</span></div>
-                    <div class="explain-arrow">↓</div>
-                    <div class="explain-node"><i data-lucide="shield-alert" style="width:14px; color:var(--danger);"></i> Risk mapping: <span id="explain-risk" style="color:white; font-weight:500;">High LTV account at high churn danger</span></div>
-                    <div class="explain-arrow">↓</div>
-                    <div class="explain-node"><i data-lucide="check-circle" style="width:14px; color:var(--success);"></i> Suggested Action: <span id="explain-action" style="color:white; font-weight:500;">Bypass rate lock & credit billing discount</span></div>
+                  <div class="explain-flowchart" style="display:flex; flex-direction:column; gap:0.6rem;">
+                    <div class="explain-node"><i data-lucide="smile" style="width:14px; color:var(--accent-blue);"></i> Detected Emotion: &nbsp;<span id="explain-emotion" style="color:white; font-weight:500;">Frustrated (84%)</span></div>
+                    <div class="explain-node"><i data-lucide="target" style="width:14px; color:var(--accent-blue);"></i> Detected Intent: &nbsp;<span id="explain-intent" style="color:white; font-weight:500;">Subscription renewal payment decline</span></div>
+                    <div class="explain-node"><i data-lucide="alert-triangle" style="width:14px; color:var(--danger);"></i> Risk Explanation: &nbsp;<span id="explain-risk" style="color:white; font-weight:500;">High Churn Threat due to competitor mentions</span></div>
+                    <div class="explain-node"><i data-lucide="brain" style="width:14px; color:var(--accent-purple);"></i> Why this recommendation?: &nbsp;<span id="explain-why" style="color:white; font-weight:500;">Discount code buffers cash flow while override ensures SLA</span></div>
+                    <div class="explain-node"><i data-lucide="trending-up" style="width:14px; color:var(--success);"></i> Business Impact: &nbsp;<span id="explain-impact" style="color:white; font-weight:500;">Protects $2,500/mo ARR contract</span></div>
+                    <div class="explain-node"><i data-lucide="shield-check" style="width:14px; color:var(--success);"></i> Confidence Score: &nbsp;<span id="explain-confidence" style="color:white; font-weight:500;">94%</span></div>
                   </div>
                 </div>
               </details>
@@ -1026,13 +1069,13 @@
               <p style="color:var(--text-secondary); font-size:0.9rem; margin-bottom:2rem;">Trace how customer vocal/text telemetry runs through the Gemini AI layer and feeds the BI recommendation dashboard.</p>
               
               <div class="arch-flowchart">
-                <!-- Left Side: Input Node -->
+                <!-- Node 1: Customer -->
                 <div class="arch-card active" id="arch-node-customer">
                   <div class="arch-icon"><i data-lucide="user"></i></div>
                   <div class="arch-details">
-                    <h4>1. Customer Interaction</h4>
-                    <p>Vocal streams & chat message packets</p>
-                    <span class="arch-tech">Websocket / Audio Stream</span>
+                    <h4>1. Customer</h4>
+                    <p>Voice audio or text interaction stream</p>
+                    <span class="arch-tech">WebSocket / REST</span>
                   </div>
                   <div class="status-indicator online"></div>
                 </div>
@@ -1040,12 +1083,12 @@
                 <!-- Connector Line -->
                 <div class="arch-connector"><div class="arch-pulse"></div></div>
 
-                <!-- Node 2: Workspace Layer -->
-                <div class="arch-card active" id="arch-node-workspace">
+                <!-- Node 2: Conversation UI -->
+                <div class="arch-card active" id="arch-node-ui">
                   <div class="arch-icon"><i data-lucide="monitor"></i></div>
                   <div class="arch-details">
-                    <h4>2. Copilot Console UI</h4>
-                    <p>Support Agent client workspace</p>
+                    <h4>2. Conversation UI</h4>
+                    <p>Agent copilot console workspace</p>
                     <span class="arch-tech">Vanilla JS Client Shell</span>
                   </div>
                   <div class="status-indicator online"></div>
@@ -1054,12 +1097,12 @@
                 <!-- Connector Line -->
                 <div class="arch-connector"><div class="arch-pulse"></div></div>
 
-                <!-- Node 3: Gemini Analysis (Central API) -->
+                <!-- Node 3: Gemini AI -->
                 <div class="arch-card gemini-node" id="arch-node-gemini">
                   <div class="arch-icon"><i data-lucide="brain"></i></div>
                   <div class="arch-details">
-                    <h4>3. Gemini AI Engine</h4>
-                    <p>Structured LLM analysis & intent extraction</p>
+                    <h4>3. Gemini AI</h4>
+                    <p>Structured analysis model gateway</p>
                     <span class="arch-tech" id="arch-gemini-version">gemini-2.5-flash API</span>
                   </div>
                   <div class="status-indicator offline" id="arch-gemini-status"></div>
@@ -1068,13 +1111,13 @@
                 <!-- Connector Line -->
                 <div class="arch-connector"><div class="arch-pulse"></div></div>
 
-                <!-- Node 4: Metric Telemetry -->
-                <div class="arch-card active" id="arch-node-telemetry">
+                <!-- Node 4: Emotion Analysis -->
+                <div class="arch-card active" id="arch-node-emotion">
                   <div class="arch-icon"><i data-lucide="gauge"></i></div>
                   <div class="arch-details">
-                    <h4>4. Telemetry Classifiers</h4>
-                    <p>Stress, Risk, Sentiment & Urgency indicators</p>
-                    <span class="arch-tech">Structured JSON Schema parsing</span>
+                    <h4>4. Emotion Analysis</h4>
+                    <p>Telemetry index classification dials</p>
+                    <span class="arch-tech">JSON Schema classification</span>
                   </div>
                   <div class="status-indicator online"></div>
                 </div>
@@ -1082,13 +1125,13 @@
                 <!-- Connector Line -->
                 <div class="arch-connector"><div class="arch-pulse"></div></div>
 
-                <!-- Node 5: Action Recommendation Center -->
+                <!-- Node 5: Recommendation Engine -->
                 <div class="arch-card active" id="arch-node-recommendations">
                   <div class="arch-icon"><i data-lucide="zap"></i></div>
                   <div class="arch-details">
                     <h4>5. Recommendation Engine</h4>
-                    <p>Discount coupons, managers routes, zoom triggers</p>
-                    <span class="arch-tech">Heuristic Action Mapping</span>
+                    <p>Autogenerated discount & script recommendations</p>
+                    <span class="arch-tech">Heuristic Action Compiler</span>
                   </div>
                   <div class="status-indicator online"></div>
                 </div>
@@ -1096,13 +1139,41 @@
                 <!-- Connector Line -->
                 <div class="arch-connector"><div class="arch-pulse"></div></div>
 
-                <!-- Node 6: Executive & Analytics -->
-                <div class="arch-card active" id="arch-node-bi">
-                  <div class="arch-icon"><i data-lucide="bar-chart-3"></i></div>
+                <!-- Node 6: Business Analytics -->
+                <div class="arch-card active" id="arch-node-analytics">
+                  <div class="arch-icon"><i data-lucide="bar-chart-2"></i></div>
                   <div class="arch-details">
-                    <h4>6. Executive BI Dashboard</h4>
-                    <p>Aggregate ROI analytics & CSAT charts</p>
-                    <span class="arch-tech">Chart.js / Data Warehousing</span>
+                    <h4>6. Business Analytics</h4>
+                    <p>CSAT trend metrics & issue breakdowns</p>
+                    <span class="arch-tech">Telemetry DB Warehousing</span>
+                  </div>
+                  <div class="status-indicator online"></div>
+                </div>
+
+                <!-- Connector Line -->
+                <div class="arch-connector"><div class="arch-pulse"></div></div>
+
+                <!-- Node 7: Executive Dashboard -->
+                <div class="arch-card active" id="arch-node-bi">
+                  <div class="arch-icon"><i data-lucide="layout-dashboard"></i></div>
+                  <div class="arch-details">
+                    <h4>7. Executive Dashboard</h4>
+                    <p>Aggregate ROI counters & corporate metrics</p>
+                    <span class="arch-tech">Chart.js BI render</span>
+                  </div>
+                  <div class="status-indicator online"></div>
+                </div>
+
+                <!-- Connector Line -->
+                <div class="arch-connector"><div class="arch-pulse"></div></div>
+
+                <!-- Node 8: Resolution -->
+                <div class="arch-card active" id="arch-node-resolution">
+                  <div class="arch-icon"><i data-lucide="check-circle-2"></i></div>
+                  <div class="arch-details">
+                    <h4>8. Resolution</h4>
+                    <p>Autogenerated executive outcome management reports</p>
+                    <span class="arch-tech">Incident Logger Archiver</span>
                   </div>
                   <div class="status-indicator online"></div>
                 </div>

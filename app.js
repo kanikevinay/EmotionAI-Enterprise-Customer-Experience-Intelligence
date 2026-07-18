@@ -255,7 +255,9 @@ function writeTerminalLog(type, text) {
   const terminal = document.getElementById('developer-terminal-logs');
   if (!terminal) return;
   
-  const timestamp = new Date().toLocaleTimeString();
+  const now = new Date();
+  const timestamp = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+  
   const colorMap = {
     INFO: '#60A5FA',    // Blue
     SYSTEM: '#818CF8',  // Indigo
@@ -266,7 +268,7 @@ function writeTerminalLog(type, text) {
   };
 
   const color = colorMap[type] || '#F3F4F6';
-  const rawLine = `[<span style="color:${color}; font-weight:600;">${type}</span>] (${timestamp}) ${text}<br>`;
+  const rawLine = `[<span style="color:${color}; font-weight:600;">${timestamp} ${type}</span>] ${text}<br>`;
   
   terminal.insertAdjacentHTML('beforeend', rawLine);
   terminal.scrollTop = terminal.scrollHeight;
@@ -343,8 +345,15 @@ function switchTab(tabId) {
   } else if (tabId === 'executive') {
     setTimeout(() => {
       renderExecutiveCharts();
-      // Animate Business ROI counters
+      // Animate Business ROI counters and all 8 executive metrics
       animateRoiCalculator(142580, 124, 24.5, 4.5);
+      if (activeCustomer === 'sarah') {
+        animateExecutiveMetrics(4.82, 98.4, 142580, 24.5, 1.4, 14, 96.8, 98.1);
+      } else if (activeCustomer === 'michael') {
+        animateExecutiveMetrics(4.91, 99.1, 284500, 32.1, 0.9, 8, 97.4, 99.2);
+      } else {
+        animateExecutiveMetrics(4.95, 99.6, 92400, 18.2, 0.5, 3, 98.5, 99.5);
+      }
     }, 50);
   } else if (tabId === 'voice-ai') {
     initVoiceWaveformCanvas();
@@ -399,17 +408,30 @@ function onCustomerChange(val) {
   // Update Executive Summary Metrics in Real-Time
   updateExecutiveScores(custData);
 
-  // Update Explainability Defaults
+  // Update Explainability Defaults with exact 6 parameters
   updateExplainabilityPanel(
-    ["access", "billing", "declined"],
+    `${custData.currentEmotion} (${custData.emotionScore}%)`,
     custData.detectedIntent,
-    "Negative keywords clustered during card transaction retries.",
-    `Customer LTV is high (${custData.ltv}), competitor mention elevates risk index.`,
-    "Bypass invoice checks and apply discount coupon code to preserve contract."
+    `LTV is high (${custData.ltv}), multiple billing failures flag churn warnings.`,
+    "Bypass invoice locks and apply coupon to prevent contract cancellation threat.",
+    `Protects ${custData.ltv} contract ARR value`,
+    "94%"
   );
 
   // Reset Gauges
   updateConfidenceGauges(custData.emotionScore + 5, 88, 92);
+
+  // Trigger metrics animations
+  if (val === 'sarah') {
+    animateExecutiveMetrics(4.82, 98.4, 142580, 24.5, 1.4, 14, 96.8, 98.1);
+    animateRoiCalculator(142580, 124, 24.5, 4.5);
+  } else if (val === 'michael') {
+    animateExecutiveMetrics(4.91, 99.1, 284500, 32.1, 0.9, 8, 97.4, 99.2);
+    animateRoiCalculator(284500, 185, 32.1, 6.2);
+  } else {
+    animateExecutiveMetrics(4.95, 99.6, 92400, 18.2, 0.5, 3, 98.5, 99.5);
+    animateRoiCalculator(92400, 68, 18.2, 8.4);
+  }
 
   writeTerminalLog('DATABASE', `Switched customer context to: ${custData.fullName}`);
 }
@@ -462,11 +484,13 @@ function updateTelemetry(emotion, stress, comm, intent, ltv, risk, sentiment) {
 }
 
 // Update Explainability panel elements
-function updateExplainabilityPanel(keywords, intent, sentimentReason, riskReason, actionReason) {
-  document.getElementById('explain-keywords').innerText = keywords.join(', ');
-  document.getElementById('explain-sentiment').innerText = sentimentReason;
-  document.getElementById('explain-risk').innerText = riskReason;
-  document.getElementById('explain-action').innerText = actionReason;
+function updateExplainabilityPanel(emotion, intent, risk, why, impact, confidence) {
+  document.getElementById('explain-emotion').innerText = emotion;
+  document.getElementById('explain-intent').innerText = intent;
+  document.getElementById('explain-risk').innerText = risk;
+  document.getElementById('explain-why').innerText = why;
+  document.getElementById('explain-impact').innerText = impact;
+  document.getElementById('explain-confidence').innerText = confidence;
 }
 
 // Update Confidence Visualizer SVG Gauges
@@ -516,6 +540,55 @@ function animateRoiCalculator(savedRev, churnPrev, costRed, timeSaved) {
     document.getElementById('roi-churn-prev').innerText = Math.round(churnPrev * ratio);
     document.getElementById('roi-cost-reduction').innerText = `${(costRed * ratio).toFixed(1)}%`;
     document.getElementById('roi-time-saved').innerText = `${(timeSaved * ratio).toFixed(1)}m`;
+  }, intervalTime);
+}
+
+// Animate the 8 Executive Dashboard metrics
+function animateExecutiveMetrics(csat, retention, revenue, cost, time, risk, accuracy, health) {
+  const steps = 30;
+  const intervalTime = 25;
+  let currentStep = 0;
+
+  const timer = setInterval(() => {
+    currentStep++;
+    
+    // Check if the DOM elements are rendered
+    const elCsat = document.getElementById('exec-metric-csat');
+    const elRet = document.getElementById('exec-metric-retention');
+    const elRev = document.getElementById('exec-metric-revenue');
+    const elCost = document.getElementById('exec-metric-cost');
+    const elTime = document.getElementById('exec-metric-time');
+    const elRisk = document.getElementById('exec-metric-risk');
+    const elAcc = document.getElementById('exec-metric-accuracy');
+    const elHealth = document.getElementById('exec-metric-health');
+
+    if (!elCsat || !elRet || !elRev || !elCost || !elTime || !elRisk || !elAcc || !elHealth) {
+      clearInterval(timer);
+      return;
+    }
+
+    if (currentStep > steps) {
+      clearInterval(timer);
+      elCsat.innerText = `${csat.toFixed(2)}/5.0`;
+      elRet.innerText = `${retention.toFixed(1)}%`;
+      elRev.innerText = `$${revenue.toLocaleString()}`;
+      elCost.innerText = `${cost.toFixed(1)}%`;
+      elTime.innerText = `${time.toFixed(1)}m`;
+      elRisk.innerText = risk;
+      elAcc.innerText = `${accuracy.toFixed(1)}%`;
+      elHealth.innerText = health.toFixed(1);
+      return;
+    }
+
+    const ratio = currentStep / steps;
+    elCsat.innerText = `${(csat * ratio).toFixed(2)}/5.0`;
+    elRet.innerText = `${(retention * ratio).toFixed(1)}%`;
+    elRev.innerText = `$${Math.round(revenue * ratio).toLocaleString()}`;
+    elCost.innerText = `${(cost * ratio).toFixed(1)}%`;
+    elTime.innerText = `${(time * ratio).toFixed(1)}m`;
+    elRisk.innerText = Math.round(risk * ratio);
+    elAcc.innerText = `${(accuracy * ratio).toFixed(1)}%`;
+    elHealth.innerText = (health * ratio).toFixed(1);
   }, intervalTime);
 }
 
@@ -709,8 +782,8 @@ function simulateCustomerResponseAfterAgent() {
 
 // Core LLM API call engine
 async function triggerLiveAILayer(text) {
-  writeTerminalLog('INFO', `Customer message received: "${text}"`);
-  writeTerminalLog('INFO', `Sending request to Gemini REST gateway...`);
+  writeTerminalLog('INFO', 'Customer message received');
+  writeTerminalLog('INFO', 'Connecting to Gemini');
   
   // Toggle loading pulse state in architecture page
   const statusIndicator = document.getElementById('arch-gemini-status');
@@ -754,8 +827,8 @@ async function triggerLiveAILayer(text) {
     });
   };
 
-  await runStep(0, 300);
-  await runStep(1, 350);
+  await runStep(0, 200);
+  await runStep(1, 200);
 
   // Send API Call
   try {
@@ -769,15 +842,17 @@ async function triggerLiveAILayer(text) {
     // Output raw JSON format
     document.getElementById('arch-json-output').innerHTML = JSON.stringify(analysis, null, 2);
 
-    writeTerminalLog('INFO', 'Parsing JSON response from Gemini API.');
-    writeTerminalLog('SUCCESS', `Dashboard updated in ${latencyVal}ms.`);
+    writeTerminalLog('INFO', 'Gemini response received');
+    writeTerminalLog('INFO', 'JSON parsed');
+    writeTerminalLog('INFO', 'Recommendation generated');
+    writeTerminalLog('SUCCESS', 'Dashboard updated');
 
-    await runStep(2, 200);
-    await runStep(3, 200);
-    await runStep(4, 200);
+    await runStep(2, 150);
+    await runStep(3, 150);
+    await runStep(4, 150);
 
     // Close loader
-    setTimeout(() => { if (loaderEl) loaderEl.style.display = 'none'; }, 400);
+    setTimeout(() => { if (loaderEl) loaderEl.style.display = 'none'; }, 200);
 
     // Apply analysis results
     applyGeminiAnalysisToDashboard(analysis);
@@ -787,13 +862,13 @@ async function triggerLiveAILayer(text) {
     document.getElementById('arch-latency-val').innerText = `${latencyVal}ms`;
     document.getElementById('arch-processing-val').innerText = `${(latencyVal / 1000).toFixed(2)}s`;
     
-    writeTerminalLog('ERROR', `Gemini API invocation failed: ${err.message}. Triggering local simulator.`);
+    writeTerminalLog('ERROR', `Gemini API failed: ${err.message}. Running fallback simulator.`);
     
     // Run remaining loader steps
-    await runStep(2, 200);
-    await runStep(3, 200);
-    await runStep(4, 200);
-    setTimeout(() => { if (loaderEl) loaderEl.style.display = 'none'; }, 400);
+    await runStep(2, 150);
+    await runStep(3, 150);
+    await runStep(4, 150);
+    setTimeout(() => { if (loaderEl) loaderEl.style.display = 'none'; }, 200);
 
     // Mock fallback
     handleMockFallback(text);
@@ -828,7 +903,7 @@ async function analyzeMessageWithGemini(message) {
 - "risk" (string, Low, Medium, High, or Critical)
 - "intent" (string, concise summary of what user wants)
 - "recommendation" (string, recommended script action)
-- "reason" (string, explanation of sentiment classification)
+- "explanation" (string, detailed explanation of why this action/sentiment was calculated)
 
 Customer Message: "${message}"
 
@@ -880,13 +955,15 @@ function applyGeminiAnalysisToDashboard(analysis) {
     analysis.sentiment.toUpperCase()
   );
 
-  // 2. Update Explainability
+  // 2. Update Explainability Panel using required 6 fields
+  const ltvAmountVal = customerData[activeCustomer].ltv;
   updateExplainabilityPanel(
-    [analysis.emotion.toLowerCase(), analysis.intent.split(' ')[0].toLowerCase(), "billing"],
+    `${analysis.emotion} (${emotionVal}%)`,
     analysis.intent,
-    analysis.reason,
-    `AI evaluated risk rating as ${analysis.risk.toUpperCase()} due to churn signals.`,
-    analysis.recommendation
+    `High churn danger flagged due to billing/competitor keywords.`,
+    analysis.recommendation || analysis.explanation,
+    `Protects ${ltvAmountVal} Enterprise contract value`,
+    `${analysis.confidence}%`
   );
 
   // 3. Update Confidence Gauges
@@ -903,7 +980,7 @@ function applyGeminiAnalysisToDashboard(analysis) {
       satisfactionGain: '+35%',
       ctaText: 'Execute Recommended Action',
       outputTitle: 'AI Recommendation Executed',
-      outputContent: `Recommendation Reason: ${analysis.reason}\nAction Status: COMPLETED\nSystem Event log: Dispatched Apology Script email sequence.`
+      outputContent: `Recommendation Explanation: ${analysis.explanation || 'Analyzed intent requires custom billing tokens'}\nAction Status: COMPLETED\nSystem Event log: Dispatched Apology Script email sequence.`
     }
   ];
 
@@ -931,13 +1008,18 @@ function handleMockFallback(text) {
       risk: isAngry ? 'High' : 'Low',
       intent: isAngry ? 'Billing Pipeline Lock' : 'Resolution Acknowledgment',
       recommendation: isAngry ? 'Bypass Limit Lock + 15% discount coupon' : 'Request feedback SLA audit',
-      reason: 'Syntax keywords matched high urgency billing structures.'
+      explanation: 'Syntax keywords matched high urgency billing structures.'
     };
     
     // Update architecture metrics with mock latency values
     document.getElementById('arch-latency-val').innerText = `145ms`;
     document.getElementById('arch-processing-val').innerText = `0.15s`;
     document.getElementById('arch-json-output').innerHTML = JSON.stringify(mockAnalysis, null, 2);
+
+    writeTerminalLog('INFO', 'Gemini response received');
+    writeTerminalLog('INFO', 'JSON parsed');
+    writeTerminalLog('INFO', 'Recommendation generated');
+    writeTerminalLog('SUCCESS', 'Dashboard updated');
 
     applyGeminiAnalysisToDashboard(mockAnalysis);
   }, 800);
@@ -1574,14 +1656,16 @@ async function saveApiKey() {
       localStorage.removeItem('gemini_api_key');
       const box = document.getElementById('modal-validation-status');
       box.className = 'modal-status-box failed';
-      document.getElementById('modal-status-text').innerText = 'Gemini Connection Failed';
+      document.getElementById('modal-status-text').innerText = 'Invalid API Key';
       document.getElementById('modal-status-icon').setAttribute('data-lucide', 'x-circle');
       lucide.createIcons();
       writeTerminalLog('ERROR', 'Gemini validation check failed: Invalid API Token Key.');
+      loadApiKeySettings();
     }
   } catch (err) {
     localStorage.removeItem('gemini_api_key');
     writeTerminalLog('ERROR', `Network failure during Gemini validation check: ${err.message}`);
+    loadApiKeySettings();
   } finally {
     saveBtn.innerText = 'Save Settings';
     saveBtn.disabled = false;

@@ -94,7 +94,7 @@ body {
   height: 50vw;
   border-radius: 50%;
   filter: blur(100px);
-  opacity: 0.15;
+  opacity: 0.02;
   mix-blend-mode: screen;
   animation: float 25s infinite alternate ease-in-out;
 }
@@ -119,7 +119,7 @@ body {
   left: 50%;
   width: 40vw;
   height: 40vw;
-  opacity: 0.08;
+  opacity: 0.01;
   animation-delay: -10s;
   animation-duration: 20s;
 }
