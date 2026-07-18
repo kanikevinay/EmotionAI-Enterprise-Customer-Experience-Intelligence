@@ -1,8 +1,11 @@
 /**
  * Netlify serverless function — /api/analyze
- * Proxies to Anthropic Claude API server-side.
- * ANTHROPIC_API_KEY is read from process.env at request time.
+ * Proxies to Google Gemini API server-side.
+ * GEMINI_API_KEY is read from process.env at request time.
  */
+
+const GEMINI_MODEL = 'gemini-1.5-flash';
+const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 
 const SYSTEM_PROMPT = [
   'You are an expert customer experience analyzer.',
@@ -33,15 +36,9 @@ function jsonResp(statusCode, body) {
 }
 
 exports.handler = async function (event) {
-  // Pre-flight
-  if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 204, headers: CORS_HEADERS, body: '' };
-  }
-  if (event.httpMethod !== 'POST') {
-    return jsonResp(405, { error: 'Method Not Allowed' });
-  }
+  if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers: CORS_HEADERS, body: '' };
+  if (event.httpMethod !== 'POST') return jsonResp(405, { error: 'Method Not Allowed' });
 
-  // Parse body
   let messages;
   try {
     const payload = JSON.parse(event.body || '{}');
@@ -51,55 +48,49 @@ exports.handler = async function (event) {
     return jsonResp(400, { error: `Invalid request body: ${e.message}` });
   }
 
-  // Read API key at request time
-  const apiKey = (process.env.ANTHROPIC_API_KEY || '').trim();
-  if (!apiKey) {
-    return jsonResp(400, {
-      error: 'ANTHROPIC_API_KEY is not configured as a Netlify environment variable.',
-    });
-  }
+  const apiKey = (process.env.GEMINI_API_KEY || '').trim();
+  if (!apiKey) return jsonResp(400, { error: 'GEMINI_API_KEY is not configured as a Netlify environment variable.' });
 
-  // Map roles
-  const apiMessages = messages.map(m => ({
-    role: m.role === 'agent' || m.role === 'assistant' ? 'assistant' : 'user',
-    content: m.content || '',
+  // Map to Gemini role format
+  const contents = messages.map(m => ({
+    role: m.role === 'agent' || m.role === 'assistant' || m.role === 'model' ? 'model' : 'user',
+    parts: [{ text: m.content || '' }],
   }));
 
-  // Call Anthropic
   let resp;
   try {
-    resp = await fetch('https://api.anthropic.com/v1/messages', {
+    resp = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
       method: 'POST',
-      headers: {
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'content-type': 'application/json',
-      },
+      headers: { 'content-type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-3-5-sonnet-20241022',
-        max_tokens: 512,
-        system: SYSTEM_PROMPT,
-        messages: apiMessages,
+        system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
+        contents,
+        generationConfig: { maxOutputTokens: 512, temperature: 0.2, responseMimeType: 'application/json' },
       }),
     });
   } catch (netErr) {
-    return jsonResp(502, { error: `Network error reaching Anthropic: ${netErr.message}` });
+    return jsonResp(502, { error: `Network error reaching Gemini: ${netErr.message}` });
   }
 
   const envelope = await resp.json();
-
   if (!resp.ok) {
     const msg = envelope?.error?.message || JSON.stringify(envelope);
-    return jsonResp(resp.status, { error: `Anthropic API error ${resp.status}: ${msg}` });
+    return jsonResp(resp.status, { error: `Gemini API error ${resp.status}: ${msg}` });
   }
 
-  const rawText = (envelope?.content?.[0]?.text || '').trim()
-    .replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```$/, '').trim();
+  let text = '';
+  try {
+    text = envelope.candidates[0].content.parts[0].text.trim();
+  } catch (_) {
+    return jsonResp(500, { error: `Unexpected Gemini response: ${JSON.stringify(envelope).slice(0, 200)}` });
+  }
+
+  // Strip optional fences
+  text = text.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```$/, '').trim();
 
   try {
-    const parsed = JSON.parse(rawText);
-    return jsonResp(200, parsed);
+    return jsonResp(200, JSON.parse(text));
   } catch (e) {
-    return jsonResp(500, { error: `LLM returned non-JSON: ${rawText.slice(0, 200)}` });
+    return jsonResp(500, { error: `LLM returned non-JSON: ${text.slice(0, 200)}` });
   }
 };
