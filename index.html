@@ -3,783 +3,267 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EmotionAI – Enterprise Customer Experience Intelligence</title>
+  <title>EmotionAI – Real-Time Customer Experience Intelligence</title>
+  <meta name="description" content="Enterprise emotion detection and customer intelligence powered by real LLM analysis. Dual-panel support demo with live sentiment, risk scoring, and AI recommendations.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <!-- Chart.js CDN for premium charts -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- Lucide Icons CDN -->
-  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
 
-  <!-- Background Glowing Blobs -->
-  <div class="blob-container">
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-    <div class="blob blob-3"></div>
-  </div>
+  <!-- ================================================ -->
+  <!-- TOP STATUS BAR                                    -->
+  <!-- ================================================ -->
+  <header class="top-bar" id="top-bar">
+    <div class="top-bar-logo">
+      <svg class="logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z" fill="currentColor"/>
+      </svg>
+      <span class="logo-text">EmotionAI</span>
+      <span class="logo-tag">Enterprise</span>
+    </div>
 
-  <!-- SVG Dial Gradient Definition -->
-  <svg style="width:0; height:0; position:absolute;">
-    <defs>
-      <linearGradient id="dial-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stop-color="#3B82F6" />
-        <stop offset="100%" stop-color="#7C3AED" />
-      </linearGradient>
-    </defs>
-  </svg>
-
-  <!-- ========================================== -->
-  <!-- 1. LANDING PAGE VIEW                       -->
-  <!-- ========================================== -->
-  <div id="landing-page" role="region" aria-label="Landing Page">
-    <nav class="header-nav">
-      <div class="logo" onclick="returnToLanding()" tabindex="0" aria-label="EmotionAI Home">
-        <i data-lucide="brain-circuit"></i>
-        <span>EmotionAI</span>
-      </div>
-      <div class="cta-group">
-        <button class="btn btn-secondary scale-hover" onclick="showDemo(true)" aria-label="Start Autoplay Demo">Run Auto Demo</button>
-        <button class="btn btn-primary scale-hover" onclick="showDemo()" aria-label="Launch Console Dashboard">Launch Console <i data-lucide="arrow-right"></i></button>
-      </div>
-    </nav>
-
-    <header class="hero">
-      <div class="badge">
-        <i data-lucide="sparkles"></i> Next-Gen Enterprise Customer Intelligence
-      </div>
-      <h1>
-        <span class="text-gradient">Enterprise Emotion</span><br>
-        <span class="text-gradient-purple">Customer Intelligence</span>
-      </h1>
-      <p>
-        Traditional AI chatbots only answer questions. EmotionAI understands customer emotions, predicts frustration before escalation, routes real-time script guides to agents, and visualizes enterprise-wide telemetry.
-      </p>
-      <div class="cta-group">
-        <button class="btn btn-primary btn-lg scale-hover" onclick="showDemo()" aria-label="Start Console">
-          Launch Agent Dashboard <i data-lucide="terminal"></i>
-        </button>
-      </div>
-    </header>
-
-    <div class="features-container">
-      <h2 class="section-title">Engineered for High-Growth Enterprises</h2>
-      <div class="features-grid">
-        <div class="feature-card glass glow-card" tabindex="0">
-          <i data-lucide="shield-alert"></i>
-          <h3>Predictive Frustration Alerts</h3>
-          <p>Scans chat vocabulary, message velocity, punctuation patterns, and customer history to predict agent escalations before they occur.</p>
-        </div>
-        <div class="feature-card glass glow-card" tabindex="0">
-          <i data-lucide="zap"></i>
-          <h3>Action Recommendations</h3>
-          <p>Dynamically provides support agents with instant solutions like custom discount coupons, senior manager routings, and auto-generated apologetic email scripts.</p>
-        </div>
-        <div class="feature-card glass glow-card" tabindex="0">
-          <i data-lucide="trending-up"></i>
-          <h3>Executive CEO Metrics</h3>
-          <p>Track business health with CEO-level indices such as Revenue Saved, Brand Reputation Scores, Retention Forecasts, and CX ROI.</p>
-        </div>
+    <div class="top-bar-center">
+      <div class="session-info">
+        <span class="session-label">LIVE SESSION</span>
+        <span class="session-id">SID-2026-1807</span>
       </div>
     </div>
 
-    <section class="trust-section" aria-label="Enterprise Customers">
-      <p>Trusted by industry leaders in enterprise software</p>
-      <div class="trust-logos">
-        <div class="logo-item"><i data-lucide="circle-dot"></i> Vercel</div>
-        <div class="logo-item"><i data-lucide="triangle"></i> Stripe</div>
-        <div class="logo-item"><i data-lucide="square"></i> Linear</div>
-        <div class="logo-item"><i data-lucide="hexagon"></i> OpenAI</div>
+    <div class="top-bar-right">
+      <div class="status-pill" id="api-status-pill">
+        <span class="status-dot" id="api-status-dot"></span>
+        <span id="api-status-text">Live Analysis Ready</span>
+      </div>
+      <div class="agent-badge">
+        <div class="agent-avatar">AG</div>
+        <span class="agent-name">Alex Gray</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================================================ -->
+  <!-- MAIN DUAL-PANEL LAYOUT                            -->
+  <!-- ================================================ -->
+  <main class="app-container">
+
+    <!-- ============================================== -->
+    <!-- LEFT PANEL — CUSTOMER CHAT                      -->
+    <!-- ============================================== -->
+    <section class="chat-panel" aria-label="Customer Chat">
+      <div class="chat-panel-header">
+        <div class="chat-panel-user">
+          <div class="customer-avatar" id="customer-avatar">C</div>
+          <div class="customer-info">
+            <h2 class="customer-name" id="customer-name">Customer</h2>
+            <div class="customer-status">
+              <span class="online-dot"></span>
+              <span>Connected now</span>
+            </div>
+          </div>
+        </div>
+        <div class="chat-panel-label">Customer View</div>
+      </div>
+
+      <!-- Quick-send sample buttons -->
+      <div class="quick-send-bar" id="quick-send-bar">
+        <span class="quick-send-label">Quick send:</span>
+        <button class="quick-btn" onclick="sendQuickMessage('My payment keeps failing and I cannot access my account.')">💳 Payment failed</button>
+        <button class="quick-btn" onclick="sendQuickMessage(&quot;I've tried three times now and I still can't get this to work. This is really frustrating.&quot;)">😤 I've tried 3 times</button>
+        <button class="quick-btn" onclick="sendQuickMessage('This is absolutely ridiculous. I want a full refund right now or I am cancelling everything.')">🔥 Refund me now</button>
+      </div>
+
+      <!-- Chat messages feed -->
+      <div class="chat-messages-feed" id="chat-feed" role="log" aria-live="polite" aria-label="Chat messages">
+        <!-- Populated by JS -->
+      </div>
+
+      <!-- Typing indicator -->
+      <div class="typing-indicator" id="typing-indicator" style="display:none;" aria-live="polite">
+        <div class="typing-avatar">AI</div>
+        <div class="typing-bubble">
+          <span class="typing-dot"></span>
+          <span class="typing-dot"></span>
+          <span class="typing-dot"></span>
+        </div>
+        <span class="typing-label">Agent is responding…</span>
+      </div>
+
+      <!-- Input area -->
+      <div class="chat-input-area">
+        <div class="chat-input-wrapper">
+          <textarea
+            id="customer-input"
+            class="customer-textarea"
+            placeholder="Type your message here…"
+            rows="2"
+            aria-label="Customer message input"
+            onkeydown="handleKeyDown(event)"
+          ></textarea>
+          <button class="send-btn" id="send-btn" onclick="sendMessage()" aria-label="Send message">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M22 2L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+        <p class="input-hint">Press Enter to send, Shift+Enter for new line</p>
       </div>
     </section>
-  </div>
 
+    <!-- ============================================== -->
+    <!-- DIVIDER                                         -->
+    <!-- ============================================== -->
+    <div class="panel-divider" aria-hidden="true"></div>
 
-  <!-- ========================================== -->
-  <!-- APP WORKSPACE SHELL                        -->
-  <!-- ========================================== -->
-  <div id="app-workspace" style="display: none;" role="main" aria-label="Copilot Workspace Console">
-    <!-- Navigation Sidebar -->
-    <aside class="sidebar" role="navigation" aria-label="Sidebar Navigation">
-      <div>
-        <div class="sidebar-logo logo" onclick="returnToLanding()" tabindex="0" aria-label="EmotionAI Landing Home">
-          <i data-lucide="brain-circuit"></i>
-          <span>EmotionAI</span>
-        </div>
-        <ul class="nav-list">
-          <li>
-            <div class="nav-item active" onclick="switchTab('conversation')" id="nav-conversation" tabindex="0" role="button" aria-label="Conversation Workspace">
-              <i data-lucide="message-square"></i>
-              <span>Live Workspace</span>
-            </div>
-          </li>
-          <li>
-            <div class="nav-item" onclick="switchTab('executive')" id="nav-executive" tabindex="0" role="button" aria-label="Executive Overview">
-              <i data-lucide="layout-dashboard"></i>
-              <span>Executive Overview</span>
-            </div>
-          </li>
-          <li>
-            <div class="nav-item" onclick="switchTab('architecture')" id="nav-architecture" style="border-top: 1px dashed rgba(255,255,255,0.08); margin-top:0.5rem; padding-top:0.8rem;" tabindex="0" role="button" aria-label="System Pipeline Architecture Flow">
-              <i data-lucide="workflow" style="color:var(--accent-blue);"></i>
-              <span style="font-weight:600; color:var(--text-primary);">System Architecture</span>
-            </div>
-          </li>
-        </ul>
+    <!-- ============================================== -->
+    <!-- RIGHT PANEL — LIVE INTELLIGENCE                 -->
+    <!-- ============================================== -->
+    <section class="intel-panel" aria-label="Live Intelligence Dashboard">
+      <div class="intel-panel-header">
+        <h2 class="intel-panel-title">
+          <svg class="intel-icon" viewBox="0 0 24 24" fill="none">
+            <path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Live Intelligence
+        </h2>
+        <div class="intel-panel-label">Agent View Only</div>
       </div>
 
-      <div class="sidebar-footer">
-        <!-- Live Connection Mode Badge -->
-        <div id="sidebar-connection-tag" class="sidebar-status-tag demo-mode">
-          <i data-lucide="alert-circle"></i> Demo Mode (Mock AI)
+      <!-- ---- Emotion Row ---- -->
+      <div class="intel-card" id="emotion-card">
+        <div class="intel-card-header">
+          <span class="intel-card-title">Current Emotion</span>
+          <span class="intel-card-badge emotion-badge" id="emotion-badge">—</span>
         </div>
-        <div class="user-profile-sm" style="margin-top: 0.75rem;">
-          <div class="avatar-sm">AG</div>
-          <div class="user-info-sm">
-            <h4>Alex Gray</h4>
-            <p>Enterprise Tier 2</p>
+        <div class="emotion-display">
+          <span class="emotion-emoji" id="emotion-emoji">🔍</span>
+          <div class="emotion-details">
+            <span class="emotion-label" id="emotion-label">Awaiting input…</span>
+            <div class="confidence-row">
+              <span class="confidence-label">Confidence</span>
+              <span class="confidence-val" id="confidence-val">—</span>
+            </div>
           </div>
         </div>
       </div>
-    </aside>
 
-    <!-- Main Workspace Frame -->
-    <main class="dashboard-frame">
-      <header class="dashboard-header">
-        <div class="header-title-area">
-          <h2 id="header-view-title">
-            <i data-lucide="layout-dashboard" style="color: var(--accent-blue);"></i> 
-            <span>Executive Dashboard</span>
-          </h2>
+      <!-- ---- Sentiment Bar ---- -->
+      <div class="intel-card">
+        <div class="intel-card-header">
+          <span class="intel-card-title">Sentiment</span>
+          <span class="intel-card-badge" id="sentiment-badge">—</span>
         </div>
-        
-        <div class="header-actions">
-          <!-- Connection Status Button -->
-          <div class="connection-status-pill offline" id="header-conn-pill" onclick="toggleApiModal(true)">
-            <span class="status-pulse-dot"></span>
-            <span id="header-conn-text" style="font-size:0.75rem; font-weight:700;">Demo Mode (Mock AI)</span>
+        <div class="bar-row">
+          <span class="bar-side-label neg">😠</span>
+          <div class="sentiment-bar-track">
+            <div class="sentiment-bar-fill" id="sentiment-bar" style="width:50%; left:0;"></div>
+            <div class="sentiment-bar-marker" id="sentiment-marker" style="left:50%;"></div>
           </div>
-
-          <button class="icon-btn active" id="btn-api-config" title="Configure Gemini API Settings" onclick="toggleApiModal(true)">
-            <i data-lucide="settings-2"></i>
-          </button>
-          
-          <div class="customer-selector-container">
-            <span style="font-size:0.8rem; color:var(--text-secondary); font-weight:600;">ACTIVE CUSTOMER:</span>
-            <select class="customer-dropdown" id="global-customer-select" onchange="onCustomerChange(this.value)" aria-label="Select Active Customer Profile">
-              <option value="sarah">Sarah Jenkins (Frustrated / Payment Failed)</option>
-              <option value="michael">Michael Chen (Anxious / Enterprise Upgrade)</option>
-              <option value="elena">Elena Rostova (Satisfied / Billing Query)</option>
-            </select>
-          </div>
-          <div class="live-badge">
-            <span class="pulse-dot"></span> LIVE
-          </div>
+          <span class="bar-side-label pos">😊</span>
         </div>
-      </header>
-
-      <div class="dashboard-content">
-
-        <!-- ========================================== -->
-        <!-- VIEW 9 & 5: EXECUTIVE OVERVIEW DASHBOARD   -->
-        <!-- ========================================== -->
-        <div id="view-executive" class="view-pane active">          <!-- Active Session Real-Time Dashboard -->
-          <div class="glass glow-card" style="padding:2rem; margin-bottom:1.5rem; border-color:rgba(124, 58, 237, 0.2);">
-            <h3 style="font-family:var(--font-title); font-size:1.25rem; font-weight:800; margin-bottom:0.5rem;" class="text-gradient">Active Session Analytics</h3>
-            <p style="color:var(--text-secondary); font-size:0.9rem; margin-bottom:2rem;">Corporate executive report generated entirely from telemetry metadata processed during the current customer session.</p>
-
-            <div class="stats-grid-4" style="margin-bottom: 2rem;">
-              <div class="stat-card glass glow-card">
-                <div class="stat-header">
-                  <span>Session Messages</span>
-                  <i data-lucide="message-square" style="color: var(--accent-blue);"></i>
-                </div>
-                <div class="stat-main">
-                  <span class="stat-num" id="exec-session-messages">0</span>
-                  <span class="stat-trend up">turns</span>
-                </div>
-                <p class="stat-footer">Total conversation flow turns</p>
-              </div>
-
-              <div class="stat-card glass glow-card">
-                <div class="stat-header">
-                  <span>Avg API Response Latency</span>
-                  <i data-lucide="zap" style="color: var(--accent-purple);"></i>
-                </div>
-                <div class="stat-main">
-                  <span class="stat-num" id="exec-average-latency">0ms</span>
-                  <span class="stat-trend down">live inference</span>
-                </div>
-                <p class="stat-footer">Average round-trip response time</p>
-              </div>
-
-              <div class="stat-card glass glow-card">
-                <div class="stat-header">
-                  <span>Current Emotion</span>
-                  <i data-lucide="heart" style="color: var(--danger);"></i>
-                </div>
-                <div class="stat-main">
-                  <span class="stat-num" id="exec-detected-emotion" style="font-size: 1.4rem;">Neutral</span>
-                  <span class="stat-trend up" id="exec-detected-sentiment" style="font-size:0.75rem;">Neutral</span>
-                </div>
-                <p class="stat-footer">Latest classified telemetry state</p>
-              </div>
-
-              <div class="stat-card glass glow-card">
-                <div class="stat-header">
-                  <span>SLA Threat Level</span>
-                  <i data-lucide="shield-alert" style="color: var(--warning);"></i>
-                </div>
-                <div class="stat-main">
-                  <span class="stat-num" id="exec-conversation-risk" style="font-size: 1.4rem; color: var(--success);">LOW RISK</span>
-                  <span class="stat-trend down">churn danger</span>
-                </div>
-                <p class="stat-footer">Active account churn hazard</p>
-              </div>
-            </div>
-
-            <!-- Extended Session Details -->
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:2rem;">
-              <div class="glass" style="padding:1.5rem;">
-                <h4 style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase; font-weight:600; margin-bottom:1rem;">Suggested Remediation Resolution</h4>
-                <div style="font-size:1.1rem; font-weight:800; color:white; line-height:1.4;" id="exec-suggested-resolution">Awaiting customer session input...</div>
-              </div>
-              <div class="glass" style="padding:1.5rem;">
-                <h4 style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase; font-weight:600; margin-bottom:1rem;">Conversation Status</h4>
-                <div style="font-size:1.1rem; font-weight:800; color:var(--success);" id="exec-conversation-status">Monitoring Customer State</div>
-              </div>
-            </div>
-
-            <!-- Resolution Verification Progress -->
-            <div class="glass" style="padding:1.5rem;">
-              <div style="display:flex; justify-content:space-between; margin-bottom:0.75rem; font-size:0.85rem; font-weight:600;">
-                <span style="color:var(--text-secondary);">Resolution Progress</span>
-                <span id="exec-resolution-progress-text" style="color:var(--accent-blue);">0% Completed</span>
-              </div>
-              <div class="tel-bar-wrapper" style="height: 10px; border-radius: 99px;">
-                <div class="tel-bar-fill success" id="exec-resolution-progress-bar" style="width: 0%; height: 100%; border-radius: 99px; transition: width 0.6s ease;"></div>
-              </div>
-            </div>
-          </div>
+        <div class="bar-labels">
+          <span>Negative</span>
+          <span>Neutral</span>
+          <span>Positive</span>
         </div>
-
-        <!-- ========================================== -->
-        <!-- VIEW 2: AI CONVERSATION WORKSPACE         -->
-        <!-- ========================================== -->
-        <div id="view-conversation" class="view-pane">
-          <div class="workspace-grid">
-            <!-- Left Panel: Chat Interface -->
-            <div class="chat-container glass">
-              <div class="chat-header">
-                <div class="chat-user-profile">
-                  <div class="chat-avatar" id="chat-avatar-char">S</div>
-                  <div class="chat-user-details">
-                    <h3 id="chat-user-fullname">Sarah Jenkins</h3>
-                    <p><span class="pulse-dot"></span> Active Call Integration</p>
-                  </div>
-                </div>
-                <div class="chat-actions">
-                  <button class="icon-btn" title="Initiate Screen Share" aria-label="Share Agent Screen"><i data-lucide="monitor"></i></button>
-                  <button class="icon-btn" title="Dial via Voice Network" onclick="switchTab('voice-ai')" aria-label="Start Voice call"><i data-lucide="phone"></i></button>
-                  <button class="icon-btn active" title="AI Live Copilot Mode" aria-label="AI Copilot Active"><i data-lucide="bot"></i></button>
-                </div>
-              </div>
-
-              <!-- Conversation Feed -->
-              <div class="chat-messages" id="chat-conversation-feed" role="log" aria-live="polite">
-                <!-- Populated dynamically via JS -->
-              </div>
-
-              <!-- Typing Indicator Area -->
-              <div class="typing-indicator" id="chat-typing-indicator" style="display: none;">
-                <div class="typing-dot"></div>
-                <div class="typing-dot"></div>
-                <div class="typing-dot"></div>
-                <span style="font-size: 0.8rem; color: var(--text-muted); margin-left: 0.5rem;" id="chat-typing-text">Customer typing...</span>
-              </div>
-
-              <!-- Sequential Loader Indicator (Gemini Step Loader) -->
-              <div id="gemini-step-loader" style="display:none;">
-                <div class="step-loader-header">
-                  <span class="step-pulse-purple"></span>
-                  <strong>Gemini AI Real-Time Stream Engine</strong>
-                </div>
-                <ul class="step-loader-list">
-                  <li id="step-0"><i data-lucide="circle" class="step-icon"></i> Analyzing customer intent...</li>
-                  <li id="step-1"><i data-lucide="circle" class="step-icon"></i> Understanding emotional context...</li>
-                  <li id="step-2"><i data-lucide="circle" class="step-icon"></i> Evaluating business impact...</li>
-                  <li id="step-3"><i data-lucide="circle" class="step-icon"></i> Preparing customer response...</li>
-                </ul>
-              </div>
-
-              <!-- Input Bar -->
-              <div class="chat-input-bar">
-                <button class="icon-btn" title="Upload debug logs / screenshots" aria-label="Attach File"><i data-lucide="paperclip"></i></button>
-                <div class="chat-input-wrapper">
-                  <input type="text" class="chat-input" id="chat-user-input" placeholder="Type customer message to analyze telemetry & trigger assistant responses..." onkeydown="handleChatInput(event)" aria-label="Type customer message">
-                  <div class="chat-input-actions">
-                    <button class="input-icon-btn" onclick="startSimulatedVoiceInput()" title="Voice Script overlay" aria-label="Simulate Mic Input"><i data-lucide="mic"></i></button>
-                    <button class="input-icon-btn" onclick="sendCustomAgentMessage()" title="Send Message" aria-label="Send message"><i data-lucide="send"></i></button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Right Panel: Live AI Support Copilot -->
-            <div class="telemetry-container">
-              <!-- Premium Heartbeat Pulse Line -->
-              <div class="heartbeat-pulse-wrapper" style="width: 100%; height: 6px; background: rgba(255,255,255,0.03); border-radius: 99px; overflow: hidden; margin-bottom: 1.5rem; position: relative;">
-                <div id="copilot-heartbeat-pulse" class="heartbeat-pulse-line pulse-green" style="height: 100%; width: 100%; transition: background-color 0.8s ease, box-shadow 0.8s ease; background-color: var(--success); box-shadow: 0 0 10px var(--success);"></div>
-              </div>
-
-              <div class="telemetry-header" style="margin-bottom: 1.25rem;">
-                <i data-lucide="heart-handshake"></i> Enterprise Support Copilot Panel
-              </div>
-              
-              <div class="telemetry-grid">
-                <div class="tel-card glass" id="tel-card-emotion">
-                  <div class="tel-label">
-                    <span>Current Emotion</span>
-                    <i data-lucide="heart-pulse" style="color: var(--accent-purple);"></i>
-                  </div>
-                  <div class="tel-dial-container">
-                    <svg class="tel-dial-svg">
-                      <circle class="tel-dial-track" cx="45" cy="45" r="40"></circle>
-                      <circle class="tel-dial-progress" id="dial-emotion-progress" cx="45" cy="45" r="40"></circle>
-                    </svg>
-                    <div class="tel-dial-text" id="dial-emotion-text">0</div>
-                  </div>
-                  <div style="font-size:0.75rem; text-align:center; margin-top:0.35rem; color:var(--text-secondary);" id="copilot-current-emotion">Neutral</div>
-                </div>
-
-                <div class="tel-card glass" id="tel-card-stress">
-                  <div class="tel-label">
-                    <span>Urgency & Stress</span>
-                    <i data-lucide="gauge" style="color: var(--danger);"></i>
-                  </div>
-                  <div>
-                    <div class="tel-value" id="telemetry-stress-value">0%</div>
-                    <div class="tel-bar-wrapper">
-                      <div class="tel-bar-fill danger" id="telemetry-stress-bar" style="width: 0%;"></div>
-                    </div>
-                  </div>
-                  <div style="font-size:0.75rem; color:var(--text-muted); margin-top:0.5rem;" id="copilot-urgency">Urgency: Low</div>
-                </div>
-
-                <div class="tel-card glass" id="tel-card-sentiment">
-                  <div class="tel-label">
-                    <span>Sentiment State</span>
-                    <i data-lucide="smile" style="color: var(--accent-blue);"></i>
-                  </div>
-                  <div class="tel-badge emotion-neutral" id="telemetry-sentiment-badge">
-                    <i data-lucide="activity"></i> NEUTRAL
-                  </div>
-                  <div style="font-size:0.75rem; color:var(--text-muted); margin-top:0.5rem;">Customer Health: <span id="copilot-health" style="font-weight:600; color:var(--success);">Stable</span></div>
-                </div>
-
-                <div class="tel-card glass" id="tel-card-intent">
-                  <div class="tel-label">
-                    <span>Primary Intent</span>
-                    <i data-lucide="target" style="color: var(--success);"></i>
-                  </div>
-                  <div style="font-size:0.9rem; font-weight:700; color:white; word-break:break-word; margin-bottom:0.25rem;" id="telemetry-detected-intent">Waiting for input...</div>
-                  <div style="font-size:0.75rem; color:var(--text-muted);">LTV: <strong id="telemetry-ltv-value" style="color:white;">$12,400</strong></div>
-                </div>
-              </div>
-
-              <!-- Suggested Next Action -->
-              <div class="glass" style="padding: 1.25rem; border-color: rgba(124, 58, 237, 0.2); background: rgba(124, 58, 237, 0.02);">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
-                  <span style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase; font-weight:600; letter-spacing:0.05em;">Suggested Next Action (Heuristics)</span>
-                  <span id="telemetry-risk-badge" style="font-size:0.75rem; font-weight:700; color:var(--success);">LOW RISK</span>
-                </div>
-                <h4 style="font-size:1.1rem; font-weight:800; color:white;" id="copilot-suggested-action">Awaiting telemetry logs...</h4>
-              </div>
-
-              <!-- Animated Confidence Gauges -->
-              <div class="glass" style="padding:1.25rem;">
-                <h4 style="font-size:0.85rem; color:var(--text-muted); text-transform:uppercase; font-weight:600; margin-bottom:1rem;">Model Confidence Metrics</h4>
-                <div class="gauges-flex-row" style="display:flex; justify-content:space-around; gap:0.5rem;">
-                  <div class="gauge-compact">
-                    <div class="gauge-c-header">Emotion</div>
-                    <div class="gauge-circle-outer">
-                      <svg class="gauge-svg-comp">
-                        <circle class="gauge-track-c" cx="30" cy="30" r="24"></circle>
-                        <circle class="gauge-progress-c text-success" id="gauge-conf-emotion" cx="30" cy="30" r="24" style="stroke-dashoffset: 150.8;"></circle>
-                      </svg>
-                      <span class="gauge-percent-val" id="gauge-txt-emotion">0%</span>
-                    </div>
-                  </div>
-                  <div class="gauge-compact">
-                    <div class="gauge-c-header">Intent</div>
-                    <div class="gauge-circle-outer">
-                      <svg class="gauge-svg-comp">
-                        <circle class="gauge-track-c" cx="30" cy="30" r="24"></circle>
-                        <circle class="gauge-progress-c text-success" id="gauge-conf-intent" cx="30" cy="30" r="24" style="stroke-dashoffset: 150.8;"></circle>
-                      </svg>
-                      <span class="gauge-percent-val" id="gauge-txt-intent">0%</span>
-                    </div>
-                  </div>
-                  <div class="gauge-compact">
-                    <div class="gauge-c-header">Next Action</div>
-                    <div class="gauge-circle-outer">
-                      <svg class="gauge-svg-comp">
-                        <circle class="gauge-track-c" cx="30" cy="30" r="24"></circle>
-                        <circle class="gauge-progress-c text-success" id="gauge-conf-recommendation" cx="30" cy="30" r="24" style="stroke-dashoffset: 150.8;"></circle>
-                      </svg>
-                      <span class="gauge-percent-val" id="gauge-txt-recommendation">0%</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- AI Explainability Drawer -->
-              <details class="glass explain-details-panel" id="ai-explainability-details" open>
-                <summary style="font-size:0.85rem; font-weight:600; text-transform:uppercase; color:var(--text-muted); cursor:pointer; list-style:none; padding:1.25rem; display:flex; justify-content:space-between; align-items:center;">
-                  <span>Why? AI Explainability Diagnostics</span>
-                  <i data-lucide="chevron-down" style="width:16px;"></i>
-                </summary>
-                <div class="explain-body-content" style="padding:0 1.25rem 1.25rem 1.25rem; border-top: 1px solid rgba(255,255,255,0.03); padding-top:1rem;">
-                  <div class="explain-flowchart" style="display:flex; flex-direction:column; gap:0.6rem;">
-                    <div class="explain-node"><i data-lucide="smile" style="width:14px; color:var(--accent-blue);"></i> Detected Emotion: &nbsp;<span id="explain-emotion" style="color:white; font-weight:500;">-</span></div>
-                    <div class="explain-node"><i data-lucide="target" style="width:14px; color:var(--accent-blue);"></i> Detected Intent: &nbsp;<span id="explain-intent" style="color:white; font-weight:500;">-</span></div>
-                    <div class="explain-node"><i data-lucide="search" style="width:14px; color:var(--accent-purple);"></i> Key triggers: &nbsp;<span id="explain-keywords" style="color:white; font-weight:500;">-</span></div>
-                    <div class="explain-node"><i data-lucide="alert-triangle" style="width:14px; color:var(--danger);"></i> Risk & Reasoning: &nbsp;<span id="explain-risk" style="color:white; font-weight:500;">-</span></div>
-                    <div class="explain-node"><i data-lucide="brain" style="width:14px; color:var(--accent-purple);"></i> Reasoning details: &nbsp;<span id="explain-why" style="color:white; font-weight:500;">-</span></div>
-                    <div class="explain-node"><i data-lucide="trending-up" style="width:14px; color:var(--success);"></i> Business Impact: &nbsp;<span id="explain-impact" style="color:white; font-weight:500;">-</span></div>
-                    <div class="explain-node"><i data-lucide="shield-check" style="width:14px; color:var(--success);"></i> Confidence Score: &nbsp;<span id="explain-confidence" style="color:white; font-weight:500;">0%</span></div>
-                  </div>
-                </div>
-              </details>
-
-              <!-- Live Expandable JSON Response Viewer -->
-              <details class="glass" style="border-color: rgba(255,255,255,0.05); overflow:hidden;">
-                <summary style="font-size:0.85rem; font-weight:600; text-transform:uppercase; color:var(--text-muted); cursor:pointer; padding:1rem 1.25rem; display:flex; justify-content:space-between; align-items:center; list-style:none;">
-                  <span>Raw live Gemini JSON Response</span>
-                  <i data-lucide="chevron-down" style="width:16px;"></i>
-                </summary>
-                <div style="padding:0 1.25rem 1.25rem 1.25rem; border-top:1px solid rgba(255,255,255,0.03); padding-top:0.75rem;">
-                  <pre id="copilot-raw-json" style="background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.04); border-radius:6px; padding:0.85rem; font-family:monospace; font-size:0.75rem; color:#A5B4FC; max-height:200px; overflow-y:auto; white-space:pre-wrap;"></pre>
-                </div>
-              </details>
-
-              <!-- Developer Logs Terminal -->
-              <div class="glass" style="padding: 1.25rem; display:flex; flex-direction:column; gap:0.75rem;">
-                <h4 style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase; font-weight:600; display:flex; justify-content:space-between; align-items:center; margin-bottom:0.25rem;">
-                  <span>Developer Diagnostics console log</span>
-                  <span class="pulse-dot"></span>
-                </h4>
-                <div id="developer-terminal-logs" style="background:rgba(0,0,0,0.4); border:1px solid rgba(255,255,255,0.05); border-radius:6px; padding:0.85rem; font-family:monospace; font-size:0.75rem; color:var(--text-secondary); height:120px; overflow-y:auto; line-height:1.5; word-break:break-all;"></div>
-              </div>
-
-              <!-- Compile Summary Action -->
-              <button class="btn btn-primary scale-hover" id="btn-generate-summary" onclick="generateExecutiveSummary()" style="width:100%; display:flex; justify-content:center; align-items:center; gap:0.5rem;" aria-label="Compile Executive Outcome Report">
-                <i data-lucide="file-text"></i> Compile Executive Summary
-              </button>
-            </div>
-          </div>
-        </div>
-
-
-
-        <!-- ========================================== -->
-        <!-- VIEW: SYSTEM ARCHITECTURE VISUALIZER       -->
-        <!-- ========================================== -->
-        <div id="view-architecture" class="view-pane">
-          <!-- Flowchart Grid and live metrics -->
-          <div style="display:grid; grid-template-columns:2fr 1.2fr; gap:1.5rem; margin-bottom:1.5rem;">
-            <div class="glass" style="padding: 2rem;">
-              <h3 style="font-family:var(--font-title); font-weight:700; margin-bottom:0.5rem;">Enterprise Real-Time Pipeline</h3>
-              <p style="color:var(--text-secondary); font-size:0.9rem; margin-bottom:2rem;">Trace how customer vocal/text telemetry runs through the Gemini AI layer and feeds the BI recommendation dashboard.</p>
-              
-              <div class="arch-flowchart">
-                <!-- Node 1: Customer -->
-                <div class="arch-card active" id="arch-node-customer">
-                  <div class="arch-icon"><i data-lucide="user"></i></div>
-                  <div class="arch-details">
-                    <h4>1. Customer</h4>
-                    <p>Voice audio or text interaction stream</p>
-                    <span class="arch-tech">WebSocket / REST</span>
-                  </div>
-                  <div class="status-indicator online"></div>
-                </div>
-
-                <!-- Connector Line -->
-                <div class="arch-connector"><div class="arch-pulse"></div></div>
-
-                <!-- Node 2: EmotionAI -->
-                <div class="arch-card active" id="arch-node-ui">
-                  <div class="arch-icon"><i data-lucide="monitor"></i></div>
-                  <div class="arch-details">
-                    <h4>2. EmotionAI</h4>
-                    <p>Agent copilot console workspace</p>
-                    <span class="arch-tech">Vanilla JS Client Shell</span>
-                  </div>
-                  <div class="status-indicator online"></div>
-                </div>
-
-                <!-- Connector Line -->
-                <div class="arch-connector"><div class="arch-pulse"></div></div>
-
-                <!-- Node 3: Gemini -->
-                <div class="arch-card gemini-node" id="arch-node-gemini">
-                  <div class="arch-icon"><i data-lucide="brain"></i></div>
-                  <div class="arch-details">
-                    <h4>3. Gemini</h4>
-                    <p>Structured analysis model gateway</p>
-                    <span class="arch-tech" id="arch-gemini-version">gemini-2.5-flash API</span>
-                  </div>
-                  <div class="status-indicator offline" id="arch-gemini-status"></div>
-                </div>
-
-                <!-- Connector Line -->
-                <div class="arch-connector"><div class="arch-pulse"></div></div>
-
-                <!-- Node 4: Emotion Analysis -->
-                <div class="arch-card active" id="arch-node-analysis">
-                  <div class="arch-icon"><i data-lucide="heart-pulse"></i></div>
-                  <div class="arch-details">
-                    <h4>4. Emotion Analysis</h4>
-                    <p>JSON classification telemetry outputs</p>
-                    <span class="arch-tech">JSON Sentiment Extraction</span>
-                  </div>
-                  <div class="status-indicator online"></div>
-                </div>
-
-                <!-- Connector Line -->
-                <div class="arch-connector"><div class="arch-pulse"></div></div>
-
-                <!-- Node 5: Recommendation Engine -->
-                <div class="arch-card active" id="arch-node-recommendation">
-                  <div class="arch-icon"><i data-lucide="zap"></i></div>
-                  <div class="arch-details">
-                    <h4>5. Recommendation Engine</h4>
-                    <p>Heuristics action-routing rules</p>
-                    <span class="arch-tech">JS Rule Mapping</span>
-                  </div>
-                  <div class="status-indicator online"></div>
-                </div>
-
-                <!-- Connector Line -->
-                <div class="arch-connector"><div class="arch-pulse"></div></div>
-
-                <!-- Node 6: Support Copilot -->
-                <div class="arch-card active" id="arch-node-copilot">
-                  <div class="arch-icon"><i data-lucide="layout-dashboard"></i></div>
-                  <div class="arch-details">
-                    <h4>6. Support Copilot</h4>
-                    <p>Telemetry dashboard & explanation cards</p>
-                    <span class="arch-tech">Live UI Rendering</span>
-                  </div>
-                  <div class="status-indicator online"></div>
-                </div>
-
-                <!-- Connector Line -->
-                <div class="arch-connector"><div class="arch-pulse"></div></div>
-
-                <!-- Node 7: Resolution -->
-                <div class="arch-card active" id="arch-node-resolution">
-                  <div class="arch-icon"><i data-lucide="check-circle-2"></i></div>
-                  <div class="arch-details">
-                    <h4>7. Resolution</h4>
-                    <p>Executive outcomes summary & ticketing</p>
-                    <span class="arch-tech">CSAT Protection Verified</span>
-                  </div>
-                  <div class="status-indicator online"></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Pipeline Live Metrics and Enterprise Health Indicators -->
-            <div style="display:flex; flex-direction:column; gap:1.5rem;">
-              <!-- Real-Time API Metrics -->
-              <div class="glass" style="padding:1.5rem;">
-                <h4 style="font-size:0.85rem; color:var(--text-muted); text-transform:uppercase; font-weight:600; margin-bottom:1rem; display:flex; justify-content:space-between; align-items:center;">
-                  <span>Pipeline Telemetry Logs</span>
-                  <span class="pulse-dot" style="margin-left:0.5rem;"></span>
-                </h4>
-                <div style="display:flex; flex-direction:column; gap:0.75rem;">
-                  <div style="display:flex; justify-content:space-between; font-size:0.9rem;">
-                    <span style="color:var(--text-secondary);">Request Latency:</span>
-                    <strong style="color:white;" id="arch-latency-val">0ms</strong>
-                  </div>
-                  <div style="display:flex; justify-content:space-between; font-size:0.9rem;">
-                    <span style="color:var(--text-secondary);">LLM processing:</span>
-                    <strong style="color:white;" id="arch-processing-val">0.0s</strong>
-                  </div>
-                  <div style="display:flex; justify-content:space-between; font-size:0.9rem;">
-                    <span style="color:var(--text-secondary);">API requests count:</span>
-                    <strong style="color:white;" id="arch-requests-val">124</strong>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Enterprise Health Status Widget -->
-              <div class="glass" style="padding:1.5rem;">
-                <h4 style="font-size:0.85rem; color:var(--text-muted); text-transform:uppercase; font-weight:600; margin-bottom:1rem;">
-                  Enterprise System Status
-                </h4>
-                <div class="health-status-list" style="display:flex; flex-direction:column; gap:0.75rem;">
-                  <div class="health-status-row">
-                    <span class="health-service">Gemini API Connection</span>
-                    <span class="health-indicator offline" id="health-indicator-gemini">Demo Mode</span>
-                  </div>
-                  <div class="health-status-row">
-                    <span class="health-service">Telemetry DB Cluster</span>
-                    <span class="health-indicator healthy">Healthy</span>
-                  </div>
-                  <div class="health-status-row">
-                    <span class="health-service">Analytics Matrix Engine</span>
-                    <span class="health-indicator healthy">Healthy</span>
-                  </div>
-                  <div class="health-status-row">
-                    <span class="health-service">Rule Recommendation Node</span>
-                    <span class="health-indicator healthy">Healthy</span>
-                  </div>
-                  <div class="health-status-row">
-                    <span class="health-service">Copilot UI Dashboard</span>
-                    <span class="health-indicator running">Running</span>
-                  </div>
-                  <div class="health-status-row">
-                    <span class="health-service">Voice DSP Module</span>
-                    <span class="health-indicator running">Running</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Structured JSON Code block returned by Gemini -->
-          <div class="glass" style="padding:1.5rem; margin-bottom:1.5rem;">
-            <h4 style="font-size:0.9rem; color:var(--text-muted); text-transform:uppercase; font-weight:600; margin-bottom:1rem; display:flex; justify-content:space-between; align-items:center;">
-              <span>Structured Gemini Schema (JSON Output)</span>
-              <i data-lucide="braces" style="width:16px;"></i>
-            </h4>
-            <div class="preview-code-box" style="margin-bottom:0;" id="arch-json-output">
-{
-  "status": "awaiting_input",
-  "info": "Send a customer message to analyze JSON responses."
-}
-            </div>
-          </div>
-
-          <!-- Developer Diagnostics Panel -->
-          <div class="glass" style="padding: 1.5rem;">
-            <h4 style="font-size:0.9rem; color:var(--text-muted); text-transform:uppercase; font-weight:600; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
-              <i data-lucide="terminal" style="color:var(--accent-purple);"></i> Technical Diagnostics Logs
-            </h4>
-            <div style="background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.05); border-radius:8px; padding:1rem; font-family:'Courier New', Courier, monospace; font-size:0.85rem; color:#A5B4FC; line-height:1.5; max-height:200px; overflow-y:auto;" id="arch-terminal-logs">
-              [SYSTEM] Telemetry pipeline initialized.<br>
-              [SYSTEM] Connection stable on http://localhost:8000.<br>
-              [SYSTEM] UI Render cycles completed.<br>
-              [DATABASE] 3 core customer profiles loaded.<br>
-              [AI] Awaiting connection token key. Live Gemini pipeline disabled (Falling back to simulated classification).
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </main>
-  </div>
-
-  <!-- ========================================== -->
-  <!-- GEMINI API CONFIGURATION MODAL             -->
-  <!-- ========================================== -->
-  <div class="modal-backdrop" id="api-key-modal" style="display: none;" role="dialog" aria-modal="true" aria-label="Gemini API Key settings overlay">
-    <div class="modal-card glass">
-      <div class="modal-header">
-        <h3><i data-lucide="settings" style="vertical-align:middle; color:var(--accent-blue); margin-right:6px;"></i> Gemini API Configuration</h3>
-        <button class="modal-close-btn" onclick="toggleApiModal(false)" aria-label="Close settings">&times;</button>
-      </div>
-      <div class="modal-body">
-        <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5; margin-bottom: 1.25rem;">
-          Provide a Google Gemini API Key to enable **real-time AI analytics**. Every chat message submitted in the workspace will make direct API calls to Google's models to analyze emotion, risk, and generate scripts.
-        </p>
-
-        <!-- Dynamic Modal Status Indicator -->
-        <div id="modal-validation-status" class="modal-status-box demo-mode" style="margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem; padding:0.5rem 0.75rem; border-radius:6px; font-size:0.85rem; font-weight:600;">
-          <i data-lucide="alert-circle" id="modal-status-icon"></i>
-          <span id="modal-status-text">Demo Mode (Mock AI)</span>
-        </div>
-
-        <div style="margin-bottom: 1.25rem;">
-          <label for="input-api-key" style="display:block; font-size:0.8rem; font-weight:600; color:var(--text-secondary); margin-bottom:0.5rem; text-transform:uppercase;">Gemini API Key</label>
-          <input type="password" class="chat-input" id="input-api-key" placeholder="AIzaSy..." style="padding-right:1rem;">
-        </div>
-        <div class="badge" style="background:rgba(59,130,246,0.1); border-color:rgba(59,130,246,0.2); color:#93C5FD; text-transform:none; font-size:0.75rem; margin-bottom:0.5rem; display:block; text-align:left;">
-          <i data-lucide="shield-check" style="width:14px; height:14px; vertical-align:middle;"></i> Stored locally in your browser's local storage.
-        </div>
-        <p style="font-size:0.75rem; color:var(--text-muted); line-height:1.4;">
-          No API key? No problem. The dashboard automatically falls back to high-fidelity simulated outputs so the presentation works perfectly out of the box!
-        </p>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary" onclick="toggleApiModal(false)">Cancel</button>
-        <button class="btn btn-primary" id="btn-save-api-settings" onclick="saveApiKey()">Save Settings</button>
-      </div>
-    </div>
-  </div>
-
-
-
-  <!-- Autoplay Final Business Outcome Overlay (Executive Summary Management Report) -->
-  <div class="modal-backdrop" id="autoplay-outcome-modal" style="display: none; z-index: 1000;" role="dialog" aria-modal="true" aria-label="Executive Summary Report Overlay">
-    <div class="modal-card glass" style="max-width:680px; padding:2.5rem; position:relative;">
-      <!-- Close button -->
-      <button class="modal-close-btn" onclick="closeOutcomeModal()" style="position:absolute; right:1.5rem; top:1.5rem;">&times;</button>
-      
-      <!-- Executive Letter Header -->
-      <div style="border-bottom:1px dashed rgba(255,255,255,0.1); padding-bottom:1.25rem; margin-bottom:1.5rem; text-align:left;">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <div style="display:flex; align-items:center; gap:0.5rem; font-family:var(--font-title); font-weight:800; font-size:1.25rem;">
-            <i data-lucide="brain-circuit" style="color:var(--accent-blue);"></i> EmotionAI Core Intelligence
-          </div>
-          <span style="font-size:0.75rem; color:var(--text-muted); font-family:monospace;" id="exec-report-timestamp">REPORT ID: SRH-RET-2026</span>
-        </div>
-        <h3 style="font-family:var(--font-title); font-size:1.5rem; font-weight:800; margin-top:0.75rem;" class="text-gradient">EXECUTIVE OUTCOME SUMMARY</h3>
       </div>
 
-      <!-- Report content -->
-      <div style="text-align:left; display:flex; flex-direction:column; gap:1.25rem; font-size:0.95rem; line-height:1.5; color:var(--text-secondary); max-height: 420px; overflow-y: auto; padding-right:0.5rem; margin-bottom:2rem;">
-        
-        <div>
-          <strong style="color:white; display:block; margin-bottom:0.25rem;">Conversation Summary:</strong>
-          <p id="outcome-report-summary" style="font-size:0.9rem; color:var(--text-primary);">Analysing conversation transcript...</p>
+      <!-- ---- Risk Score ---- -->
+      <div class="intel-card">
+        <div class="intel-card-header">
+          <span class="intel-card-title">Churn Risk Score</span>
+          <span class="urgency-badge" id="urgency-badge">Low</span>
         </div>
-
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
-          <div>
-            <strong style="color:white; display:block; margin-bottom:0.25rem;">Detected Emotion:</strong>
-            <span id="outcome-report-emotion" style="font-size:0.9rem; font-weight:600; color:white;">-</span>
+        <div class="risk-row">
+          <span class="risk-score-num" id="risk-score-num">0</span>
+          <div class="risk-bar-track">
+            <div class="risk-bar-fill" id="risk-bar" style="width:0%;"></div>
           </div>
-          <div>
-            <strong style="color:white; display:block; margin-bottom:0.25rem;">Detected Intent:</strong>
-            <span id="outcome-report-intent" style="font-size:0.9rem; font-weight:600; color:white;">-</span>
-          </div>
+          <span class="risk-score-max">/100</span>
         </div>
-
-        <div>
-          <strong style="color:white; display:block; margin-bottom:0.25rem;">Business Recommendation:</strong>
-          <p id="outcome-report-recommendation" style="font-size:0.9rem; color:var(--text-primary);">-</p>
-        </div>
-
-        <div>
-          <strong style="color:white; display:block; margin-bottom:0.25rem;">Expected Customer Outcome:</strong>
-          <p id="outcome-report-outcome" style="font-size:0.9rem; color:var(--text-primary); font-style:italic;">-</p>
-        </div>
-
-        <div style="border-top:1px dashed rgba(255,255,255,0.05); padding-top:1rem; display:flex; justify-content:space-between; align-items:center; font-size:0.8rem; color:var(--text-muted);">
-          <span>Customer Status: <strong style="color:var(--success);">SUCCESSFULLY EVALUATED</strong></span>
-          <span>Verified Agent: Alex Gray (Customer Success VP)</span>
+        <div class="risk-legend">
+          <span class="risk-zone green">Low &lt;30</span>
+          <span class="risk-zone amber">Moderate 30–70</span>
+          <span class="risk-zone red">High &gt;70</span>
         </div>
       </div>
-      
-      <div style="display:flex; gap:1rem;">
-        <button class="btn btn-secondary scale-hover" style="flex:1;" onclick="closeOutcomeModal()">Back to Workspace</button>
-        <button class="btn btn-primary scale-hover" style="flex:1;" onclick="closeOutcomeModal(); switchTab('executive');">View Executive Overview</button>
+
+      <!-- ---- AI Recommendation ---- -->
+      <div class="intel-card recommendation-card" id="recommendation-card">
+        <div class="intel-card-header">
+          <span class="intel-card-title">AI Recommendation</span>
+          <span class="rec-label">Human review required</span>
+        </div>
+        <p class="recommendation-text" id="recommendation-text">Send a customer message to receive AI-powered recommendations.</p>
+        <button class="apply-action-btn" id="apply-action-btn" onclick="applyAction()" disabled>
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Apply Action
+        </button>
       </div>
-    </div>
-  </div>
+
+      <!-- ---- Emotional Pulse Chart ---- -->
+      <div class="intel-card pulse-card">
+        <div class="intel-card-header">
+          <span class="intel-card-title">Emotional Pulse</span>
+          <span class="pulse-card-label" id="pulse-turn-count">0 turns</span>
+        </div>
+        <div class="pulse-chart-container">
+          <svg id="pulse-chart" class="pulse-chart-svg" viewBox="0 0 400 80" preserveAspectRatio="none" aria-label="Emotional pulse line chart">
+            <defs>
+              <linearGradient id="pulseGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="var(--pulse-color, #14B8A6)" stop-opacity="0.3"/>
+                <stop offset="100%" stop-color="var(--pulse-color, #14B8A6)" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <!-- Grid lines -->
+            <line x1="0" y1="20" x2="400" y2="20" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+            <line x1="0" y1="40" x2="400" y2="40" stroke="rgba(255,255,255,0.07)" stroke-width="1" stroke-dasharray="4,4"/>
+            <line x1="0" y1="60" x2="400" y2="60" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+            <!-- Neutral zone label -->
+            <text x="4" y="38" fill="rgba(255,255,255,0.2)" font-size="7" font-family="Inter,sans-serif">Neutral</text>
+            <!-- Area fill -->
+            <path id="pulse-area" d="" fill="url(#pulseGradient)" opacity="0.6"/>
+            <!-- Pulse line -->
+            <path id="pulse-line" d="" fill="none" stroke="var(--pulse-color, #14B8A6)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- Data points -->
+            <g id="pulse-points"></g>
+            <!-- Placeholder text -->
+            <text id="pulse-placeholder" x="200" y="44" text-anchor="middle" fill="rgba(255,255,255,0.2)" font-size="11" font-family="Inter,sans-serif">Send a message to start tracking</text>
+          </svg>
+        </div>
+        <div class="pulse-legend">
+          <span class="pulse-legend-item teal">😌 Calm</span>
+          <span class="pulse-legend-item amber">😤 Stressed</span>
+          <span class="pulse-legend-item red">😡 High Risk</span>
+        </div>
+      </div>
+
+      <!-- ---- Session Stats ---- -->
+      <div class="session-stats-footer">
+        <div class="stat-item">
+          <span class="stat-val" id="stat-messages">0</span>
+          <span class="stat-label">Messages</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-val" id="stat-avg-risk">—</span>
+          <span class="stat-label">Avg Risk</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-val danger-val" id="stat-high-risk">0</span>
+          <span class="stat-label">High-Risk Moments</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Toast notification -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script src="app.js"></script>
 </body>
