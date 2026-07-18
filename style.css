@@ -2339,3 +2339,39 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+/* Real-Time Support Copilot Emotional Pulse Line Animations */
+.heartbeat-pulse-wrapper {
+  position: relative;
+}
+
+.heartbeat-pulse-line {
+  background-size: 200% 100%;
+  animation: emotionalPulseFlow 3s linear infinite;
+}
+
+@keyframes emotionalPulseFlow {
+  0% { background-position: 0% 50%; }
+  100% { background-position: -200% 50%; }
+}
+
+.pulse-green {
+  background: linear-gradient(90deg, #10B981, #34D399, #059669, #10B981) !important;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.4) !important;
+}
+
+.pulse-yellow {
+  background: linear-gradient(90deg, #F59E0B, #FBBF24, #D97706, #F59E0B) !important;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.4) !important;
+}
+
+.pulse-orange {
+  background: linear-gradient(90deg, #F97316, #FB923C, #EA580C, #F97316) !important;
+  box-shadow: 0 0 12px rgba(249, 115, 22, 0.4) !important;
+}
+
+.pulse-red {
+  background: linear-gradient(90deg, #EF4444, #F87171, #DC2626, #EF4444) !important;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.4) !important;
+}
+

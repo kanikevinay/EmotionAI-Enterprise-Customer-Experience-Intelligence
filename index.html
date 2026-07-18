@@ -59,9 +59,6 @@
         <button class="btn btn-primary btn-lg scale-hover" onclick="showDemo()" aria-label="Start Console">
           Launch Agent Dashboard <i data-lucide="terminal"></i>
         </button>
-        <button class="btn btn-secondary btn-lg scale-hover" onclick="showDemo(true)" aria-label="Start Guided Presentation">
-          Start Guided AI Demo
-        </button>
       </div>
     </header>
 
@@ -111,51 +108,15 @@
         </div>
         <ul class="nav-list">
           <li>
-            <div class="nav-item active" onclick="switchTab('executive')" id="nav-executive" tabindex="0" role="button" aria-label="Executive Dashboard">
-              <i data-lucide="layout-dashboard"></i>
-              <span>Executive Overview</span>
-            </div>
-          </li>
-          <li>
-            <div class="nav-item" onclick="switchTab('conversation')" id="nav-conversation" tabindex="0" role="button" aria-label="Conversation Workspace">
+            <div class="nav-item active" onclick="switchTab('conversation')" id="nav-conversation" tabindex="0" role="button" aria-label="Conversation Workspace">
               <i data-lucide="message-square"></i>
               <span>Live Workspace</span>
             </div>
           </li>
           <li>
-            <div class="nav-item" onclick="switchTab('recommendations')" id="nav-recommendations" tabindex="0" role="button" aria-label="AI Recommendations">
-              <i data-lucide="zap"></i>
-              <span>Recommendations</span>
-            </div>
-          </li>
-          <li>
-            <div class="nav-item" onclick="switchTab('timeline')" id="nav-timeline" tabindex="0" role="button" aria-label="Customer Journey Timeline">
-              <i data-lucide="git-commit"></i>
-              <span>Journey Timeline</span>
-            </div>
-          </li>
-          <li>
-            <div class="nav-item" onclick="switchTab('analytics')" id="nav-analytics" tabindex="0" role="button" aria-label="CX Analytics Dashboard">
-              <i data-lucide="bar-chart-3"></i>
-              <span>CX Analytics</span>
-            </div>
-          </li>
-          <li>
-            <div class="nav-item" onclick="switchTab('insights')" id="nav-insights" tabindex="0" role="button" aria-label="AI Diagnostic Insights">
-              <i data-lucide="lightbulb"></i>
-              <span>AI Insights</span>
-            </div>
-          </li>
-          <li>
-            <div class="nav-item" onclick="switchTab('profile')" id="nav-profile" tabindex="0" role="button" aria-label="Customer Profile Card">
-              <i data-lucide="user"></i>
-              <span>Customer Profile</span>
-            </div>
-          </li>
-          <li>
-            <div class="nav-item" onclick="switchTab('voice-ai')" id="nav-voice-ai" tabindex="0" role="button" aria-label="Voice AI Phone Integration">
-              <i data-lucide="mic"></i>
-              <span>Voice AI Assistant</span>
+            <div class="nav-item" onclick="switchTab('executive')" id="nav-executive" tabindex="0" role="button" aria-label="Executive Overview">
+              <i data-lucide="layout-dashboard"></i>
+              <span>Executive Overview</span>
             </div>
           </li>
           <li>
@@ -222,166 +183,82 @@
         <!-- ========================================== -->
         <!-- VIEW 9 & 5: EXECUTIVE OVERVIEW DASHBOARD   -->
         <!-- ========================================== -->
-        <div id="view-executive" class="view-pane active">
-          <!-- Live ROI Impact Estimates -->
-          <div class="glass glow-card" style="padding:1.5rem; margin-bottom:1.5rem; border-color:rgba(34,197,94,0.15);">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
-              <h3 style="font-family:var(--font-title); font-size:1.1rem; font-weight:700; display:flex; align-items:center; gap:0.5rem;">
-                <i data-lucide="piggy-bank" style="color:var(--success);"></i> Live Business ROI Estimates <span style="font-size:0.7rem; color:var(--text-muted); font-weight:500;">(Demo Estimates)</span>
-              </h3>
-            </div>
-            <div class="roi-grid" style="display:grid; grid-template-columns:repeat(4, 1fr); gap:1rem;">
-              <div class="roi-box">
-                <span class="roi-label">Est. Revenue Saved</span>
-                <strong class="roi-val" id="roi-saved-rev">$0</strong>
-              </div>
-              <div class="roi-box">
-                <span class="roi-label">Est. Churn Prevented</span>
-                <strong class="roi-val" id="roi-churn-prev">0</strong>
-              </div>
-              <div class="roi-box">
-                <span class="roi-label">Support Cost Reduction</span>
-                <strong class="roi-val" id="roi-cost-reduction">0%</strong>
-              </div>
-              <div class="roi-box">
-                <span class="roi-label">Resolution Time Saved</span>
-                <strong class="roi-val" id="roi-time-saved">0m</strong>
-              </div>
-            </div>
-          </div>
+        <div id="view-executive" class="view-pane active">          <!-- Active Session Real-Time Dashboard -->
+          <div class="glass glow-card" style="padding:2rem; margin-bottom:1.5rem; border-color:rgba(124, 58, 237, 0.2);">
+            <h3 style="font-family:var(--font-title); font-size:1.25rem; font-weight:800; margin-bottom:0.5rem;" class="text-gradient">Active Session Analytics</h3>
+            <p style="color:var(--text-secondary); font-size:0.9rem; margin-bottom:2rem;">Corporate executive report generated entirely from telemetry metadata processed during the current customer session.</p>
 
-          <div class="stats-grid-4">
-            <div class="stat-card glass glow-card">
-              <div class="stat-header">
-                <span>Customer Satisfaction</span>
-                <i data-lucide="smile" style="color: var(--success);"></i>
+            <div class="stats-grid-4" style="margin-bottom: 2rem;">
+              <div class="stat-card glass glow-card">
+                <div class="stat-header">
+                  <span>Session Messages</span>
+                  <i data-lucide="message-square" style="color: var(--accent-blue);"></i>
+                </div>
+                <div class="stat-main">
+                  <span class="stat-num" id="exec-session-messages">0</span>
+                  <span class="stat-trend up">turns</span>
+                </div>
+                <p class="stat-footer">Total conversation flow turns</p>
               </div>
-              <div class="stat-main">
-                <span class="stat-num" id="exec-metric-csat">4.82/5.0</span>
-                <span class="stat-trend up"><i data-lucide="trending-up"></i> +2.1%</span>
-              </div>
-              <p class="stat-footer">Weighted average aggregate score</p>
-            </div>
-            <div class="stat-card glass glow-card">
-              <div class="stat-header">
-                <span>Customer Retention</span>
-                <i data-lucide="users" style="color: var(--accent-blue);"></i>
-              </div>
-              <div class="stat-main">
-                <span class="stat-num" id="exec-metric-retention">98.4%</span>
-                <span class="stat-trend up"><i data-lucide="trending-up"></i> +1.8%</span>
-              </div>
-              <p class="stat-footer">Accounts actively saved by AI</p>
-            </div>
-            <div class="stat-card glass glow-card">
-              <div class="stat-header">
-                <span>Revenue Saved</span>
-                <i data-lucide="banknote" style="color: var(--success);"></i>
-              </div>
-              <div class="stat-main">
-                <span class="stat-num" id="exec-metric-revenue">$142,580</span>
-                <span class="stat-trend up"><i data-lucide="trending-up"></i> +14.2%</span>
-              </div>
-              <p class="stat-footer">Protected churn-risk contracts</p>
-            </div>
-            <div class="stat-card glass glow-card">
-              <div class="stat-header">
-                <span>Support Cost Reduced</span>
-                <i data-lucide="trending-down" style="color: var(--accent-purple);"></i>
-              </div>
-              <div class="stat-main">
-                <span class="stat-num" id="exec-metric-cost">24.5%</span>
-                <span class="stat-trend up"><i data-lucide="trending-up"></i> +5.4%</span>
-              </div>
-              <p class="stat-footer">Tier-1 human delegation offset</p>
-            </div>
-            <div class="stat-card glass glow-card">
-              <div class="stat-header">
-                <span>Average Resolution Time</span>
-                <i data-lucide="clock" style="color: var(--warning);"></i>
-              </div>
-              <div class="stat-main">
-                <span class="stat-num" id="exec-metric-time">1.4m</span>
-                <span class="stat-trend down"><i data-lucide="trending-down"></i> -12.4%</span>
-              </div>
-              <p class="stat-footer">Avg time to close support tickets</p>
-            </div>
-            <div class="stat-card glass glow-card">
-              <div class="stat-header">
-                <span>High Risk Customers</span>
-                <i data-lucide="alert-triangle" style="color: var(--danger);"></i>
-              </div>
-              <div class="stat-main">
-                <span class="stat-num" id="exec-metric-risk">14</span>
-                <span class="stat-trend up"><i data-lucide="minus"></i> Stable</span>
-              </div>
-              <p class="stat-footer">Flagged billing or quota warnings</p>
-            </div>
-            <div class="stat-card glass glow-card">
-              <div class="stat-header">
-                <span>AI Accuracy</span>
-                <i data-lucide="shield-check" style="color: var(--accent-blue);"></i>
-              </div>
-              <div class="stat-main">
-                <span class="stat-num" id="exec-metric-accuracy">96.8%</span>
-                <span class="stat-trend up"><i data-lucide="trending-up"></i> +0.8%</span>
-              </div>
-              <p class="stat-footer">Correct intent classifications</p>
-            </div>
-            <div class="stat-card glass glow-card">
-              <div class="stat-header">
-                <span>Business Health</span>
-                <i data-lucide="activity" style="color: var(--warning);"></i>
-              </div>
-              <div class="stat-main">
-                <span class="stat-num" id="exec-metric-health">98.1</span>
-                <span class="stat-trend up"><i data-lucide="plus"></i> Stable</span>
-              </div>
-              <p class="stat-footer">Global systems health index</p>
-            </div>
-          </div>
 
-          <div class="charts-grid-2">
-            <div class="chart-card glass">
-              <div class="chart-header">
-                <div class="chart-title">
-                  <h3>Revenue Protected Trend</h3>
-                  <p>Revenue saved through proactive discount offers</p>
+              <div class="stat-card glass glow-card">
+                <div class="stat-header">
+                  <span>Avg API Response Latency</span>
+                  <i data-lucide="zap" style="color: var(--accent-purple);"></i>
                 </div>
-                <div class="global-stat-item" style="color: var(--success);">
-                  <i data-lucide="trending-up"></i> +18.4% this quarter
+                <div class="stat-main">
+                  <span class="stat-num" id="exec-average-latency">0ms</span>
+                  <span class="stat-trend down">live inference</span>
                 </div>
+                <p class="stat-footer">Average round-trip response time</p>
               </div>
-              <div class="chart-canvas-container">
-                <canvas id="chart-exec-revenue"></canvas>
-              </div>
-            </div>
-            <div class="chart-card glass">
-              <div class="chart-header">
-                <div class="chart-title">
-                  <h3>Business Health Score Metrics</h3>
-                  <p>Aggregate performance vs targets</p>
-                </div>
-              </div>
-              <div class="chart-canvas-container">
-                <canvas id="chart-exec-radar"></canvas>
-              </div>
-            </div>
-          </div>
 
-          <!-- Bottom C-Level Summary -->
-          <div class="glass glow-card" style="padding: 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 2rem;">
-            <div style="display: flex; align-items: center; gap: 1rem;">
-              <div style="width:48px; height:48px; border-radius:50%; background:rgba(124,58,237,0.1); border:1px solid rgba(124,58,237,0.2); display:flex; align-items:center; justify-content:center; color:var(--accent-purple);">
-                <i data-lucide="trending-up"></i>
+              <div class="stat-card glass glow-card">
+                <div class="stat-header">
+                  <span>Current Emotion</span>
+                  <i data-lucide="heart" style="color: var(--danger);"></i>
+                </div>
+                <div class="stat-main">
+                  <span class="stat-num" id="exec-detected-emotion" style="font-size: 1.4rem;">Neutral</span>
+                  <span class="stat-trend up" id="exec-detected-sentiment" style="font-size:0.75rem;">Neutral</span>
+                </div>
+                <p class="stat-footer">Latest classified telemetry state</p>
               </div>
-              <div>
-                <h4 style="font-weight:700; font-family:var(--font-title);">AI Retention Forecast: Strong Performance</h4>
-                <p style="color:var(--text-secondary); font-size:0.85rem; margin-top:0.15rem;">Churn predictions indicate a 64% reduction in voluntary churn over the next 90 days.</p>
+
+              <div class="stat-card glass glow-card">
+                <div class="stat-header">
+                  <span>SLA Threat Level</span>
+                  <i data-lucide="shield-alert" style="color: var(--warning);"></i>
+                </div>
+                <div class="stat-main">
+                  <span class="stat-num" id="exec-conversation-risk" style="font-size: 1.4rem; color: var(--success);">LOW RISK</span>
+                  <span class="stat-trend down">churn danger</span>
+                </div>
+                <p class="stat-footer">Active account churn hazard</p>
               </div>
             </div>
-            <div class="tel-badge emotion-satisfied">
-              <i data-lucide="check-circle-2"></i> Low Attrition Risk
+
+            <!-- Extended Session Details -->
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:2rem;">
+              <div class="glass" style="padding:1.5rem;">
+                <h4 style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase; font-weight:600; margin-bottom:1rem;">Suggested Remediation Resolution</h4>
+                <div style="font-size:1.1rem; font-weight:800; color:white; line-height:1.4;" id="exec-suggested-resolution">Awaiting customer session input...</div>
+              </div>
+              <div class="glass" style="padding:1.5rem;">
+                <h4 style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase; font-weight:600; margin-bottom:1rem;">Conversation Status</h4>
+                <div style="font-size:1.1rem; font-weight:800; color:var(--success);" id="exec-conversation-status">Monitoring Customer State</div>
+              </div>
+            </div>
+
+            <!-- Resolution Verification Progress -->
+            <div class="glass" style="padding:1.5rem;">
+              <div style="display:flex; justify-content:space-between; margin-bottom:0.75rem; font-size:0.85rem; font-weight:600;">
+                <span style="color:var(--text-secondary);">Resolution Progress</span>
+                <span id="exec-resolution-progress-text" style="color:var(--accent-blue);">0% Completed</span>
+              </div>
+              <div class="tel-bar-wrapper" style="height: 10px; border-radius: 99px;">
+                <div class="tel-bar-fill success" id="exec-resolution-progress-bar" style="width: 0%; height: 100%; border-radius: 99px; transition: width 0.6s ease;"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -428,11 +305,10 @@
                   <strong>Gemini AI Real-Time Stream Engine</strong>
                 </div>
                 <ul class="step-loader-list">
-                  <li id="step-0"><i data-lucide="circle" class="step-icon"></i> Connecting to Gemini API Gateway...</li>
-                  <li id="step-1"><i data-lucide="circle" class="step-icon"></i> Parsing Vocabulary & Intent...</li>
-                  <li id="step-2"><i data-lucide="circle" class="step-icon"></i> Running Emotion Dial Classifiers...</li>
-                  <li id="step-3"><i data-lucide="circle" class="step-icon"></i> Mapping Action Recommendation Center...</li>
-                  <li id="step-4"><i data-lucide="circle" class="step-icon"></i> Syncing Executive BI Dashboards...</li>
+                  <li id="step-0"><i data-lucide="circle" class="step-icon"></i> Analyzing customer intent...</li>
+                  <li id="step-1"><i data-lucide="circle" class="step-icon"></i> Understanding emotional context...</li>
+                  <li id="step-2"><i data-lucide="circle" class="step-icon"></i> Evaluating business impact...</li>
+                  <li id="step-3"><i data-lucide="circle" class="step-icon"></i> Preparing customer response...</li>
                 </ul>
               </div>
 
@@ -440,7 +316,7 @@
               <div class="chat-input-bar">
                 <button class="icon-btn" title="Upload debug logs / screenshots" aria-label="Attach File"><i data-lucide="paperclip"></i></button>
                 <div class="chat-input-wrapper">
-                  <input type="text" class="chat-input" id="chat-user-input" placeholder="Draft agent response or copy AI recommendation script..." onkeydown="handleChatInput(event)" aria-label="Type message or reply template">
+                  <input type="text" class="chat-input" id="chat-user-input" placeholder="Type customer message to analyze telemetry & trigger assistant responses..." onkeydown="handleChatInput(event)" aria-label="Type customer message">
                   <div class="chat-input-actions">
                     <button class="input-icon-btn" onclick="startSimulatedVoiceInput()" title="Voice Script overlay" aria-label="Simulate Mic Input"><i data-lucide="mic"></i></button>
                     <button class="input-icon-btn" onclick="sendCustomAgentMessage()" title="Send Message" aria-label="Send message"><i data-lucide="send"></i></button>
@@ -449,16 +325,21 @@
               </div>
             </div>
 
-            <!-- Right Panel: Live AI Telemetry -->
+            <!-- Right Panel: Live AI Support Copilot -->
             <div class="telemetry-container">
-              <div class="telemetry-header">
-                <i data-lucide="heart-handshake"></i> Live Emotion Telemetry
+              <!-- Premium Heartbeat Pulse Line -->
+              <div class="heartbeat-pulse-wrapper" style="width: 100%; height: 6px; background: rgba(255,255,255,0.03); border-radius: 99px; overflow: hidden; margin-bottom: 1.5rem; position: relative;">
+                <div id="copilot-heartbeat-pulse" class="heartbeat-pulse-line pulse-green" style="height: 100%; width: 100%; transition: background-color 0.8s ease, box-shadow 0.8s ease; background-color: var(--success); box-shadow: 0 0 10px var(--success);"></div>
+              </div>
+
+              <div class="telemetry-header" style="margin-bottom: 1.25rem;">
+                <i data-lucide="heart-handshake"></i> Enterprise Support Copilot Panel
               </div>
               
               <div class="telemetry-grid">
                 <div class="tel-card glass" id="tel-card-emotion">
                   <div class="tel-label">
-                    <span>Emotion Score</span>
+                    <span>Current Emotion</span>
                     <i data-lucide="heart-pulse" style="color: var(--accent-purple);"></i>
                   </div>
                   <div class="tel-dial-container">
@@ -468,19 +349,21 @@
                     </svg>
                     <div class="tel-dial-text" id="dial-emotion-text">0</div>
                   </div>
+                  <div style="font-size:0.75rem; text-align:center; margin-top:0.35rem; color:var(--text-secondary);" id="copilot-current-emotion">Neutral</div>
                 </div>
 
                 <div class="tel-card glass" id="tel-card-stress">
                   <div class="tel-label">
-                    <span>Stress Level</span>
+                    <span>Urgency & Stress</span>
                     <i data-lucide="gauge" style="color: var(--danger);"></i>
                   </div>
                   <div>
-                    <div class="tel-value" id="telemetry-stress-value">84%</div>
+                    <div class="tel-value" id="telemetry-stress-value">0%</div>
                     <div class="tel-bar-wrapper">
                       <div class="tel-bar-fill danger" id="telemetry-stress-bar" style="width: 0%;"></div>
                     </div>
                   </div>
+                  <div style="font-size:0.75rem; color:var(--text-muted); margin-top:0.5rem;" id="copilot-urgency">Urgency: Low</div>
                 </div>
 
                 <div class="tel-card glass" id="tel-card-sentiment">
@@ -488,26 +371,32 @@
                     <span>Sentiment State</span>
                     <i data-lucide="smile" style="color: var(--accent-blue);"></i>
                   </div>
-                  <div class="tel-badge emotion-frustrated" id="telemetry-sentiment-badge">
-                    <i data-lucide="frown"></i> FRUSTRATED
+                  <div class="tel-badge emotion-neutral" id="telemetry-sentiment-badge">
+                    <i data-lucide="activity"></i> NEUTRAL
                   </div>
+                  <div style="font-size:0.75rem; color:var(--text-muted); margin-top:0.5rem;">Customer Health: <span id="copilot-health" style="font-weight:600; color:var(--success);">Stable</span></div>
                 </div>
 
                 <div class="tel-card glass" id="tel-card-intent">
                   <div class="tel-label">
-                    <span>Buying Intent</span>
-                    <i data-lucide="shopping-cart" style="color: var(--success);"></i>
+                    <span>Primary Intent</span>
+                    <i data-lucide="target" style="color: var(--success);"></i>
                   </div>
-                  <div>
-                    <div class="tel-value" id="telemetry-intent-value">High</div>
-                    <div class="tel-bar-wrapper">
-                      <div class="tel-bar-fill success" id="telemetry-intent-bar" style="width: 0%;"></div>
-                    </div>
-                  </div>
+                  <div style="font-size:0.9rem; font-weight:700; color:white; word-break:break-word; margin-bottom:0.25rem;" id="telemetry-detected-intent">Waiting for input...</div>
+                  <div style="font-size:0.75rem; color:var(--text-muted);">LTV: <strong id="telemetry-ltv-value" style="color:white;">$12,400</strong></div>
                 </div>
               </div>
 
-              <!-- Animated Confidence Gauges (Polished visual gauges replacing plain text) -->
+              <!-- Suggested Next Action -->
+              <div class="glass" style="padding: 1.25rem; border-color: rgba(124, 58, 237, 0.2); background: rgba(124, 58, 237, 0.02);">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+                  <span style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase; font-weight:600; letter-spacing:0.05em;">Suggested Next Action (Heuristics)</span>
+                  <span id="telemetry-risk-badge" style="font-size:0.75rem; font-weight:700; color:var(--success);">LOW RISK</span>
+                </div>
+                <h4 style="font-size:1.1rem; font-weight:800; color:white;" id="copilot-suggested-action">Awaiting telemetry logs...</h4>
+              </div>
+
+              <!-- Animated Confidence Gauges -->
               <div class="glass" style="padding:1.25rem;">
                 <h4 style="font-size:0.85rem; color:var(--text-muted); text-transform:uppercase; font-weight:600; margin-bottom:1rem;">Model Confidence Metrics</h4>
                 <div class="gauges-flex-row" style="display:flex; justify-content:space-around; gap:0.5rem;">
@@ -516,9 +405,9 @@
                     <div class="gauge-circle-outer">
                       <svg class="gauge-svg-comp">
                         <circle class="gauge-track-c" cx="30" cy="30" r="24"></circle>
-                        <circle class="gauge-progress-c text-danger" id="gauge-conf-emotion" cx="30" cy="30" r="24" style="stroke-dashoffset: 15.07;"></circle>
+                        <circle class="gauge-progress-c text-success" id="gauge-conf-emotion" cx="30" cy="30" r="24" style="stroke-dashoffset: 150.8;"></circle>
                       </svg>
-                      <span class="gauge-percent-val" id="gauge-txt-emotion">90%</span>
+                      <span class="gauge-percent-val" id="gauge-txt-emotion">0%</span>
                     </div>
                   </div>
                   <div class="gauge-compact">
@@ -526,537 +415,72 @@
                     <div class="gauge-circle-outer">
                       <svg class="gauge-svg-comp">
                         <circle class="gauge-track-c" cx="30" cy="30" r="24"></circle>
-                        <circle class="gauge-progress-c text-warning" id="gauge-conf-intent" cx="30" cy="30" r="24" style="stroke-dashoffset: 22.61;"></circle>
+                        <circle class="gauge-progress-c text-success" id="gauge-conf-intent" cx="30" cy="30" r="24" style="stroke-dashoffset: 150.8;"></circle>
                       </svg>
-                      <span class="gauge-percent-val" id="gauge-txt-intent">85%</span>
+                      <span class="gauge-percent-val" id="gauge-txt-intent">0%</span>
                     </div>
                   </div>
                   <div class="gauge-compact">
-                    <div class="gauge-c-header">Recommendation</div>
+                    <div class="gauge-c-header">Next Action</div>
                     <div class="gauge-circle-outer">
                       <svg class="gauge-svg-comp">
                         <circle class="gauge-track-c" cx="30" cy="30" r="24"></circle>
-                        <circle class="gauge-progress-c text-success" id="gauge-conf-recommendation" cx="30" cy="30" r="24" style="stroke-dashoffset: 7.53;"></circle>
+                        <circle class="gauge-progress-c text-success" id="gauge-conf-recommendation" cx="30" cy="30" r="24" style="stroke-dashoffset: 150.8;"></circle>
                       </svg>
-                      <span class="gauge-percent-val" id="gauge-txt-recommendation">95%</span>
+                      <span class="gauge-percent-val" id="gauge-txt-recommendation">0%</span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <!-- Collapsible AI Explainability Panel -->
+              <!-- AI Explainability Drawer -->
               <details class="glass explain-details-panel" id="ai-explainability-details" open>
                 <summary style="font-size:0.85rem; font-weight:600; text-transform:uppercase; color:var(--text-muted); cursor:pointer; list-style:none; padding:1.25rem; display:flex; justify-content:space-between; align-items:center;">
-                  <span>Why did AI make this decision?</span>
+                  <span>Why? AI Explainability Diagnostics</span>
                   <i data-lucide="chevron-down" style="width:16px;"></i>
                 </summary>
                 <div class="explain-body-content" style="padding:0 1.25rem 1.25rem 1.25rem; border-top: 1px solid rgba(255,255,255,0.03); padding-top:1rem;">
                   <div class="explain-flowchart" style="display:flex; flex-direction:column; gap:0.6rem;">
-                    <div class="explain-node"><i data-lucide="smile" style="width:14px; color:var(--accent-blue);"></i> Detected Emotion: &nbsp;<span id="explain-emotion" style="color:white; font-weight:500;">Frustrated (84%)</span></div>
-                    <div class="explain-node"><i data-lucide="target" style="width:14px; color:var(--accent-blue);"></i> Detected Intent: &nbsp;<span id="explain-intent" style="color:white; font-weight:500;">Subscription renewal payment decline</span></div>
-                    <div class="explain-node"><i data-lucide="alert-triangle" style="width:14px; color:var(--danger);"></i> Risk Explanation: &nbsp;<span id="explain-risk" style="color:white; font-weight:500;">High Churn Threat due to competitor mentions</span></div>
-                    <div class="explain-node"><i data-lucide="brain" style="width:14px; color:var(--accent-purple);"></i> Why this recommendation?: &nbsp;<span id="explain-why" style="color:white; font-weight:500;">Discount code buffers cash flow while override ensures SLA</span></div>
-                    <div class="explain-node"><i data-lucide="trending-up" style="width:14px; color:var(--success);"></i> Business Impact: &nbsp;<span id="explain-impact" style="color:white; font-weight:500;">Protects $2,500/mo ARR contract</span></div>
-                    <div class="explain-node"><i data-lucide="shield-check" style="width:14px; color:var(--success);"></i> Confidence Score: &nbsp;<span id="explain-confidence" style="color:white; font-weight:500;">94%</span></div>
+                    <div class="explain-node"><i data-lucide="smile" style="width:14px; color:var(--accent-blue);"></i> Detected Emotion: &nbsp;<span id="explain-emotion" style="color:white; font-weight:500;">-</span></div>
+                    <div class="explain-node"><i data-lucide="target" style="width:14px; color:var(--accent-blue);"></i> Detected Intent: &nbsp;<span id="explain-intent" style="color:white; font-weight:500;">-</span></div>
+                    <div class="explain-node"><i data-lucide="search" style="width:14px; color:var(--accent-purple);"></i> Key triggers: &nbsp;<span id="explain-keywords" style="color:white; font-weight:500;">-</span></div>
+                    <div class="explain-node"><i data-lucide="alert-triangle" style="width:14px; color:var(--danger);"></i> Risk & Reasoning: &nbsp;<span id="explain-risk" style="color:white; font-weight:500;">-</span></div>
+                    <div class="explain-node"><i data-lucide="brain" style="width:14px; color:var(--accent-purple);"></i> Reasoning details: &nbsp;<span id="explain-why" style="color:white; font-weight:500;">-</span></div>
+                    <div class="explain-node"><i data-lucide="trending-up" style="width:14px; color:var(--success);"></i> Business Impact: &nbsp;<span id="explain-impact" style="color:white; font-weight:500;">-</span></div>
+                    <div class="explain-node"><i data-lucide="shield-check" style="width:14px; color:var(--success);"></i> Confidence Score: &nbsp;<span id="explain-confidence" style="color:white; font-weight:500;">0%</span></div>
                   </div>
                 </div>
               </details>
 
-              <!-- Additional Analytics Details -->
-              <div class="glass" style="padding: 1.5rem;" id="tel-card-diagnostics">
-                <h4 style="font-size:0.9rem; color:var(--text-muted); text-transform:uppercase; font-weight:600; margin-bottom:1rem;">AI Alert & Diagnostics</h4>
-                <div style="display:flex; flex-direction:column; gap:1rem;">
-                  <div>
-                    <span style="font-size:0.8rem; color:var(--text-secondary); display:block; margin-bottom:0.25rem;">Detected Intent:</span>
-                    <strong style="font-size:0.9rem; color:white;" id="telemetry-detected-intent">Subscription Cancel Due to Billing Issues</strong>
-                  </div>
-                  <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
-                    <div>
-                      <span style="font-size:0.8rem; color:var(--text-muted); display:block;">Customer Value:</span>
-                      <strong style="font-size:0.95rem; color:white;" id="telemetry-ltv-value">$12,400 (LTV)</strong>
-                    </div>
-                    <div>
-                      <span style="font-size:0.8rem; color:var(--text-muted); display:block;">Risk Level:</span>
-                      <strong style="font-size:0.95rem; color:var(--danger);" id="telemetry-risk-badge">HIGH RISK</strong>
-                    </div>
-                  </div>
+              <!-- Live Expandable JSON Response Viewer -->
+              <details class="glass" style="border-color: rgba(255,255,255,0.05); overflow:hidden;">
+                <summary style="font-size:0.85rem; font-weight:600; text-transform:uppercase; color:var(--text-muted); cursor:pointer; padding:1rem 1.25rem; display:flex; justify-content:space-between; align-items:center; list-style:none;">
+                  <span>Raw live Gemini JSON Response</span>
+                  <i data-lucide="chevron-down" style="width:16px;"></i>
+                </summary>
+                <div style="padding:0 1.25rem 1.25rem 1.25rem; border-top:1px solid rgba(255,255,255,0.03); padding-top:0.75rem;">
+                  <pre id="copilot-raw-json" style="background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.04); border-radius:6px; padding:0.85rem; font-family:monospace; font-size:0.75rem; color:#A5B4FC; max-height:200px; overflow-y:auto; white-space:pre-wrap;"></pre>
                 </div>
+              </details>
+
+              <!-- Developer Logs Terminal -->
+              <div class="glass" style="padding: 1.25rem; display:flex; flex-direction:column; gap:0.75rem;">
+                <h4 style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase; font-weight:600; display:flex; justify-content:space-between; align-items:center; margin-bottom:0.25rem;">
+                  <span>Developer Diagnostics console log</span>
+                  <span class="pulse-dot"></span>
+                </h4>
+                <div id="developer-terminal-logs" style="background:rgba(0,0,0,0.4); border:1px solid rgba(255,255,255,0.05); border-radius:6px; padding:0.85rem; font-family:monospace; font-size:0.75rem; color:var(--text-secondary); height:120px; overflow-y:auto; line-height:1.5; word-break:break-all;"></div>
               </div>
 
-              <!-- Agent Assistant Playback Simulator -->
-              <button class="btn btn-secondary scale-hover" id="btn-run-simulation" onclick="triggerSimulation()" aria-label="Trigger Chat Playback Script">
-                <i data-lucide="play-circle"></i> Trigger Conversation Simulation
+              <!-- Compile Summary Action -->
+              <button class="btn btn-primary scale-hover" id="btn-generate-summary" onclick="generateExecutiveSummary()" style="width:100%; display:flex; justify-content:center; align-items:center; gap:0.5rem;" aria-label="Compile Executive Outcome Report">
+                <i data-lucide="file-text"></i> Compile Executive Summary
               </button>
             </div>
           </div>
         </div>
 
-        <!-- ========================================== -->
-        <!-- VIEW 3: AI RECOMMENDATION CENTER           -->
-        <!-- ========================================== -->
-        <div id="view-recommendations" class="view-pane">
-          <div class="recommendations-wrapper">
-            <div class="rec-grid" id="rec-container">
-              <!-- Dynamically rendered via JS -->
-            </div>
 
-            <!-- Copilot Script / Action Playground -->
-            <div class="glass ai-actions-preview" id="recommendation-playground">
-              <div class="preview-header">
-                <div class="preview-title">
-                  <i data-lucide="file-text" style="color: var(--accent-purple);"></i>
-                  <span id="playground-title">Apology Draft Template</span>
-                </div>
-                <button class="icon-btn" onclick="copyPlaygroundCode()" title="Copy draft to clipboard" aria-label="Copy template code"><i data-lucide="copy"></i></button>
-              </div>
-              <div class="preview-code-box" id="playground-content">
-                // Select an action from the recommendations cards above to view live code.
-              </div>
-              <div style="display:flex; justify-content:space-between; align-items:center;">
-                <p style="font-size:0.8rem; color:var(--text-muted);"><i data-lucide="shield-check" style="vertical-align:middle; width:14px;"></i> Enterprise security compliant. Sensitive data masked.</p>
-                <button class="btn btn-primary" onclick="injectDraftToChat()" aria-label="Inject template script to chat input">Inject Draft to Chat Workspace</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ========================================== -->
-        <!-- VIEW 4: CUSTOMER JOURNEY TIMELINE          -->
-        <!-- ========================================== -->
-        <div id="view-timeline" class="view-pane">
-          <div class="glass" style="padding: 2rem; margin-bottom: 2rem;">
-            <h3 style="font-family:var(--font-title); font-weight:700; margin-bottom:0.5rem;">Customer Touchpoint Timeline</h3>
-            <p style="color:var(--text-secondary); font-size:0.9rem;">Visualizing the path that triggered frustration and the subsequent recommendation action loops.</p>
-            
-            <div class="timeline-outer">
-              <div class="timeline-track">
-                <div class="timeline-line"></div>
-                <div class="timeline-progress-line" id="timeline-progress-indicator"></div>
-                
-                <div class="timeline-node active" id="node-0" onclick="showTimelineNodeDetail(0)">
-                  <div class="timeline-icon-box"><i data-lucide="globe"></i></div>
-                  <div class="timeline-label">Website Visit</div>
-                </div>
-                <div class="timeline-node" id="node-1" onclick="showTimelineNodeDetail(1)">
-                  <div class="timeline-icon-box"><i data-lucide="search"></i></div>
-                  <div class="timeline-label">Product View</div>
-                </div>
-                <div class="timeline-node" id="node-2" onclick="showTimelineNodeDetail(2)">
-                  <div class="timeline-icon-box"><i data-lucide="shopping-cart"></i></div>
-                  <div class="timeline-label">Checkout</div>
-                </div>
-                <div class="timeline-node" id="node-3" onclick="showTimelineNodeDetail(3)">
-                  <div class="timeline-icon-box"><i data-lucide="credit-card"></i></div>
-                  <div class="timeline-label">Payment Failed</div>
-                </div>
-                <div class="timeline-node" id="node-4" onclick="showTimelineNodeDetail(4)">
-                  <div class="timeline-icon-box"><i data-lucide="frown"></i></div>
-                  <div class="timeline-label">Customer Frustrated</div>
-                </div>
-                <div class="timeline-node" id="node-5" onclick="showTimelineNodeDetail(5)">
-                  <div class="timeline-icon-box"><i data-lucide="brain"></i></div>
-                  <div class="timeline-label">Emotion Detected</div>
-                </div>
-                <div class="timeline-node" id="node-6" onclick="showTimelineNodeDetail(6)">
-                  <div class="timeline-icon-box"><i data-lucide="award"></i></div>
-                  <div class="timeline-label">AI Suggestion</div>
-                </div>
-                <div class="timeline-node" id="node-7" onclick="showTimelineNodeDetail(7)">
-                  <div class="timeline-icon-box"><i data-lucide="check-circle-2"></i></div>
-                  <div class="timeline-label">Issue Solved</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Dynamic Node Details Card -->
-          <div class="glass timeline-details-card" id="timeline-details-area">
-            <div class="timeline-details-grid">
-              <div style="border-right: 1px solid rgba(255,255,255,0.05); padding-right:2rem;">
-                <div class="tel-badge emotion-satisfied" id="timeline-detail-badge" style="margin-bottom: 1rem;">
-                  <i data-lucide="check-circle-2"></i> STAGE COMPLETED
-                </div>
-                <h4 style="font-size:1.5rem; font-family:var(--font-title); font-weight:700;" id="timeline-detail-title">Website Visit</h4>
-                <p style="color:var(--text-muted); font-size:0.85rem; margin-top:0.25rem;" id="timeline-detail-time">Time: 14:02:10 UTC</p>
-              </div>
-              <div>
-                <h5 style="color:var(--text-secondary); text-transform:uppercase; font-size:0.75rem; letter-spacing:0.05em; margin-bottom:0.75rem;">Stage Telemetry Logs</h5>
-                <p style="color:var(--text-primary); font-size:0.95rem; line-height:1.6;" id="timeline-detail-log">
-                  Customer initialized connection from desktop IP 192.168.1.1 (Chrome, macOS). Active session duration: 0 mins. Referral source: Direct.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ========================================== -->
-        <!-- VIEW 5: ENTERPRISE ANALYTICS DASHBOARD     -->
-        <!-- ========================================== -->
-        <div id="view-analytics" class="view-pane">
-          <div class="stats-grid-4">
-            <div class="stat-card glass">
-              <div class="stat-header">
-                <span>Total Customers Evaluated</span>
-                <i data-lucide="users" style="color: var(--accent-blue);"></i>
-              </div>
-              <div class="stat-main">
-                <span class="stat-num">24,850</span>
-                <span class="stat-trend up"><i data-lucide="trending-up"></i> +8.1%</span>
-              </div>
-              <p class="stat-footer">Evaluated across all integrations</p>
-            </div>
-            <div class="stat-card glass">
-              <div class="stat-header">
-                <span>Active Channels</span>
-                <i data-lucide="hash" style="color: var(--accent-purple);"></i>
-              </div>
-              <div class="stat-main">
-                <span class="stat-num">1,482</span>
-                <span class="stat-trend up"><i data-lucide="trending-up"></i> +12.4%</span>
-              </div>
-              <p class="stat-footer">Live chat, phone & email feeds</p>
-            </div>
-            <div class="stat-card glass">
-              <div class="stat-header">
-                <span>Avg Customer Satisfaction</span>
-                <i data-lucide="smile" style="color: var(--success);"></i>
-              </div>
-              <div class="stat-main">
-                <span class="stat-num">4.82</span>
-                <span class="stat-trend up"><i data-lucide="trending-up"></i> +0.15</span>
-              </div>
-              <p class="stat-footer">Out of 5.0 (Aggregate CSAT)</p>
-            </div>
-            <div class="stat-card glass">
-              <div class="stat-header">
-                <span>Response Time SLA</span>
-                <i data-lucide="clock" style="color: var(--warning);"></i>
-              </div>
-              <div class="stat-main">
-                <span class="stat-num">1.4m</span>
-                <span class="stat-trend down"><i data-lucide="trending-down"></i> -12.4%</span>
-              </div>
-              <p class="stat-footer">Avg time to resolve emotional alert</p>
-            </div>
-          </div>
-
-          <div class="charts-grid-2">
-            <div class="chart-card glass">
-              <div class="chart-header">
-                <div class="chart-title">
-                  <h3>Customer Sentiment Distribution</h3>
-                  <p>Aggregate distribution across active conversations</p>
-                </div>
-              </div>
-              <div class="chart-canvas-container">
-                <canvas id="chart-analytics-sentiment"></canvas>
-              </div>
-            </div>
-            <div class="chart-card glass">
-              <div class="chart-header">
-                <div class="chart-title">
-                  <h3>Issue Categories Breakdown</h3>
-                  <p>Root causes triggering customer stress alerts</p>
-                </div>
-              </div>
-              <div class="chart-canvas-container">
-                <canvas id="chart-analytics-categories"></canvas>
-              </div>
-            </div>
-          </div>
-
-          <div class="charts-grid-2">
-            <div class="chart-card glass">
-              <div class="chart-header">
-                <div class="chart-title">
-                  <h3>Historical Satisfaction Index</h3>
-                  <p>Comparing CSAT trends with and without EmotionAI</p>
-                </div>
-              </div>
-              <div class="chart-canvas-container">
-                <canvas id="chart-analytics-csat-history"></canvas>
-              </div>
-            </div>
-            
-            <!-- Heatmap Hotspots -->
-            <div class="chart-card glass" style="height:auto;">
-              <div class="chart-header">
-                <div class="chart-title">
-                  <h3>Systemic Frustration Hotspots</h3>
-                  <p>Peak alerts by hour of day vs customer timezone</p>
-                </div>
-              </div>
-              <div class="heatmap-container">
-                <!-- Heatmap grid cells -->
-                <div class="heatmap-cell hm-low" title="09:00 - Low Alerts">Low</div>
-                <div class="heatmap-cell hm-med" title="10:00 - Med Alerts">Med</div>
-                <div class="heatmap-cell hm-high" title="11:00 - High Alerts">High</div>
-                <div class="heatmap-cell hm-crit" title="12:00 - Critical Alerts">Crit</div>
-                <div class="heatmap-cell hm-high" title="13:00 - High Alerts">High</div>
-                <div class="heatmap-cell hm-med" title="14:00 - Med Alerts">Med</div>
-                
-                <div class="heatmap-cell hm-med" title="15:00 - Med Alerts">Med</div>
-                <div class="heatmap-cell hm-high" title="16:00 - High Alerts">High</div>
-                <div class="heatmap-cell hm-crit" title="17:00 - Critical Alerts">Crit</div>
-                <div class="heatmap-cell hm-crit" title="18:00 - Critical Alerts">Crit</div>
-                <div class="heatmap-cell hm-high" title="19:00 - High Alerts">High</div>
-                <div class="heatmap-cell hm-med" title="20:00 - Med Alerts">Med</div>
-
-                <div class="heatmap-cell hm-low" title="21:00 - Low Alerts">Low</div>
-                <div class="heatmap-cell hm-low" title="22:00 - Low Alerts">Low</div>
-                <div class="heatmap-cell hm-med" title="23:00 - Med Alerts">Med</div>
-                <div class="heatmap-cell hm-high" title="00:00 - High Alerts">High</div>
-                <div class="heatmap-cell hm-med" title="01:00 - Med Alerts">Med</div>
-                <div class="heatmap-cell hm-low" title="02:00 - Low Alerts">Low</div>
-              </div>
-              <div style="margin-top:1.5rem; border-top:1px solid rgba(255,255,255,0.05); padding-top:1rem;">
-                <h4 style="font-size:0.9rem; color:var(--text-muted); text-transform:uppercase; font-weight:600; margin-bottom:0.75rem;">Top Performing Support Agents</h4>
-                <div class="leaderboard-list">
-                  <div class="leaderboard-row">
-                    <div class="leaderboard-user">
-                      <span class="leaderboard-rank">#1</span>
-                      <strong style="font-size: 0.9rem;">Sarah Connor</strong>
-                    </div>
-                    <div class="leaderboard-metrics">
-                      <span style="color:var(--success);">98.4% CSAT</span>
-                      <span style="color:var(--text-secondary);">4.2m resolution</span>
-                    </div>
-                  </div>
-                  <div class="leaderboard-row">
-                    <div class="leaderboard-user">
-                      <span class="leaderboard-rank">#2</span>
-                      <strong style="font-size: 0.9rem;">John Miller</strong>
-                    </div>
-                    <div class="leaderboard-metrics">
-                      <span style="color:var(--success);">96.8% CSAT</span>
-                      <span style="color:var(--text-secondary);">4.8m resolution</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ========================================== -->
-        <!-- VIEW 6: AI INSIGHTS                       -->
-        <!-- ========================================== -->
-        <div id="view-insights" class="view-pane">
-          <div class="insights-grid">
-            <div class="insight-card glass glow-card danger-edge">
-              <div>
-                <div class="insight-header">
-                  <div class="insight-icon-wrapper"><i data-lucide="skull"></i></div>
-                  <div class="insight-title">
-                    <h4>Most Common Complaint Trigger</h4>
-                    <p>Highest frequency trigger keyword</p>
-                  </div>
-                </div>
-                <div class="insight-body">"invoice billing failure"</div>
-              </div>
-              <p class="insight-footer">Accounts encountering checkout issues are 82% more likely to request cancellation within 48 hours.</p>
-            </div>
-
-            <div class="insight-card glass glow-card danger-edge">
-              <div>
-                <div class="insight-header">
-                  <div class="insight-icon-wrapper"><i data-lucide="alert-triangle"></i></div>
-                  <div class="insight-title">
-                    <h4>High-Risk Churn Accounts</h4>
-                    <p>Accounts at high frustration risk</p>
-                  </div>
-                </div>
-                <div class="insight-body">14 Enterprise Clients</div>
-              </div>
-              <p class="insight-footer">Flagged due to multi-session payment failures and unresolved SLA delays.</p>
-            </div>
-
-            <div class="insight-card glass glow-card success-edge">
-              <div>
-                <div class="insight-header">
-                  <div class="insight-icon-wrapper"><i data-lucide="refresh-cw"></i></div>
-                  <div class="insight-title">
-                    <h4>Top Suggestion Resolution Rate</h4>
-                    <p>Most effective resolution recommendation</p>
-                  </div>
-                </div>
-                <div class="insight-body">15% Loyalty Discount Offer</div>
-              </div>
-              <p class="insight-footer">Generates 91% retention recovery rate when executed within 2 minutes of payment fail.</p>
-            </div>
-
-            <div class="insight-card glass glow-card">
-              <div>
-                <div class="insight-header">
-                  <div class="insight-icon-wrapper"><i data-lucide="shield-check"></i></div>
-                  <div class="insight-title">
-                    <h4>Escalation Interception Rate</h4>
-                    <p>Prevented human tier-2 escalations</p>
-                  </div>
-                </div>
-                <div class="insight-body">64.2% Escalations Intercepted</div>
-              </div>
-              <p class="insight-footer">Proactive script prompts help tier-1 agents resolve complex emotional requests locally.</p>
-            </div>
-
-            <div class="insight-card glass glow-card">
-              <div>
-                <div class="insight-header">
-                  <div class="insight-icon-wrapper"><i data-lucide="gauge"></i></div>
-                  <div class="insight-title">
-                    <h4>Avg Customer Resolution Gain</h4>
-                    <p>Support ticket resolution velocity</p>
-                  </div>
-                </div>
-                <div class="insight-body">-4.5m Resolution Time</div>
-              </div>
-              <p class="insight-footer">Integration of automated refund recommendation speeds resolution loops significantly.</p>
-            </div>
-
-            <div class="insight-card glass glow-card success-edge">
-              <div>
-                <div class="insight-header">
-                  <div class="insight-icon-wrapper"><i data-lucide="users"></i></div>
-                  <div class="insight-title">
-                    <h4>Repeat Frustration Intercepts</h4>
-                    <p>Users flagged for repeat frustration</p>
-                  </div>
-                </div>
-                <div class="insight-body">124 Accounts Remediated</div>
-              </div>
-              <p class="insight-footer">Proactive follow-up automated workflows successfully repaired trust index for 112 accounts.</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- ========================================== -->
-        <!-- VIEW 7: CUSTOMER PROFILE                  -->
-        <!-- ========================================== -->
-        <div id="view-profile" class="view-pane">
-          <div class="profile-container">
-            <!-- Sidebar Identity -->
-            <div class="profile-sidebar-card glass glow-card">
-              <div class="profile-avatar-large" id="profile-avatar-char">S</div>
-              <h3 class="profile-name" id="profile-fullname">Sarah Jenkins</h3>
-              <div class="profile-tag" id="profile-membership">Enterprise Tier 2</div>
-              
-              <div class="profile-meta-list">
-                <div class="profile-meta-item">
-                  <span>Location</span>
-                  <span id="profile-meta-location">San Francisco, CA</span>
-                </div>
-                <div class="profile-meta-item">
-                  <span>Language</span>
-                  <span id="profile-meta-language">English (US)</span>
-                </div>
-                <div class="profile-meta-item">
-                  <span>Lifetime Value</span>
-                  <strong style="color: var(--success);" id="profile-meta-ltv">$12,400</strong>
-                </div>
-                <div class="profile-meta-item">
-                  <span>Risk Status</span>
-                  <strong style="color: var(--danger);" id="profile-meta-risk">HIGH RISK</strong>
-                </div>
-                <div class="profile-meta-item">
-                  <span>Communication Style</span>
-                  <span id="profile-meta-style">Direct & Urgent</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Details Dashboard Grid -->
-            <div class="profile-details-grid">
-              <div class="profile-detail-card glass">
-                <h4><i data-lucide="shopping-bag" style="color: var(--accent-blue);"></i> Purchase History</h4>
-                <div id="profile-purchase-list">
-                  <!-- Rendered dynamically -->
-                </div>
-              </div>
-
-              <div class="profile-detail-card glass">
-                <h4><i data-lucide="history" style="color: var(--accent-purple);"></i> Previous Support Issues</h4>
-                <div id="profile-support-list">
-                  <!-- Rendered dynamically -->
-                </div>
-              </div>
-
-              <div class="profile-detail-card glass" style="grid-column: span 2;">
-                <h4><i data-lucide="bar-chart-2" style="color: var(--warning);"></i> Active Sentiment Insights</h4>
-                <div style="display:grid; grid-template-columns:1fr 2fr; gap:1.5rem; align-items:center;">
-                  <div style="text-align:center;">
-                    <div style="font-size:3rem; font-weight:800; font-family:var(--font-title); color:var(--danger);" id="profile-sentiment-rating">84</div>
-                    <span style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; font-weight:600;">Current Frustration</span>
-                  </div>
-                  <div>
-                    <p style="font-size:0.9rem; line-height:1.5; color:var(--text-secondary);">
-                      The customer's current session score has triggered a high-level warning. They have encountered consecutive payment declinations. Their historical sentiment indicates low tolerance for billing issues, with a previous churn threat recorded on 2026-03-12.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ========================================== -->
-        <!-- VIEW 8: VOICE AI ASSISTANT                -->
-        <!-- ========================================== -->
-        <div id="view-voice-ai" class="view-pane">
-          <div class="glass voice-assistant-container" id="voice-assistant-card">
-            <div class="voice-mic-outer" onclick="toggleVoiceAIAssistant()">
-              <button class="voice-mic-btn" aria-label="Toggle Microphone Voice Assistant">
-                <i data-lucide="mic" id="voice-mic-icon"></i>
-              </button>
-            </div>
-            
-            <div class="voice-status-text" id="voice-status-heading">Voice Stream Offline</div>
-            <div class="voice-substatus" id="voice-status-subheading">
-              <i data-lucide="info" style="width:16px;"></i> Click the microphone to simulate active voice integration
-            </div>
-
-            <!-- Waveform Canvas -->
-            <div class="waveform-container">
-              <canvas class="waveform-canvas" id="voice-canvas-render" aria-label="Voice Waveform Telemetry Visualizer"></canvas>
-            </div>
-
-            <div class="voice-telemetry-grid">
-              <div class="tel-card glass">
-                <div class="tel-label">
-                  <span>Detected Voice Tone</span>
-                  <i data-lucide="activity" style="color: var(--accent-purple);"></i>
-                </div>
-                <div class="tel-value" id="voice-tone-val">Neutral</div>
-                <p class="stat-footer">Evaluating pitch jitter</p>
-              </div>
-              <div class="tel-card glass">
-                <div class="tel-label">
-                  <span>Speech Confidence</span>
-                  <i data-lucide="check-circle" style="color: var(--success);"></i>
-                </div>
-                <div class="tel-value" id="voice-conf-val">0.0%</div>
-                <p class="stat-footer">AI speech-to-text accuracy</p>
-              </div>
-              <div class="tel-card glass">
-                <div class="tel-label">
-                  <span>Avg Speaking Rate</span>
-                  <i data-lucide="trending-up" style="color: var(--accent-blue);"></i>
-                </div>
-                <div class="tel-value" id="voice-rate-val">0 WPM</div>
-                <p class="stat-footer">Words per minute</p>
-              </div>
-            </div>
-
-            <!-- Text Transcription Panel -->
-            <div class="glass" style="width:100%; max-width:800px; padding:1.5rem; margin-top:2rem;">
-              <h4 style="font-size:0.9rem; color:var(--text-muted); text-transform:uppercase; font-weight:600; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
-                <i data-lucide="subtitles" style="color: var(--accent-blue);"></i> Real-Time Voice Transcription
-              </h4>
-              <div style="background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.03); border-radius:8px; padding:1.5rem; font-size:1rem; line-height:1.5; color:var(--text-secondary); min-height:80px; font-style:italic;" id="voice-transcription-box">
-                No active audio connection. Toggle the microphone stream above to simulate a live customer calling.
-              </div>
-            </div>
-          </div>
-        </div>
 
         <!-- ========================================== -->
         <!-- VIEW: SYSTEM ARCHITECTURE VISUALIZER       -->
@@ -1083,11 +507,11 @@
                 <!-- Connector Line -->
                 <div class="arch-connector"><div class="arch-pulse"></div></div>
 
-                <!-- Node 2: Conversation UI -->
+                <!-- Node 2: EmotionAI -->
                 <div class="arch-card active" id="arch-node-ui">
                   <div class="arch-icon"><i data-lucide="monitor"></i></div>
                   <div class="arch-details">
-                    <h4>2. Conversation UI</h4>
+                    <h4>2. EmotionAI</h4>
                     <p>Agent copilot console workspace</p>
                     <span class="arch-tech">Vanilla JS Client Shell</span>
                   </div>
@@ -1097,11 +521,11 @@
                 <!-- Connector Line -->
                 <div class="arch-connector"><div class="arch-pulse"></div></div>
 
-                <!-- Node 3: Gemini AI -->
+                <!-- Node 3: Gemini -->
                 <div class="arch-card gemini-node" id="arch-node-gemini">
                   <div class="arch-icon"><i data-lucide="brain"></i></div>
                   <div class="arch-details">
-                    <h4>3. Gemini AI</h4>
+                    <h4>3. Gemini</h4>
                     <p>Structured analysis model gateway</p>
                     <span class="arch-tech" id="arch-gemini-version">gemini-2.5-flash API</span>
                   </div>
@@ -1112,12 +536,12 @@
                 <div class="arch-connector"><div class="arch-pulse"></div></div>
 
                 <!-- Node 4: Emotion Analysis -->
-                <div class="arch-card active" id="arch-node-emotion">
-                  <div class="arch-icon"><i data-lucide="gauge"></i></div>
+                <div class="arch-card active" id="arch-node-analysis">
+                  <div class="arch-icon"><i data-lucide="heart-pulse"></i></div>
                   <div class="arch-details">
                     <h4>4. Emotion Analysis</h4>
-                    <p>Telemetry index classification dials</p>
-                    <span class="arch-tech">JSON Schema classification</span>
+                    <p>JSON classification telemetry outputs</p>
+                    <span class="arch-tech">JSON Sentiment Extraction</span>
                   </div>
                   <div class="status-indicator online"></div>
                 </div>
@@ -1126,12 +550,12 @@
                 <div class="arch-connector"><div class="arch-pulse"></div></div>
 
                 <!-- Node 5: Recommendation Engine -->
-                <div class="arch-card active" id="arch-node-recommendations">
+                <div class="arch-card active" id="arch-node-recommendation">
                   <div class="arch-icon"><i data-lucide="zap"></i></div>
                   <div class="arch-details">
                     <h4>5. Recommendation Engine</h4>
-                    <p>Autogenerated discount & script recommendations</p>
-                    <span class="arch-tech">Heuristic Action Compiler</span>
+                    <p>Heuristics action-routing rules</p>
+                    <span class="arch-tech">JS Rule Mapping</span>
                   </div>
                   <div class="status-indicator online"></div>
                 </div>
@@ -1139,27 +563,13 @@
                 <!-- Connector Line -->
                 <div class="arch-connector"><div class="arch-pulse"></div></div>
 
-                <!-- Node 6: Business Analytics -->
-                <div class="arch-card active" id="arch-node-analytics">
-                  <div class="arch-icon"><i data-lucide="bar-chart-2"></i></div>
-                  <div class="arch-details">
-                    <h4>6. Business Analytics</h4>
-                    <p>CSAT trend metrics & issue breakdowns</p>
-                    <span class="arch-tech">Telemetry DB Warehousing</span>
-                  </div>
-                  <div class="status-indicator online"></div>
-                </div>
-
-                <!-- Connector Line -->
-                <div class="arch-connector"><div class="arch-pulse"></div></div>
-
-                <!-- Node 7: Executive Dashboard -->
-                <div class="arch-card active" id="arch-node-bi">
+                <!-- Node 6: Support Copilot -->
+                <div class="arch-card active" id="arch-node-copilot">
                   <div class="arch-icon"><i data-lucide="layout-dashboard"></i></div>
                   <div class="arch-details">
-                    <h4>7. Executive Dashboard</h4>
-                    <p>Aggregate ROI counters & corporate metrics</p>
-                    <span class="arch-tech">Chart.js BI render</span>
+                    <h4>6. Support Copilot</h4>
+                    <p>Telemetry dashboard & explanation cards</p>
+                    <span class="arch-tech">Live UI Rendering</span>
                   </div>
                   <div class="status-indicator online"></div>
                 </div>
@@ -1167,13 +577,13 @@
                 <!-- Connector Line -->
                 <div class="arch-connector"><div class="arch-pulse"></div></div>
 
-                <!-- Node 8: Resolution -->
+                <!-- Node 7: Resolution -->
                 <div class="arch-card active" id="arch-node-resolution">
                   <div class="arch-icon"><i data-lucide="check-circle-2"></i></div>
                   <div class="arch-details">
-                    <h4>8. Resolution</h4>
-                    <p>Autogenerated executive outcome management reports</p>
-                    <span class="arch-tech">Incident Logger Archiver</span>
+                    <h4>7. Resolution</h4>
+                    <p>Executive outcomes summary & ticketing</p>
+                    <span class="arch-tech">CSAT Protection Verified</span>
                   </div>
                   <div class="status-indicator online"></div>
                 </div>
@@ -1258,7 +668,7 @@
             <h4 style="font-size:0.9rem; color:var(--text-muted); text-transform:uppercase; font-weight:600; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
               <i data-lucide="terminal" style="color:var(--accent-purple);"></i> Technical Diagnostics Logs
             </h4>
-            <div style="background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.05); border-radius:8px; padding:1rem; font-family:'Courier New', Courier, monospace; font-size:0.85rem; color:#A5B4FC; line-height:1.5; max-height:200px; overflow-y:auto;" id="developer-terminal-logs">
+            <div style="background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.05); border-radius:8px; padding:1rem; font-family:'Courier New', Courier, monospace; font-size:0.85rem; color:#A5B4FC; line-height:1.5; max-height:200px; overflow-y:auto;" id="arch-terminal-logs">
               [SYSTEM] Telemetry pipeline initialized.<br>
               [SYSTEM] Connection stable on http://localhost:8000.<br>
               [SYSTEM] UI Render cycles completed.<br>
@@ -1310,18 +720,7 @@
     </div>
   </div>
 
-  <!-- ========================================== -->
-  <!-- AUTOPLAY PRESENTATION OVERLAY OVERLAYS     -->
-  <!-- ========================================== -->
-  <div id="autoplay-banner" style="display: none;">
-    <div style="display:flex; align-items:center; gap:0.75rem; flex:1;">
-      <div class="pulse-dot" style="background-color: var(--accent-purple); box-shadow: 0 0 15px var(--accent-purple);"></div>
-      <span style="font-weight:600; font-size:0.9rem;" id="autoplay-banner-step">Demo Mode Active: Step 1 of 5</span>
-    </div>
-    <button class="btn btn-primary btn-sm" id="autoplay-banner-action" style="padding:0.4rem 1rem; font-size:0.8rem; background:var(--accent-purple);" onclick="cancelAutoplayDemo()">
-      Cancel Demo
-    </button>
-  </div>
+
 
   <!-- Autoplay Final Business Outcome Overlay (Executive Summary Management Report) -->
   <div class="modal-backdrop" id="autoplay-outcome-modal" style="display: none; z-index: 1000;" role="dialog" aria-modal="true" aria-label="Executive Summary Report Overlay">
@@ -1337,64 +736,47 @@
           </div>
           <span style="font-size:0.75rem; color:var(--text-muted); font-family:monospace;" id="exec-report-timestamp">REPORT ID: SRH-RET-2026</span>
         </div>
-        <h3 style="font-family:var(--font-title); font-size:1.5rem; font-weight:800; margin-top:0.75rem;" class="text-gradient">EXECUTIVE INCIDENT SUMMARY</h3>
+        <h3 style="font-family:var(--font-title); font-size:1.5rem; font-weight:800; margin-top:0.75rem;" class="text-gradient">EXECUTIVE OUTCOME SUMMARY</h3>
       </div>
 
       <!-- Report content -->
-      <div style="text-align:left; display:flex; flex-direction:column; gap:1.25rem; font-size:0.95rem; line-height:1.5; color:var(--text-secondary); max-height: 380px; overflow-y: auto; padding-right:0.5rem; margin-bottom:2rem;">
+      <div style="text-align:left; display:flex; flex-direction:column; gap:1.25rem; font-size:0.95rem; line-height:1.5; color:var(--text-secondary); max-height: 420px; overflow-y: auto; padding-right:0.5rem; margin-bottom:2rem;">
         
         <div>
           <strong style="color:white; display:block; margin-bottom:0.25rem;">Conversation Summary:</strong>
-          <p id="outcome-report-summary">The customer Jenkins, Sarah (Enterprise Tier 2, LTV $12,400) connected via Chat Workspace due to billing Stripe declined failure. AI classified negative frustration state trigger limit blocks.</p>
+          <p id="outcome-report-summary" style="font-size:0.9rem; color:var(--text-primary);">Analysing conversation transcript...</p>
         </div>
 
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
           <div>
             <strong style="color:white; display:block; margin-bottom:0.25rem;">Detected Emotion:</strong>
-            <span class="tel-badge emotion-frustrated" id="outcome-report-emotion"><i data-lucide="frown"></i> FRUSTRATED (84%)</span>
+            <span id="outcome-report-emotion" style="font-size:0.9rem; font-weight:600; color:white;">-</span>
           </div>
           <div>
-            <strong style="color:white; display:block; margin-bottom:0.25rem;">Business Risk Tier:</strong>
-            <span style="color:var(--danger); font-weight:700;" id="outcome-report-risk">CRITICAL CHURN RISK (94%)</span>
+            <strong style="color:white; display:block; margin-bottom:0.25rem;">Detected Intent:</strong>
+            <span id="outcome-report-intent" style="font-size:0.9rem; font-weight:600; color:white;">-</span>
           </div>
         </div>
 
         <div>
-          <strong style="color:white; display:block; margin-bottom:0.25rem;">Remediation Recommendations Applied:</strong>
-          <ul style="padding-left:1.25rem; list-style-type:square; color:var(--text-primary); font-size:0.9rem; display:flex; flex-direction:column; gap:0.25rem;">
-            <li>Temporary License Override processed: +14-day pipeline token.</li>
-            <li>Apology Code EMOTIONAI15 credit applied: 15% discount for next billing.</li>
-            <li>Priority CRM Ticket escalated: Routed to lead account manager.</li>
-          </ul>
+          <strong style="color:white; display:block; margin-bottom:0.25rem;">Business Recommendation:</strong>
+          <p id="outcome-report-recommendation" style="font-size:0.9rem; color:var(--text-primary);">-</p>
         </div>
 
-        <div style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); padding:1rem; border-radius:12px;">
-          <strong style="color:white; display:block; margin-bottom:0.75rem;"><i data-lucide="trending-up" style="width:14px; color:var(--success); vertical-align:middle; margin-right:4px;"></i> Estimated SLA Resolution ROI:</strong>
-          <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1rem; text-align:center;">
-            <div>
-              <span style="font-size:0.65rem; color:var(--text-muted); text-transform:uppercase; font-weight:600; display:block;">Revenue Protected</span>
-              <strong style="font-size:1.25rem; color:var(--success); font-family:var(--font-title);">$2,500/mo</strong>
-            </div>
-            <div>
-              <span style="font-size:0.65rem; color:var(--text-muted); text-transform:uppercase; font-weight:600; display:block;">AI SLA Latency</span>
-              <strong style="font-size:1.25rem; color:var(--accent-blue); font-family:var(--font-title);">1.84s</strong>
-            </div>
-            <div>
-              <span style="font-size:0.65rem; color:var(--text-muted); text-transform:uppercase; font-weight:600; display:block;">Expected Retention</span>
-              <strong style="font-size:1.25rem; color:var(--accent-purple); font-family:var(--font-title);">98.2% CSAT</strong>
-            </div>
-          </div>
+        <div>
+          <strong style="color:white; display:block; margin-bottom:0.25rem;">Expected Customer Outcome:</strong>
+          <p id="outcome-report-outcome" style="font-size:0.9rem; color:var(--text-primary); font-style:italic;">-</p>
         </div>
 
         <div style="border-top:1px dashed rgba(255,255,255,0.05); padding-top:1rem; display:flex; justify-content:space-between; align-items:center; font-size:0.8rem; color:var(--text-muted);">
-          <span>Customer Status: <strong style="color:var(--success);">SUCCESSFULLY RETAINED</strong></span>
+          <span>Customer Status: <strong style="color:var(--success);">SUCCESSFULLY EVALUATED</strong></span>
           <span>Verified Agent: Alex Gray (Customer Success VP)</span>
         </div>
       </div>
       
       <div style="display:flex; gap:1rem;">
         <button class="btn btn-secondary scale-hover" style="flex:1;" onclick="closeOutcomeModal()">Back to Workspace</button>
-        <button class="btn btn-primary scale-hover" style="flex:1;" onclick="closeOutcomeModal(); switchTab('executive');">View Executive Impact</button>
+        <button class="btn btn-primary scale-hover" style="flex:1;" onclick="closeOutcomeModal(); switchTab('executive');">View Executive Overview</button>
       </div>
     </div>
   </div>
