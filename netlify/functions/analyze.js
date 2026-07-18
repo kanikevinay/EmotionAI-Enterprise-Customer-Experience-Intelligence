@@ -1,77 +1,105 @@
-exports.handler = async function(event, context) {
-  const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Content-Type': 'application/json'
-  };
+/**
+ * Netlify serverless function — /api/analyze
+ * Proxies to Anthropic Claude API server-side.
+ * ANTHROPIC_API_KEY is read from process.env at request time.
+ */
 
+const SYSTEM_PROMPT = [
+  'You are an expert customer experience analyzer.',
+  'Analyze the customer conversation and return ONLY a strict JSON object.',
+  'Do NOT include markdown fences, backticks, or any text outside the JSON.',
+  'The JSON object must contain exactly these fields:',
+  '- emotion: string, one of: Happy, Neutral, Frustrated, Angry, Confused, Urgent',
+  '- emotion_score: integer 0-100',
+  '- sentiment: string, one of: Positive, Neutral, Negative',
+  '- sentiment_score: integer 0-100 (100=most positive, 0=most negative)',
+  '- risk_score: integer 0-100 (churn risk; >70 high, 30-70 moderate, <30 low)',
+  '- urgency: string, one of: Low, Medium, High, Critical',
+  '- confidence: integer 0-100',
+  '- recommendation: string action for the support agent',
+  '- reply: string empathetic agent reply, max 2 sentences',
+  'Return raw JSON only. No explanation, no markdown.',
+].join('\n');
+
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'Content-Type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Content-Type': 'application/json',
+};
+
+function jsonResp(statusCode, body) {
+  return { statusCode, headers: CORS_HEADERS, body: JSON.stringify(body) };
+}
+
+exports.handler = async function (event) {
+  // Pre-flight
   if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 204, headers, body: '' };
+    return { statusCode: 204, headers: CORS_HEADERS, body: '' };
   }
-
   if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method Not Allowed' }) };
+    return jsonResp(405, { error: 'Method Not Allowed' });
   }
 
-  const SYSTEM_PROMPT = `You are an expert customer experience analyzer.
-Analyze the customer conversation and return ONLY a strict JSON object.
-Do not include any markdown formatting, code block backticks, or trailing commas. It must be valid raw JSON.
-The JSON object must contain these fields:
-- emotion: (string - one of Happy, Neutral, Frustrated, Angry, Confused, Urgent)
-- emotion_score: (number, 0 to 100)
-- sentiment: (string - one of Positive, Neutral, Negative)
-- sentiment_score: (number, 0 to 100, where 100 is highly positive and 0 is highly negative)
-- risk_score: (number, 0 to 100, churn risk rating where >70 is high, 30-70 is amber, <30 is low)
-- urgency: (string - one of Low, Medium, High, Critical)
-- confidence: (number, 0 to 100)
-- recommendation: (string - action recommendation for the agent)
-- reply: (string - a short empathetic agent reply, max 2 sentences)`;
-
+  // Parse body
+  let messages;
   try {
-    const { messages } = JSON.parse(event.body || '{}');
-    if (!messages || !Array.isArray(messages)) {
-      return { statusCode: 400, headers, body: JSON.stringify({ error: 'messages array is required' }) };
-    }
+    const payload = JSON.parse(event.body || '{}');
+    messages = payload.messages;
+    if (!messages || !Array.isArray(messages)) throw new Error('missing messages');
+  } catch (e) {
+    return jsonResp(400, { error: `Invalid request body: ${e.message}` });
+  }
 
-    const apiKey = process.env.ANTHROPIC_API_KEY;
-    if (!apiKey) {
-      return { statusCode: 400, headers, body: JSON.stringify({ error: 'ANTHROPIC_API_KEY is not set' }) };
-    }
+  // Read API key at request time
+  const apiKey = (process.env.ANTHROPIC_API_KEY || '').trim();
+  if (!apiKey) {
+    return jsonResp(400, {
+      error: 'ANTHROPIC_API_KEY is not configured as a Netlify environment variable.',
+    });
+  }
 
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+  // Map roles
+  const apiMessages = messages.map(m => ({
+    role: m.role === 'agent' || m.role === 'assistant' ? 'assistant' : 'user',
+    content: m.content || '',
+  }));
+
+  // Call Anthropic
+  let resp;
+  try {
+    resp = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'x-api-key': apiKey,
         'anthropic-version': '2023-06-01',
-        'content-type': 'application/json'
+        'content-type': 'application/json',
       },
       body: JSON.stringify({
         model: 'claude-3-5-sonnet-20241022',
-        max_tokens: 1024,
+        max_tokens: 512,
         system: SYSTEM_PROMPT,
-        messages: messages.map(msg => ({
-          role: msg.role === 'agent' || msg.role === 'assistant' ? 'assistant' : 'user',
-          content: msg.content
-        }))
-      })
+        messages: apiMessages,
+      }),
     });
+  } catch (netErr) {
+    return jsonResp(502, { error: `Network error reaching Anthropic: ${netErr.message}` });
+  }
 
-    if (!response.ok) {
-      const errText = await response.text();
-      return { statusCode: response.status, headers, body: JSON.stringify({ error: errText }) };
-    }
+  const envelope = await resp.json();
 
-    const data = await response.json();
-    const raw = data.content[0].text.trim().replace(/^```json\s*/i, '').replace(/```$/, '').trim();
+  if (!resp.ok) {
+    const msg = envelope?.error?.message || JSON.stringify(envelope);
+    return jsonResp(resp.status, { error: `Anthropic API error ${resp.status}: ${msg}` });
+  }
 
-    try {
-      const parsed = JSON.parse(raw);
-      return { statusCode: 200, headers, body: JSON.stringify(parsed) };
-    } catch (e) {
-      return { statusCode: 500, headers, body: JSON.stringify({ error: 'Failed to parse LLM JSON', raw }) };
-    }
-  } catch (err) {
-    return { statusCode: 500, headers, body: JSON.stringify({ error: err.message }) };
+  const rawText = (envelope?.content?.[0]?.text || '').trim()
+    .replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```$/, '').trim();
+
+  try {
+    const parsed = JSON.parse(rawText);
+    return jsonResp(200, parsed);
+  } catch (e) {
+    return jsonResp(500, { error: `LLM returned non-JSON: ${rawText.slice(0, 200)}` });
   }
 };
