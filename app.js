@@ -13,6 +13,7 @@ let voiceWaveformAnimationFrame = null;
 // Autoplay Demo State
 let autoplayTimer = null;
 let isAutoplayActive = false;
+let apiRequestCount = 124;
 
 // Mock Customer Dataset
 const customerData = {
@@ -244,6 +245,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Load API Key from LocalStorage and sync interface statuses
   loadApiKeySettings();
+
+  // Setup Keyboard Navigation accessibility triggers
+  setupKeyboardAccessibility();
 });
 
 // Developer Console Log Helper
@@ -253,10 +257,12 @@ function writeTerminalLog(type, text) {
   
   const timestamp = new Date().toLocaleTimeString();
   const colorMap = {
-    SYSTEM: '#818CF8', // Indigo
+    INFO: '#60A5FA',    // Blue
+    SYSTEM: '#818CF8',  // Indigo
     DATABASE: '#34D399', // Green
-    AI: '#C084FC', // Purple
-    ERROR: '#F87171' // Red
+    AI: '#C084FC',      // Purple
+    SUCCESS: '#34D399', // Green
+    ERROR: '#F87171'    // Red
   };
 
   const color = colorMap[type] || '#F3F4F6';
@@ -266,10 +272,21 @@ function writeTerminalLog(type, text) {
   terminal.scrollTop = terminal.scrollHeight;
 }
 
+// Accessibility Setup
+function setupKeyboardAccessibility() {
+  document.querySelectorAll('.nav-item, .logo').forEach(item => {
+    item.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        item.click();
+      }
+    });
+  });
+}
+
 // Tab Router
 function switchTab(tabId) {
-  // Clear any active chat simulations
-  if (chatSimulationTimer) {
+  // Clear any active chat simulations (except in presentation mode)
+  if (chatSimulationTimer && !isAutoplayActive) {
     clearInterval(chatSimulationTimer);
     chatSimulationTimer = null;
     document.getElementById('btn-run-simulation').innerHTML = `<i data-lucide="play-circle"></i> Trigger Conversation Simulation`;
@@ -324,7 +341,11 @@ function switchTab(tabId) {
   if (tabId === 'analytics') {
     setTimeout(renderAnalyticsCharts, 50);
   } else if (tabId === 'executive') {
-    setTimeout(renderExecutiveCharts, 50);
+    setTimeout(() => {
+      renderExecutiveCharts();
+      // Animate Business ROI counters
+      animateRoiCalculator(142580, 124, 24.5, 4.5);
+    }, 50);
   } else if (tabId === 'voice-ai') {
     initVoiceWaveformCanvas();
   }
@@ -378,6 +399,18 @@ function onCustomerChange(val) {
   // Update Executive Summary Metrics in Real-Time
   updateExecutiveScores(custData);
 
+  // Update Explainability Defaults
+  updateExplainabilityPanel(
+    ["access", "billing", "declined"],
+    custData.detectedIntent,
+    "Negative keywords clustered during card transaction retries.",
+    `Customer LTV is high (${custData.ltv}), competitor mention elevates risk index.`,
+    "Bypass invoice checks and apply discount coupon code to preserve contract."
+  );
+
+  // Reset Gauges
+  updateConfidenceGauges(custData.emotionScore + 5, 88, 92);
+
   writeTerminalLog('DATABASE', `Switched customer context to: ${custData.fullName}`);
 }
 
@@ -403,8 +436,6 @@ function updateTelemetry(emotion, stress, comm, intent, ltv, risk, sentiment) {
   const badge = document.getElementById('telemetry-sentiment-badge');
   if (badge) {
     badge.className = `tel-badge emotion-${sentiment.toLowerCase()}`;
-    
-    // Swap icon
     const iconName = sentiment === 'FRUSTRATED' || sentiment === 'ANXIOUS' ? 'frown' : 'smile';
     badge.innerHTML = `<i data-lucide="${iconName}"></i> ${sentiment}`;
     lucide.createIcons();
@@ -430,6 +461,64 @@ function updateTelemetry(emotion, stress, comm, intent, ltv, risk, sentiment) {
   }
 }
 
+// Update Explainability panel elements
+function updateExplainabilityPanel(keywords, intent, sentimentReason, riskReason, actionReason) {
+  document.getElementById('explain-keywords').innerText = keywords.join(', ');
+  document.getElementById('explain-sentiment').innerText = sentimentReason;
+  document.getElementById('explain-risk').innerText = riskReason;
+  document.getElementById('explain-action').innerText = actionReason;
+}
+
+// Update Confidence Visualizer SVG Gauges
+function updateConfidenceGauges(em, nt, rec) {
+  const capVal = (val) => Math.min(100, Math.max(0, val));
+  
+  const setGauge = (idSvg, idTxt, val) => {
+    const offset = 150.8 - (150.8 * capVal(val)) / 100;
+    const progressEl = document.getElementById(idSvg);
+    const textEl = document.getElementById(idTxt);
+    if (progressEl) progressEl.style.strokeDashoffset = offset;
+    if (textEl) textEl.innerText = `${val}%`;
+
+    // Swap color classes depending on metrics thresholds
+    if (progressEl) {
+      progressEl.classList.remove('text-success', 'text-warning', 'text-danger');
+      if (val >= 85) progressEl.classList.add('text-success');
+      else if (val >= 60) progressEl.classList.add('text-warning');
+      else progressEl.classList.add('text-danger');
+    }
+  };
+
+  setGauge('gauge-conf-emotion', 'gauge-txt-emotion', em);
+  setGauge('gauge-conf-intent', 'gauge-txt-intent', nt);
+  setGauge('gauge-conf-recommendation', 'gauge-txt-recommendation', rec);
+}
+
+// Animate Business ROI counters
+function animateRoiCalculator(savedRev, churnPrev, costRed, timeSaved) {
+  const steps = 30;
+  const intervalTime = 25;
+  let currentStep = 0;
+
+  const timer = setInterval(() => {
+    currentStep++;
+    if (currentStep > steps) {
+      clearInterval(timer);
+      document.getElementById('roi-saved-rev').innerText = `$${savedRev.toLocaleString()}`;
+      document.getElementById('roi-churn-prev').innerText = churnPrev;
+      document.getElementById('roi-cost-reduction').innerText = `${costRed}%`;
+      document.getElementById('roi-time-saved').innerText = `${timeSaved}m`;
+      return;
+    }
+
+    const ratio = currentStep / steps;
+    document.getElementById('roi-saved-rev').innerText = `$${Math.round(savedRev * ratio).toLocaleString()}`;
+    document.getElementById('roi-churn-prev').innerText = Math.round(churnPrev * ratio);
+    document.getElementById('roi-cost-reduction').innerText = `${(costRed * ratio).toFixed(1)}%`;
+    document.getElementById('roi-time-saved').innerText = `${(timeSaved * ratio).toFixed(1)}m`;
+  }, intervalTime);
+}
+
 // Conversation Simulator (Active Typing & Storytelling)
 function triggerSimulation() {
   const custData = customerData[activeCustomer];
@@ -447,7 +536,7 @@ function triggerSimulation() {
   simulatorBtn.innerHTML = `<i data-lucide="pause-circle"></i> Running Simulation...`;
   lucide.createIcons();
 
-  let messageIdx = 1; // start from second message (first message already active)
+  let messageIdx = 1; // start from second message
   const totalMessages = custData.chatScript.length;
 
   chatSimulationTimer = setInterval(() => {
@@ -464,7 +553,7 @@ function triggerSimulation() {
     // Show typing animation if customer is speaking next
     if (msg.sender === 'customer') {
       const typingIndicator = document.getElementById('chat-typing-indicator');
-      document.getElementById('chat-typing-text').innerText = 'Customer typing...';
+      document.getElementById('chat-typing-text').innerText = `${custData.fullName} typing...`;
       typingIndicator.style.display = 'flex';
 
       setTimeout(() => {
@@ -473,12 +562,10 @@ function triggerSimulation() {
         messageIdx++;
       }, 1500);
     } else {
-      // System alert or agent message
       appendChatMessage(msg);
       messageIdx++;
     }
 
-    // Dynamic telemetry changes during conversation flow
     simulateDynamicTelemetryFlow(msg);
 
   }, 3500);
@@ -489,8 +576,24 @@ function simulateDynamicTelemetryFlow(msg) {
   if (msg.sender === 'system-alert') {
     if (msg.text.includes('Critical stress')) {
       updateTelemetry(91, 95, 'High Urgency', 'Subscription Cancel / Churn Threat', '$12,400', 'CRITICAL CHURN RISK', 'FRUSTRATED');
+      updateExplainabilityPanel(
+        ["cancel", "migrate", "competitor"],
+        "SaaS Subscription Cancellation Threat",
+        "AI isolated churn modifiers: 'migrate to competitor'.",
+        "High risk detected. Customer value $12k requires immediate override.",
+        "Buffer service limits and route accounts manager to override billing block."
+      );
+      updateConfidenceGauges(94, 91, 97);
     } else if (msg.text.includes('dropped to 15%')) {
       updateTelemetry(22, 15, 'Collaborative', 'Issue Resolved', '$12,400', 'LOW RISK', 'SATISFIED');
+      updateExplainabilityPanel(
+        ["thank", "relief", "cleared"],
+        "Issue Resolution Confirmed",
+        "CSAT predicted: 9.8/10. Positive sentiment words loaded.",
+        "Risk mitigated to minimum. SLA timelines met.",
+        "Archive ticket workspace."
+      );
+      updateConfidenceGauges(98, 97, 99);
     }
   } else if (msg.sender === 'customer') {
     if (msg.tag === 'Relieved') {
@@ -569,19 +672,18 @@ async function sendCustomAgentMessage() {
   appendChatMessage(customMsg);
   inputEl.value = '';
 
-  // Simulate customer response after 2 seconds, which will trigger Gemini API
+  // Simulate customer response after 2 seconds
   setTimeout(simulateCustomerResponseAfterAgent, 2000);
 }
 
 function simulateCustomerResponseAfterAgent() {
   const typingIndicator = document.getElementById('chat-typing-indicator');
-  document.getElementById('chat-typing-text').innerText = 'Customer typing...';
+  document.getElementById('chat-typing-text').innerText = `${customerData[activeCustomer].fullName} typing...`;
   typingIndicator.style.display = 'flex';
 
   setTimeout(async () => {
     typingIndicator.style.display = 'none';
     
-    // Auto-generate customer response based on key words in history
     let replyText = "Fine, but please double check if the system applied the EMOTIONAI15 coupon. I want an confirmation mail.";
     if (activeCustomer === 'michael') {
       replyText = "Okay, I scheduled the Sales Zoom meeting. Did you make sure the temporary rate buffer is active on our sandbox?";
@@ -600,37 +702,100 @@ function simulateCustomerResponseAfterAgent() {
     appendChatMessage(customerMsg);
 
     // Call Real-time Gemini API or mock parser on this message
-    await triggerLiveAILayer(replyText);
+    await triggerLiveAILayer(customerMsg.text);
 
   }, 1500);
 }
 
 // Core LLM API call engine
 async function triggerLiveAILayer(text) {
-  writeTerminalLog('AI', `Routing message packet to Gemini layer: "${text}"`);
+  writeTerminalLog('INFO', `Customer message received: "${text}"`);
+  writeTerminalLog('INFO', `Sending request to Gemini REST gateway...`);
   
   // Toggle loading pulse state in architecture page
-  const archNode = document.getElementById('arch-node-gemini');
   const statusIndicator = document.getElementById('arch-gemini-status');
-  
-  if (archNode) archNode.classList.add('gemini-node', 'active');
-  if (statusIndicator) {
-    statusIndicator.className = 'status-indicator active-live';
-  }
+  if (statusIndicator) statusIndicator.className = 'status-indicator active-live';
 
-  // Load telemetry skeleton visual effects
+  // Increment requests counter
+  apiRequestCount++;
+  const reqEl = document.getElementById('arch-requests-val');
+  if (reqEl) reqEl.innerText = apiRequestCount;
+
+  const startT = performance.now();
+
+  // Run Step Loader check-offs
+  const loaderEl = document.getElementById('gemini-step-loader');
+  if (loaderEl) loaderEl.style.display = 'block';
+  
+  // Telemetry skeletons
   toggleSkeletonState(true);
 
-  // Send request
+  // Clear checkmarks
+  document.querySelectorAll('#gemini-step-loader li').forEach(li => {
+    li.className = '';
+    li.querySelector('.step-icon').setAttribute('data-lucide', 'circle');
+  });
+  lucide.createIcons();
+
+  // Step helper
+  const runStep = (idx, duration) => {
+    return new Promise(resolve => {
+      const li = document.getElementById(`step-${idx}`);
+      li.className = 'active';
+      li.querySelector('.step-icon').setAttribute('data-lucide', 'loader-2');
+      lucide.createIcons();
+      
+      setTimeout(() => {
+        li.className = 'done';
+        li.querySelector('.step-icon').setAttribute('data-lucide', 'check-circle-2');
+        lucide.createIcons();
+        resolve();
+      }, duration);
+    });
+  };
+
+  await runStep(0, 300);
+  await runStep(1, 350);
+
+  // Send API Call
   try {
     const analysis = await analyzeMessageWithGemini(text);
-    writeTerminalLog('AI', `Gemini returned structured JSON successfully. Confidence: ${analysis.confidence}%`);
+    const latencyVal = Math.round(performance.now() - startT);
     
+    // Update architecture metrics
+    document.getElementById('arch-latency-val').innerText = `${latencyVal}ms`;
+    document.getElementById('arch-processing-val').innerText = `${(latencyVal / 1000).toFixed(2)}s`;
+    
+    // Output raw JSON format
+    document.getElementById('arch-json-output').innerHTML = JSON.stringify(analysis, null, 2);
+
+    writeTerminalLog('INFO', 'Parsing JSON response from Gemini API.');
+    writeTerminalLog('SUCCESS', `Dashboard updated in ${latencyVal}ms.`);
+
+    await runStep(2, 200);
+    await runStep(3, 200);
+    await runStep(4, 200);
+
+    // Close loader
+    setTimeout(() => { if (loaderEl) loaderEl.style.display = 'none'; }, 400);
+
     // Apply analysis results
     applyGeminiAnalysisToDashboard(analysis);
+    
   } catch (err) {
-    writeTerminalLog('ERROR', `Gemini API invocation failed: ${err.message}. Gracefully falling back to baseline models.`);
-    // Fallback logic
+    const latencyVal = Math.round(performance.now() - startT);
+    document.getElementById('arch-latency-val').innerText = `${latencyVal}ms`;
+    document.getElementById('arch-processing-val').innerText = `${(latencyVal / 1000).toFixed(2)}s`;
+    
+    writeTerminalLog('ERROR', `Gemini API invocation failed: ${err.message}. Triggering local simulator.`);
+    
+    // Run remaining loader steps
+    await runStep(2, 200);
+    await runStep(3, 200);
+    await runStep(4, 200);
+    setTimeout(() => { if (loaderEl) loaderEl.style.display = 'none'; }, 400);
+
+    // Mock fallback
     handleMockFallback(text);
   } finally {
     toggleSkeletonState(false);
@@ -694,7 +859,6 @@ Do not wrap the JSON output inside markdown codeblocks (no \`\`\`json). Output t
 
 // Parse Gemini structured response and update all telemetry dials in real-time
 function applyGeminiAnalysisToDashboard(analysis) {
-  // Convert text metrics to coordinates for dial progress
   const emotionMap = {
     frustrated: 88, angry: 96, anxious: 65, neutral: 40, satisfied: 15, happy: 8, positive: 10
   };
@@ -716,7 +880,19 @@ function applyGeminiAnalysisToDashboard(analysis) {
     analysis.sentiment.toUpperCase()
   );
 
-  // 2. Generate a custom recommendation card matching the AI response
+  // 2. Update Explainability
+  updateExplainabilityPanel(
+    [analysis.emotion.toLowerCase(), analysis.intent.split(' ')[0].toLowerCase(), "billing"],
+    analysis.intent,
+    analysis.reason,
+    `AI evaluated risk rating as ${analysis.risk.toUpperCase()} due to churn signals.`,
+    analysis.recommendation
+  );
+
+  // 3. Update Confidence Gauges
+  updateConfidenceGauges(analysis.confidence, Math.max(50, analysis.confidence - 6), Math.min(100, analysis.confidence + 3));
+
+  // 4. Generate custom recommendations card
   const customRecs = [
     {
       id: 'rec-gemini-generated',
@@ -731,24 +907,22 @@ function applyGeminiAnalysisToDashboard(analysis) {
     }
   ];
 
-  // Append default baseline recommendations to this new card
   const combinedRecs = customRecs.concat(customerData[activeCustomer].recommendations);
   renderRecommendations(combinedRecs);
 
-  // Write details to Recommendations Center apology preview box
+  // Write details to apology preview box
   const playPane = document.getElementById('recommendation-playground');
   playPane.classList.add('active');
   document.getElementById('playground-title').innerText = `Gemini Apology Script Generator`;
   document.getElementById('playground-content').innerText = `Response Script:\n"Thank you for your feedback. We see that you are experiencing issues regarding ${analysis.intent}. Under our client protocol, I have processed the suggested action: ${analysis.recommendation}. Thank you for your patience while we verify this."`;
 
-  // 3. Highlight nodes in the System Architecture Pipeline
+  // 5. Highlight nodes in the System Architecture Pipeline
   triggerArchitecturePipelineAnimation();
 }
 
 function handleMockFallback(text) {
-  // Graceful simulation fallback
   setTimeout(() => {
-    const isAngry = text.toLowerCase().includes('cancel') || text.toLowerCase().includes('billing') || text.toLowerCase().includes('angry');
+    const isAngry = text.toLowerCase().includes('cancel') || text.toLowerCase().includes('billing') || text.toLowerCase().includes('angry') || text.toLowerCase().includes('charge');
     const mockAnalysis = {
       emotion: isAngry ? 'Frustrated' : 'Satisfied',
       sentiment: isAngry ? 'Negative' : 'Positive',
@@ -759,8 +933,14 @@ function handleMockFallback(text) {
       recommendation: isAngry ? 'Bypass Limit Lock + 15% discount coupon' : 'Request feedback SLA audit',
       reason: 'Syntax keywords matched high urgency billing structures.'
     };
+    
+    // Update architecture metrics with mock latency values
+    document.getElementById('arch-latency-val').innerText = `145ms`;
+    document.getElementById('arch-processing-val').innerText = `0.15s`;
+    document.getElementById('arch-json-output').innerHTML = JSON.stringify(mockAnalysis, null, 2);
+
     applyGeminiAnalysisToDashboard(mockAnalysis);
-  }, 1000);
+  }, 800);
 }
 
 // Telemetry visual loader toggle
@@ -781,19 +961,17 @@ function toggleSkeletonState(isLoading) {
 function triggerArchitecturePipelineAnimation() {
   const nodes = ['arch-node-customer', 'arch-node-workspace', 'arch-node-gemini', 'arch-node-telemetry', 'arch-node-recommendations', 'arch-node-bi'];
   
-  // Highlight nodes chronologically to show active calculation
   nodes.forEach((id, idx) => {
     setTimeout(() => {
       const nodeEl = document.getElementById(id);
       if (nodeEl) {
         nodeEl.classList.add('active');
-        // If gemini node
         if (id === 'arch-node-gemini') {
           const key = localStorage.getItem('gemini_api_key');
           if (key) nodeEl.classList.add('active-live');
         }
       }
-    }, idx * 300);
+    }, idx * 250);
   });
 }
 
@@ -807,7 +985,7 @@ function renderRecommendations(recs) {
     const priorityIcon = pClass === 'high' ? 'alert-octagon' : (pClass === 'medium' ? 'alert-circle' : 'info');
 
     const html = `
-      <div class="rec-card glass glow-card">
+      <div class="rec-card glass glow-card" id="card-${rec.id}">
         <div class="rec-badge-group">
           <span class="rec-priority ${pClass}">
             <i data-lucide="${priorityIcon}" style="width:12px; height:12px; vertical-align:middle; margin-right:2px;"></i> ${rec.priority}
@@ -843,14 +1021,8 @@ function renderRecommendations(recs) {
 // Action button inside recommendation centers
 function triggerRecommendationAction(recId) {
   const custData = customerData[activeCustomer];
+  let selectedRec = custData.recommendations.find(r => r.id === recId);
   
-  // Try to find in custom recommendations first
-  let selectedRec = null;
-  const container = document.getElementById('rec-container');
-  // Check baseline recs
-  selectedRec = custData.recommendations.find(r => r.id === recId);
-  
-  // Check if it's the custom Gemini recommendation
   if (!selectedRec && recId === 'rec-gemini-generated') {
     selectedRec = {
       outputTitle: 'Custom Action Executed',
@@ -873,7 +1045,6 @@ function copyPlaygroundCode() {
   const codeBox = document.getElementById('playground-content');
   navigator.clipboard.writeText(codeBox.innerText);
   
-  // Quick temporary success feedback state
   const copyBtn = document.querySelector('#recommendation-playground .icon-btn');
   copyBtn.innerHTML = `<i data-lucide="check" style="color:var(--success);"></i>`;
   lucide.createIcons();
@@ -886,15 +1057,12 @@ function copyPlaygroundCode() {
 
 function injectDraftToChat() {
   const codeText = document.getElementById('playground-content').innerText;
-  
-  // Extract response script portion if available
   let textToInject = codeText;
   const scriptMarker = 'Response Script:\n';
   if (codeText.includes(scriptMarker)) {
     textToInject = codeText.split(scriptMarker)[1].replace(/"/g, '');
   }
 
-  // Router to conversation tab & fill input box
   switchTab('conversation');
   const inputBar = document.getElementById('chat-user-input');
   inputBar.value = textToInject;
@@ -904,18 +1072,14 @@ function injectDraftToChat() {
 // Timeline State controller
 function updateTimelineProgress(nodes) {
   const activeIdx = activeCustomer === 'sarah' ? 5 : (activeCustomer === 'michael' ? 6 : 7);
-  
-  // Set timeline progress line width percentage
   const total = nodes.length;
   const percentage = ((activeIdx) / (total - 1)) * 100;
   document.getElementById('timeline-progress-indicator').style.width = `${percentage}%`;
 
-  // Draw node active states
   for (let i = 0; i < total; i++) {
     const nodeEl = document.getElementById(`node-${i}`);
     if (!nodeEl) continue;
 
-    // Reset styles
     nodeEl.classList.remove('active', 'danger', 'success');
 
     if (i < activeIdx) {
@@ -932,7 +1096,6 @@ function updateTimelineProgress(nodes) {
     }
   }
 
-  // Load default detail for active node
   showTimelineNodeDetail(activeIdx);
 }
 
@@ -1349,20 +1512,80 @@ function toggleApiModal(show) {
   modal.style.display = show ? 'flex' : 'none';
   if (show) {
     document.getElementById('input-api-key').value = localStorage.getItem('gemini_api_key') || '';
+    updateModalStatusBox();
   }
 }
 
-function saveApiKey() {
-  const keyVal = document.getElementById('input-api-key').value.trim();
-  if (keyVal) {
-    localStorage.setItem('gemini_api_key', keyVal);
-    writeTerminalLog('SYSTEM', 'Saved Gemini API key settings.');
+// Validates keys before saving
+async function validateGeminiKey(key) {
+  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`;
+  const payload = { contents: [{ parts: [{ text: "ping" }] }] };
+  
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  return response.ok;
+}
+
+function updateModalStatusBox() {
+  const key = localStorage.getItem('gemini_api_key');
+  const box = document.getElementById('modal-validation-status');
+  const icon = document.getElementById('modal-status-icon');
+  const text = document.getElementById('modal-status-text');
+
+  box.className = 'modal-status-box';
+  if (key) {
+    box.classList.add('connected');
+    icon.setAttribute('data-lucide', 'check-circle-2');
+    text.innerText = 'Connected to Gemini';
   } else {
+    box.classList.add('demo-mode');
+    icon.setAttribute('data-lucide', 'alert-circle');
+    text.innerText = 'Demo Mode (Mock AI)';
+  }
+  lucide.createIcons();
+}
+
+async function saveApiKey() {
+  const keyVal = document.getElementById('input-api-key').value.trim();
+  const saveBtn = document.getElementById('btn-save-api-settings');
+  
+  if (!keyVal) {
     localStorage.removeItem('gemini_api_key');
     writeTerminalLog('SYSTEM', 'Removed Gemini API key configurations.');
+    loadApiKeySettings();
+    toggleApiModal(false);
+    return;
   }
-  loadApiKeySettings();
-  toggleApiModal(false);
+
+  saveBtn.innerText = 'Validating key...';
+  saveBtn.disabled = true;
+
+  try {
+    const isValid = await validateGeminiKey(keyVal);
+    if (isValid) {
+      localStorage.setItem('gemini_api_key', keyVal);
+      writeTerminalLog('SYSTEM', 'Gemini API key validated successfully. Connected.');
+      loadApiKeySettings();
+      toggleApiModal(false);
+    } else {
+      localStorage.removeItem('gemini_api_key');
+      const box = document.getElementById('modal-validation-status');
+      box.className = 'modal-status-box failed';
+      document.getElementById('modal-status-text').innerText = 'Gemini Connection Failed';
+      document.getElementById('modal-status-icon').setAttribute('data-lucide', 'x-circle');
+      lucide.createIcons();
+      writeTerminalLog('ERROR', 'Gemini validation check failed: Invalid API Token Key.');
+    }
+  } catch (err) {
+    localStorage.removeItem('gemini_api_key');
+    writeTerminalLog('ERROR', `Network failure during Gemini validation check: ${err.message}`);
+  } finally {
+    saveBtn.innerText = 'Save Settings';
+    saveBtn.disabled = false;
+  }
 }
 
 function loadApiKeySettings() {
@@ -1371,17 +1594,54 @@ function loadApiKeySettings() {
   const versionTag = document.getElementById('arch-gemini-version');
   const apiBtn = document.getElementById('btn-api-config');
   
+  // Header indicators
+  const headerPill = document.getElementById('header-conn-pill');
+  const headerText = document.getElementById('header-conn-text');
+  
+  // Sidebar indicators
+  const sidebarTag = document.getElementById('sidebar-connection-tag');
+  
+  // System Health nodes status
+  const healthNode = document.getElementById('health-indicator-gemini');
+
   if (key) {
     if (indicator) indicator.className = 'status-indicator online';
     if (versionTag) versionTag.innerText = 'Gemini Live API Connected';
     if (apiBtn) apiBtn.style.borderColor = 'var(--success)';
-    writeTerminalLog('AI', 'Gemini Live AI core integration configured. Awaiting workspace inputs.');
+    
+    if (headerPill) {
+      headerPill.className = 'connection-status-pill online';
+      headerText.innerText = 'Connected to Gemini';
+    }
+    if (sidebarTag) {
+      sidebarTag.className = 'sidebar-status-tag connected';
+      sidebarTag.innerHTML = `<i data-lucide="check-circle-2"></i> Connected to Gemini`;
+    }
+    if (healthNode) {
+      healthNode.className = 'health-indicator healthy';
+      healthNode.innerText = 'Healthy';
+    }
+    writeTerminalLog('AI', 'Gemini Live AI connection active. Diagnostics reports status: OK.');
   } else {
     if (indicator) indicator.className = 'status-indicator offline';
     if (versionTag) versionTag.innerText = 'gemini-2.5-flash API';
     if (apiBtn) apiBtn.style.borderColor = 'var(--border-card)';
+    
+    if (headerPill) {
+      headerPill.className = 'connection-status-pill offline';
+      headerText.innerText = 'Demo Mode (Mock AI)';
+    }
+    if (sidebarTag) {
+      sidebarTag.className = 'sidebar-status-tag demo-mode';
+      sidebarTag.innerHTML = `<i data-lucide="alert-circle"></i> Demo Mode (Mock AI)`;
+    }
+    if (healthNode) {
+      healthNode.className = 'health-indicator offline';
+      healthNode.innerText = 'Demo Mode';
+    }
     writeTerminalLog('AI', 'Gemini key offline. Falling back to structured baseline model simulator.');
   }
+  lucide.createIcons();
 }
 
 // -----------------------------------------------
@@ -1391,23 +1651,20 @@ function startAutoplayDemo() {
   if (isAutoplayActive) return;
   isAutoplayActive = true;
 
-  // Clear previous timers
   if (autoplayTimer) clearTimeout(autoplayTimer);
 
-  // Sync customer to sarah first (high value target)
   onCustomerChange('sarah');
 
-  // Trigger presenting banner
   const banner = document.getElementById('autoplay-banner');
   const stepText = document.getElementById('autoplay-banner-step');
   if (banner) banner.style.display = 'flex';
   
-  // Step 1: Switch to live workspace
+  // Step 1: Initializing Workspace
   stepText.innerText = 'Step 1 of 5: Initializing Copilot Console';
   switchTab('conversation');
-  writeTerminalLog('SYSTEM', 'Autoplay demonstration launched.');
+  writeTerminalLog('SYSTEM', 'Autoplay presentation started.');
 
-  // Step 2: Show customer typing a highly frustrated message
+  // Step 2: Customer is typing
   autoplayTimer = setTimeout(() => {
     stepText.innerText = 'Step 2 of 5: Customer is typing...';
     const typingIndicator = document.getElementById('chat-typing-indicator');
@@ -1427,45 +1684,91 @@ function startAutoplayDemo() {
         time: timeStr
       });
 
-      // Step 3: Trigger analysis loading state
+      // Step 3: Trigger Gemini Analysis Loader steps
       stepText.innerText = 'Step 3 of 5: Triggering Gemini Analysis...';
       triggerLiveAILayer(angryMsgText);
 
-      // Step 4: Show Recommendation Action Workspace
+      // Step 4: Show AI Recommendation Action Workspace
       autoplayTimer = setTimeout(() => {
-        stepText.innerText = 'Step 4 of 5: AI Recommendation Center Generated';
+        stepText.innerText = 'Step 4 of 5: Transitioning to Recommendations...';
         switchTab('recommendations');
 
         autoplayTimer = setTimeout(() => {
           // Highlight first recommendation
-          const firstRecBtn = document.querySelector('#rec-container button');
-          if (firstRecBtn) firstRecBtn.click();
-          
-          stepText.innerText = 'Step 5 of 5: Dispatching Resolution Script';
+          const recCard = document.getElementById('card-rec-gemini-generated');
+          if (recCard) {
+            recCard.classList.add('autoplay-highlight');
+          }
           
           autoplayTimer = setTimeout(() => {
-            // Inject script to chat
-            injectDraftToChat();
+            // Trigger recommended action click
+            triggerRecommendationAction('rec-gemini-generated');
             
             autoplayTimer = setTimeout(() => {
-              // Final Step: Outcome modal showing protected SLA metrics
-              if (banner) banner.style.display = 'none';
-              isAutoplayActive = false;
+              stepText.innerText = 'Step 5 of 5: Visualizing Architecture pipeline...';
+              switchTab('architecture');
               
-              const outcomeModal = document.getElementById('autoplay-outcome-modal');
-              if (outcomeModal) outcomeModal.style.display = 'flex';
+              // Highlight architecture nodes
+              const archNode = document.getElementById('arch-node-gemini');
+              if (archNode) {
+                archNode.classList.add('autoplay-highlight');
+              }
               
-              writeTerminalLog('SYSTEM', 'Autoplay demo successfully completed.');
-            }, 1500);
+              autoplayTimer = setTimeout(() => {
+                // Switch to Executive Dashboard to show final business impact ROI calculations
+                switchTab('executive');
+                
+                autoplayTimer = setTimeout(() => {
+                  if (banner) banner.style.display = 'none';
+                  isAutoplayActive = false;
+                  
+                  // Reset highlight classes
+                  if (recCard) recCard.classList.remove('autoplay-highlight');
+                  if (archNode) archNode.classList.remove('autoplay-highlight');
+                  
+                  // Setup final letter popup summary values
+                  setupExecutiveIncidentReportSummary();
+                  
+                  // Open premium executive summary report modal
+                  const outcomeModal = document.getElementById('autoplay-outcome-modal');
+                  if (outcomeModal) outcomeModal.style.display = 'flex';
+                  
+                  writeTerminalLog('SUCCESS', 'Customer successfully retained. Business impact ROI achieved.');
+                }, 2500);
 
-          }, 2000);
-        }, 2000);
+              }, 2500);
+            }, 2000);
+          }, 1500);
+        }, 1000);
 
       }, 3500);
 
     }, 2500);
 
   }, 1500);
+}
+
+function setupExecutiveIncidentReportSummary() {
+  const cust = customerData[activeCustomer];
+  
+  // Format dates / tags
+  document.getElementById('exec-report-timestamp').innerText = `REPORT ID: ${cust.initial}CS-RET-${new Date().getFullYear()}`;
+  document.getElementById('outcome-report-emotion').innerHTML = `<i data-lucide="frown"></i> ${cust.currentEmotion} (${cust.emotionScore}%)`;
+  
+  const riskColor = cust.riskLevel.includes('HIGH') ? 'var(--danger)' : 'var(--success)';
+  document.getElementById('outcome-report-risk').style.color = riskColor;
+  document.getElementById('outcome-report-risk').innerText = `${cust.riskLevel} (${cust.emotionScore + 10}%)`;
+
+  let actionText = '';
+  if (cust.id === 'sarah') {
+    actionText = "The customer Jenkins, Sarah (Enterprise Tier 2, LTV $12,400) connected via Chat Workspace due to billing Stripe card declination. AI classified negative frustration state and generated loyalty coupon and token overrides.";
+  } else if (cust.id === 'michael') {
+    actionText = "The customer Chen, Michael (Growth Tier, LTV $45,800) queried regarding team expansion rates. AI flagged anxiety index due to Friday launch deadlines and generated temporary buffers.";
+  } else {
+    actionText = "The customer Rostova, Elena (Startup Tier, LTV $3,600) opened a routine billing check query. AI verified stable neutral/polite states and credited accounts manually.";
+  }
+  document.getElementById('outcome-report-summary').innerText = actionText;
+  lucide.createIcons();
 }
 
 function cancelAutoplayDemo() {
@@ -1475,6 +1778,12 @@ function cancelAutoplayDemo() {
   const banner = document.getElementById('autoplay-banner');
   if (banner) banner.style.display = 'none';
   
+  // Clean highlights
+  const recCard = document.getElementById('card-rec-gemini-generated');
+  const archNode = document.getElementById('arch-node-gemini');
+  if (recCard) recCard.classList.remove('autoplay-highlight');
+  if (archNode) archNode.classList.remove('autoplay-highlight');
+
   writeTerminalLog('SYSTEM', 'Autoplay demonstration cancelled.');
 }
 

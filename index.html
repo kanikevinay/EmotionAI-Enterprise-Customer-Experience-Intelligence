@@ -32,15 +32,15 @@
   <!-- ========================================== -->
   <!-- 1. LANDING PAGE VIEW                       -->
   <!-- ========================================== -->
-  <div id="landing-page">
+  <div id="landing-page" role="region" aria-label="Landing Page">
     <nav class="header-nav">
-      <div class="logo">
+      <div class="logo" onclick="returnToLanding()" tabindex="0" aria-label="EmotionAI Home">
         <i data-lucide="brain-circuit"></i>
         <span>EmotionAI</span>
       </div>
       <div class="cta-group">
-        <button class="btn btn-secondary scale-hover" onclick="showDemo(true)">Run Auto Demo</button>
-        <button class="btn btn-primary scale-hover" onclick="showDemo()">Launch Console <i data-lucide="arrow-right"></i></button>
+        <button class="btn btn-secondary scale-hover" onclick="showDemo(true)" aria-label="Start Autoplay Demo">Run Auto Demo</button>
+        <button class="btn btn-primary scale-hover" onclick="showDemo()" aria-label="Launch Console Dashboard">Launch Console <i data-lucide="arrow-right"></i></button>
       </div>
     </nav>
 
@@ -56,10 +56,10 @@
         Traditional AI chatbots only answer questions. EmotionAI understands customer emotions, predicts frustration before escalation, routes real-time script guides to agents, and visualizes enterprise-wide telemetry.
       </p>
       <div class="cta-group">
-        <button class="btn btn-primary btn-lg scale-hover" onclick="showDemo()">
+        <button class="btn btn-primary btn-lg scale-hover" onclick="showDemo()" aria-label="Start Console">
           Launch Agent Dashboard <i data-lucide="terminal"></i>
         </button>
-        <button class="btn btn-secondary btn-lg scale-hover" onclick="showDemo(true)">
+        <button class="btn btn-secondary btn-lg scale-hover" onclick="showDemo(true)" aria-label="Start Guided Presentation">
           Start Guided AI Demo
         </button>
       </div>
@@ -68,17 +68,17 @@
     <div class="features-container">
       <h2 class="section-title">Engineered for High-Growth Enterprises</h2>
       <div class="features-grid">
-        <div class="feature-card glass glow-card">
+        <div class="feature-card glass glow-card" tabindex="0">
           <i data-lucide="shield-alert"></i>
           <h3>Predictive Frustration Alerts</h3>
           <p>Scans chat vocabulary, message velocity, punctuation patterns, and customer history to predict agent escalations before they occur.</p>
         </div>
-        <div class="feature-card glass glow-card">
+        <div class="feature-card glass glow-card" tabindex="0">
           <i data-lucide="zap"></i>
           <h3>Action Recommendations</h3>
           <p>Dynamically provides support agents with instant solutions like custom discount coupons, senior manager routings, and auto-generated apologetic email scripts.</p>
         </div>
-        <div class="feature-card glass glow-card">
+        <div class="feature-card glass glow-card" tabindex="0">
           <i data-lucide="trending-up"></i>
           <h3>Executive CEO Metrics</h3>
           <p>Track business health with CEO-level indices such as Revenue Saved, Brand Reputation Scores, Retention Forecasts, and CX ROI.</p>
@@ -86,7 +86,7 @@
       </div>
     </div>
 
-    <section class="trust-section">
+    <section class="trust-section" aria-label="Enterprise Customers">
       <p>Trusted by industry leaders in enterprise software</p>
       <div class="trust-logos">
         <div class="logo-item"><i data-lucide="circle-dot"></i> Vercel</div>
@@ -101,65 +101,65 @@
   <!-- ========================================== -->
   <!-- APP WORKSPACE SHELL                        -->
   <!-- ========================================== -->
-  <div id="app-workspace" style="display: none;">
+  <div id="app-workspace" style="display: none;" role="main" aria-label="Copilot Workspace Console">
     <!-- Navigation Sidebar -->
-    <aside class="sidebar">
+    <aside class="sidebar" role="navigation" aria-label="Sidebar Navigation">
       <div>
-        <div class="sidebar-logo logo" onclick="returnToLanding()">
+        <div class="sidebar-logo logo" onclick="returnToLanding()" tabindex="0" aria-label="EmotionAI Landing Home">
           <i data-lucide="brain-circuit"></i>
           <span>EmotionAI</span>
         </div>
         <ul class="nav-list">
           <li>
-            <div class="nav-item active" onclick="switchTab('executive')" id="nav-executive">
+            <div class="nav-item active" onclick="switchTab('executive')" id="nav-executive" tabindex="0" role="button" aria-label="Executive Dashboard">
               <i data-lucide="layout-dashboard"></i>
               <span>Executive Overview</span>
             </div>
           </li>
           <li>
-            <div class="nav-item" onclick="switchTab('conversation')" id="nav-conversation">
+            <div class="nav-item" onclick="switchTab('conversation')" id="nav-conversation" tabindex="0" role="button" aria-label="Conversation Workspace">
               <i data-lucide="message-square"></i>
               <span>Live Workspace</span>
             </div>
           </li>
           <li>
-            <div class="nav-item" onclick="switchTab('recommendations')" id="nav-recommendations">
+            <div class="nav-item" onclick="switchTab('recommendations')" id="nav-recommendations" tabindex="0" role="button" aria-label="AI Recommendations">
               <i data-lucide="zap"></i>
               <span>Recommendations</span>
             </div>
           </li>
           <li>
-            <div class="nav-item" onclick="switchTab('timeline')" id="nav-timeline">
+            <div class="nav-item" onclick="switchTab('timeline')" id="nav-timeline" tabindex="0" role="button" aria-label="Customer Journey Timeline">
               <i data-lucide="git-commit"></i>
               <span>Journey Timeline</span>
             </div>
           </li>
           <li>
-            <div class="nav-item" onclick="switchTab('analytics')" id="nav-analytics">
+            <div class="nav-item" onclick="switchTab('analytics')" id="nav-analytics" tabindex="0" role="button" aria-label="CX Analytics Dashboard">
               <i data-lucide="bar-chart-3"></i>
               <span>CX Analytics</span>
             </div>
           </li>
           <li>
-            <div class="nav-item" onclick="switchTab('insights')" id="nav-insights">
+            <div class="nav-item" onclick="switchTab('insights')" id="nav-insights" tabindex="0" role="button" aria-label="AI Diagnostic Insights">
               <i data-lucide="lightbulb"></i>
               <span>AI Insights</span>
             </div>
           </li>
           <li>
-            <div class="nav-item" onclick="switchTab('profile')" id="nav-profile">
+            <div class="nav-item" onclick="switchTab('profile')" id="nav-profile" tabindex="0" role="button" aria-label="Customer Profile Card">
               <i data-lucide="user"></i>
               <span>Customer Profile</span>
             </div>
           </li>
           <li>
-            <div class="nav-item" onclick="switchTab('voice-ai')" id="nav-voice-ai">
+            <div class="nav-item" onclick="switchTab('voice-ai')" id="nav-voice-ai" tabindex="0" role="button" aria-label="Voice AI Phone Integration">
               <i data-lucide="mic"></i>
               <span>Voice AI Assistant</span>
             </div>
           </li>
           <li>
-            <div class="nav-item" onclick="switchTab('architecture')" id="nav-architecture" style="border-top: 1px dashed rgba(255,255,255,0.08); margin-top:0.5rem; padding-top:0.8rem;">
+            <div class="nav-item" onclick="switchTab('architecture')" id="nav-architecture" style="border-top: 1px dashed rgba(255,255,255,0.08); margin-top:0.5rem; padding-top:0.8rem;" tabindex="0" role="button" aria-label="System Pipeline Architecture Flow">
               <i data-lucide="workflow" style="color:var(--accent-blue);"></i>
               <span style="font-weight:600; color:var(--text-primary);">System Architecture</span>
             </div>
@@ -168,7 +168,11 @@
       </div>
 
       <div class="sidebar-footer">
-        <div class="user-profile-sm">
+        <!-- Live Connection Mode Badge -->
+        <div id="sidebar-connection-tag" class="sidebar-status-tag demo-mode">
+          <i data-lucide="alert-circle"></i> Demo Mode (Mock AI)
+        </div>
+        <div class="user-profile-sm" style="margin-top: 0.75rem;">
           <div class="avatar-sm">AG</div>
           <div class="user-info-sm">
             <h4>Alex Gray</h4>
@@ -189,14 +193,19 @@
         </div>
         
         <div class="header-actions">
-          <!-- Setup Gemini Key Icon Trigger -->
+          <!-- Connection Status Button -->
+          <div class="connection-status-pill offline" id="header-conn-pill" onclick="toggleApiModal(true)">
+            <span class="status-pulse-dot"></span>
+            <span id="header-conn-text" style="font-size:0.75rem; font-weight:700;">Demo Mode (Mock AI)</span>
+          </div>
+
           <button class="icon-btn active" id="btn-api-config" title="Configure Gemini API Settings" onclick="toggleApiModal(true)">
             <i data-lucide="settings-2"></i>
           </button>
           
           <div class="customer-selector-container">
             <span style="font-size:0.8rem; color:var(--text-secondary); font-weight:600;">ACTIVE CUSTOMER:</span>
-            <select class="customer-dropdown" id="global-customer-select" onchange="onCustomerChange(this.value)">
+            <select class="customer-dropdown" id="global-customer-select" onchange="onCustomerChange(this.value)" aria-label="Select Active Customer Profile">
               <option value="sarah">Sarah Jenkins (Frustrated / Payment Failed)</option>
               <option value="michael">Michael Chen (Anxious / Enterprise Upgrade)</option>
               <option value="elena">Elena Rostova (Satisfied / Billing Query)</option>
@@ -214,6 +223,33 @@
         <!-- VIEW 9 & 5: EXECUTIVE OVERVIEW DASHBOARD   -->
         <!-- ========================================== -->
         <div id="view-executive" class="view-pane active">
+          <!-- Live ROI Impact Estimates -->
+          <div class="glass glow-card" style="padding:1.5rem; margin-bottom:1.5rem; border-color:rgba(34,197,94,0.15);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+              <h3 style="font-family:var(--font-title); font-size:1.1rem; font-weight:700; display:flex; align-items:center; gap:0.5rem;">
+                <i data-lucide="piggy-bank" style="color:var(--success);"></i> Live Business ROI Estimates <span style="font-size:0.7rem; color:var(--text-muted); font-weight:500;">(Demo Estimates)</span>
+              </h3>
+            </div>
+            <div class="roi-grid" style="display:grid; grid-template-columns:repeat(4, 1fr); gap:1rem;">
+              <div class="roi-box">
+                <span class="roi-label">Est. Revenue Saved</span>
+                <strong class="roi-val" id="roi-saved-rev">$0</strong>
+              </div>
+              <div class="roi-box">
+                <span class="roi-label">Est. Churn Prevented</span>
+                <strong class="roi-val" id="roi-churn-prev">0</strong>
+              </div>
+              <div class="roi-box">
+                <span class="roi-label">Support Cost Reduction</span>
+                <strong class="roi-val" id="roi-cost-reduction">0%</strong>
+              </div>
+              <div class="roi-box">
+                <span class="roi-label">Resolution Time Saved</span>
+                <strong class="roi-val" id="roi-time-saved">0m</strong>
+              </div>
+            </div>
+          </div>
+
           <div class="stats-grid-4">
             <div class="stat-card glass glow-card">
               <div class="stat-header">
@@ -322,14 +358,14 @@
                   </div>
                 </div>
                 <div class="chat-actions">
-                  <button class="icon-btn" title="Initiate Screen Share"><i data-lucide="monitor"></i></button>
-                  <button class="icon-btn" title="Dial via Voice Network" onclick="switchTab('voice-ai')"><i data-lucide="phone"></i></button>
-                  <button class="icon-btn active" title="AI Live Copilot Mode"><i data-lucide="bot"></i></button>
+                  <button class="icon-btn" title="Initiate Screen Share" aria-label="Share Agent Screen"><i data-lucide="monitor"></i></button>
+                  <button class="icon-btn" title="Dial via Voice Network" onclick="switchTab('voice-ai')" aria-label="Start Voice call"><i data-lucide="phone"></i></button>
+                  <button class="icon-btn active" title="AI Live Copilot Mode" aria-label="AI Copilot Active"><i data-lucide="bot"></i></button>
                 </div>
               </div>
 
               <!-- Conversation Feed -->
-              <div class="chat-messages" id="chat-conversation-feed">
+              <div class="chat-messages" id="chat-conversation-feed" role="log" aria-live="polite">
                 <!-- Populated dynamically via JS -->
               </div>
 
@@ -341,14 +377,29 @@
                 <span style="font-size: 0.8rem; color: var(--text-muted); margin-left: 0.5rem;" id="chat-typing-text">Customer typing...</span>
               </div>
 
+              <!-- Sequential Loader Indicator (Gemini Step Loader) -->
+              <div id="gemini-step-loader" style="display:none;">
+                <div class="step-loader-header">
+                  <span class="step-pulse-purple"></span>
+                  <strong>Gemini AI Real-Time Stream Engine</strong>
+                </div>
+                <ul class="step-loader-list">
+                  <li id="step-0"><i data-lucide="circle" class="step-icon"></i> Connecting to Gemini API Gateway...</li>
+                  <li id="step-1"><i data-lucide="circle" class="step-icon"></i> Parsing Vocabulary & Intent...</li>
+                  <li id="step-2"><i data-lucide="circle" class="step-icon"></i> Running Emotion Dial Classifiers...</li>
+                  <li id="step-3"><i data-lucide="circle" class="step-icon"></i> Mapping Action Recommendation Center...</li>
+                  <li id="step-4"><i data-lucide="circle" class="step-icon"></i> Syncing Executive BI Dashboards...</li>
+                </ul>
+              </div>
+
               <!-- Input Bar -->
               <div class="chat-input-bar">
-                <button class="icon-btn" title="Upload debug logs / screenshots"><i data-lucide="paperclip"></i></button>
+                <button class="icon-btn" title="Upload debug logs / screenshots" aria-label="Attach File"><i data-lucide="paperclip"></i></button>
                 <div class="chat-input-wrapper">
-                  <input type="text" class="chat-input" id="chat-user-input" placeholder="Draft agent response or copy AI recommendation script..." onkeydown="handleChatInput(event)">
+                  <input type="text" class="chat-input" id="chat-user-input" placeholder="Draft agent response or copy AI recommendation script..." onkeydown="handleChatInput(event)" aria-label="Type message or reply template">
                   <div class="chat-input-actions">
-                    <button class="input-icon-btn" onclick="startSimulatedVoiceInput()"><i data-lucide="mic"></i></button>
-                    <button class="input-icon-btn" onclick="sendCustomAgentMessage()"><i data-lucide="send"></i></button>
+                    <button class="input-icon-btn" onclick="startSimulatedVoiceInput()" title="Voice Script overlay" aria-label="Simulate Mic Input"><i data-lucide="mic"></i></button>
+                    <button class="input-icon-btn" onclick="sendCustomAgentMessage()" title="Send Message" aria-label="Send message"><i data-lucide="send"></i></button>
                   </div>
                 </div>
               </div>
@@ -412,6 +463,62 @@
                 </div>
               </div>
 
+              <!-- Animated Confidence Gauges (Polished visual gauges replacing plain text) -->
+              <div class="glass" style="padding:1.25rem;">
+                <h4 style="font-size:0.85rem; color:var(--text-muted); text-transform:uppercase; font-weight:600; margin-bottom:1rem;">Model Confidence Metrics</h4>
+                <div class="gauges-flex-row" style="display:flex; justify-content:space-around; gap:0.5rem;">
+                  <div class="gauge-compact">
+                    <div class="gauge-c-header">Emotion</div>
+                    <div class="gauge-circle-outer">
+                      <svg class="gauge-svg-comp">
+                        <circle class="gauge-track-c" cx="30" cy="30" r="24"></circle>
+                        <circle class="gauge-progress-c text-danger" id="gauge-conf-emotion" cx="30" cy="30" r="24" style="stroke-dashoffset: 15.07;"></circle>
+                      </svg>
+                      <span class="gauge-percent-val" id="gauge-txt-emotion">90%</span>
+                    </div>
+                  </div>
+                  <div class="gauge-compact">
+                    <div class="gauge-c-header">Intent</div>
+                    <div class="gauge-circle-outer">
+                      <svg class="gauge-svg-comp">
+                        <circle class="gauge-track-c" cx="30" cy="30" r="24"></circle>
+                        <circle class="gauge-progress-c text-warning" id="gauge-conf-intent" cx="30" cy="30" r="24" style="stroke-dashoffset: 22.61;"></circle>
+                      </svg>
+                      <span class="gauge-percent-val" id="gauge-txt-intent">85%</span>
+                    </div>
+                  </div>
+                  <div class="gauge-compact">
+                    <div class="gauge-c-header">Recommendation</div>
+                    <div class="gauge-circle-outer">
+                      <svg class="gauge-svg-comp">
+                        <circle class="gauge-track-c" cx="30" cy="30" r="24"></circle>
+                        <circle class="gauge-progress-c text-success" id="gauge-conf-recommendation" cx="30" cy="30" r="24" style="stroke-dashoffset: 7.53;"></circle>
+                      </svg>
+                      <span class="gauge-percent-val" id="gauge-txt-recommendation">95%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Collapsible AI Explainability Panel -->
+              <details class="glass explain-details-panel" id="ai-explainability-details" open>
+                <summary style="font-size:0.85rem; font-weight:600; text-transform:uppercase; color:var(--text-muted); cursor:pointer; list-style:none; padding:1.25rem; display:flex; justify-content:space-between; align-items:center;">
+                  <span>Why did AI make this decision?</span>
+                  <i data-lucide="chevron-down" style="width:16px;"></i>
+                </summary>
+                <div class="explain-body-content" style="padding:0 1.25rem 1.25rem 1.25rem; border-top: 1px solid rgba(255,255,255,0.03); padding-top:1rem;">
+                  <div class="explain-flowchart">
+                    <div class="explain-node"><i data-lucide="search" style="width:14px; color:var(--accent-blue);"></i> Trigger words: <span id="explain-keywords" style="color:white; font-weight:500;">declined, cancel, broken</span></div>
+                    <div class="explain-arrow">↓</div>
+                    <div class="explain-node"><i data-lucide="brain-circuit" style="width:14px; color:var(--accent-purple);"></i> Sentiment reasoning: <span id="explain-sentiment" style="color:white; font-weight:500;">Repeated card failures with migration threat</span></div>
+                    <div class="explain-arrow">↓</div>
+                    <div class="explain-node"><i data-lucide="shield-alert" style="width:14px; color:var(--danger);"></i> Risk mapping: <span id="explain-risk" style="color:white; font-weight:500;">High LTV account at high churn danger</span></div>
+                    <div class="explain-arrow">↓</div>
+                    <div class="explain-node"><i data-lucide="check-circle" style="width:14px; color:var(--success);"></i> Suggested Action: <span id="explain-action" style="color:white; font-weight:500;">Bypass rate lock & credit billing discount</span></div>
+                  </div>
+                </div>
+              </details>
+
               <!-- Additional Analytics Details -->
               <div class="glass" style="padding: 1.5rem;" id="tel-card-diagnostics">
                 <h4 style="font-size:0.9rem; color:var(--text-muted); text-transform:uppercase; font-weight:600; margin-bottom:1rem;">AI Alert & Diagnostics</h4>
@@ -434,7 +541,7 @@
               </div>
 
               <!-- Agent Assistant Playback Simulator -->
-              <button class="btn btn-secondary scale-hover" id="btn-run-simulation" onclick="triggerSimulation()">
+              <button class="btn btn-secondary scale-hover" id="btn-run-simulation" onclick="triggerSimulation()" aria-label="Trigger Chat Playback Script">
                 <i data-lucide="play-circle"></i> Trigger Conversation Simulation
               </button>
             </div>
@@ -457,14 +564,14 @@
                   <i data-lucide="file-text" style="color: var(--accent-purple);"></i>
                   <span id="playground-title">Apology Draft Template</span>
                 </div>
-                <button class="icon-btn" onclick="copyPlaygroundCode()" title="Copy draft to clipboard"><i data-lucide="copy"></i></button>
+                <button class="icon-btn" onclick="copyPlaygroundCode()" title="Copy draft to clipboard" aria-label="Copy template code"><i data-lucide="copy"></i></button>
               </div>
               <div class="preview-code-box" id="playground-content">
                 // Select an action from the recommendations cards above to view live code.
               </div>
               <div style="display:flex; justify-content:space-between; align-items:center;">
                 <p style="font-size:0.8rem; color:var(--text-muted);"><i data-lucide="shield-check" style="vertical-align:middle; width:14px;"></i> Enterprise security compliant. Sensitive data masked.</p>
-                <button class="btn btn-primary" onclick="injectDraftToChat()">Inject Draft to Chat Workspace</button>
+                <button class="btn btn-primary" onclick="injectDraftToChat()" aria-label="Inject template script to chat input">Inject Draft to Chat Workspace</button>
               </div>
             </div>
           </div>
@@ -854,7 +961,7 @@
         <div id="view-voice-ai" class="view-pane">
           <div class="glass voice-assistant-container" id="voice-assistant-card">
             <div class="voice-mic-outer" onclick="toggleVoiceAIAssistant()">
-              <button class="voice-mic-btn">
+              <button class="voice-mic-btn" aria-label="Toggle Microphone Voice Assistant">
                 <i data-lucide="mic" id="voice-mic-icon"></i>
               </button>
             </div>
@@ -866,7 +973,7 @@
 
             <!-- Waveform Canvas -->
             <div class="waveform-container">
-              <canvas class="waveform-canvas" id="voice-canvas-render"></canvas>
+              <canvas class="waveform-canvas" id="voice-canvas-render" aria-label="Voice Waveform Telemetry Visualizer"></canvas>
             </div>
 
             <div class="voice-telemetry-grid">
@@ -912,93 +1019,166 @@
         <!-- VIEW: SYSTEM ARCHITECTURE VISUALIZER       -->
         <!-- ========================================== -->
         <div id="view-architecture" class="view-pane">
-          <div class="glass" style="padding: 2rem; margin-bottom: 2rem;">
-            <h3 style="font-family:var(--font-title); font-weight:700; margin-bottom:0.5rem;">Enterprise Real-Time Pipeline</h3>
-            <p style="color:var(--text-secondary); font-size:0.9rem;">Trace how customer vocal/text telemetry runs through the Gemini AI layer and feeds the BI recommendation dashboard.</p>
-            
-            <div class="arch-flowchart">
+          <!-- Flowchart Grid and live metrics -->
+          <div style="display:grid; grid-template-columns:2fr 1.2fr; gap:1.5rem; margin-bottom:1.5rem;">
+            <div class="glass" style="padding: 2rem;">
+              <h3 style="font-family:var(--font-title); font-weight:700; margin-bottom:0.5rem;">Enterprise Real-Time Pipeline</h3>
+              <p style="color:var(--text-secondary); font-size:0.9rem; margin-bottom:2rem;">Trace how customer vocal/text telemetry runs through the Gemini AI layer and feeds the BI recommendation dashboard.</p>
               
-              <!-- Left Side: Input Node -->
-              <div class="arch-card active" id="arch-node-customer">
-                <div class="arch-icon"><i data-lucide="user"></i></div>
-                <div class="arch-details">
-                  <h4>1. Customer Interaction</h4>
-                  <p>Vocal streams & chat message packets</p>
-                  <span class="arch-tech">Websocket / Audio Stream</span>
+              <div class="arch-flowchart">
+                <!-- Left Side: Input Node -->
+                <div class="arch-card active" id="arch-node-customer">
+                  <div class="arch-icon"><i data-lucide="user"></i></div>
+                  <div class="arch-details">
+                    <h4>1. Customer Interaction</h4>
+                    <p>Vocal streams & chat message packets</p>
+                    <span class="arch-tech">Websocket / Audio Stream</span>
+                  </div>
+                  <div class="status-indicator online"></div>
                 </div>
-                <div class="status-indicator online"></div>
+
+                <!-- Connector Line -->
+                <div class="arch-connector"><div class="arch-pulse"></div></div>
+
+                <!-- Node 2: Workspace Layer -->
+                <div class="arch-card active" id="arch-node-workspace">
+                  <div class="arch-icon"><i data-lucide="monitor"></i></div>
+                  <div class="arch-details">
+                    <h4>2. Copilot Console UI</h4>
+                    <p>Support Agent client workspace</p>
+                    <span class="arch-tech">Vanilla JS Client Shell</span>
+                  </div>
+                  <div class="status-indicator online"></div>
+                </div>
+
+                <!-- Connector Line -->
+                <div class="arch-connector"><div class="arch-pulse"></div></div>
+
+                <!-- Node 3: Gemini Analysis (Central API) -->
+                <div class="arch-card gemini-node" id="arch-node-gemini">
+                  <div class="arch-icon"><i data-lucide="brain"></i></div>
+                  <div class="arch-details">
+                    <h4>3. Gemini AI Engine</h4>
+                    <p>Structured LLM analysis & intent extraction</p>
+                    <span class="arch-tech" id="arch-gemini-version">gemini-2.5-flash API</span>
+                  </div>
+                  <div class="status-indicator offline" id="arch-gemini-status"></div>
+                </div>
+
+                <!-- Connector Line -->
+                <div class="arch-connector"><div class="arch-pulse"></div></div>
+
+                <!-- Node 4: Metric Telemetry -->
+                <div class="arch-card active" id="arch-node-telemetry">
+                  <div class="arch-icon"><i data-lucide="gauge"></i></div>
+                  <div class="arch-details">
+                    <h4>4. Telemetry Classifiers</h4>
+                    <p>Stress, Risk, Sentiment & Urgency indicators</p>
+                    <span class="arch-tech">Structured JSON Schema parsing</span>
+                  </div>
+                  <div class="status-indicator online"></div>
+                </div>
+
+                <!-- Connector Line -->
+                <div class="arch-connector"><div class="arch-pulse"></div></div>
+
+                <!-- Node 5: Action Recommendation Center -->
+                <div class="arch-card active" id="arch-node-recommendations">
+                  <div class="arch-icon"><i data-lucide="zap"></i></div>
+                  <div class="arch-details">
+                    <h4>5. Recommendation Engine</h4>
+                    <p>Discount coupons, managers routes, zoom triggers</p>
+                    <span class="arch-tech">Heuristic Action Mapping</span>
+                  </div>
+                  <div class="status-indicator online"></div>
+                </div>
+
+                <!-- Connector Line -->
+                <div class="arch-connector"><div class="arch-pulse"></div></div>
+
+                <!-- Node 6: Executive & Analytics -->
+                <div class="arch-card active" id="arch-node-bi">
+                  <div class="arch-icon"><i data-lucide="bar-chart-3"></i></div>
+                  <div class="arch-details">
+                    <h4>6. Executive BI Dashboard</h4>
+                    <p>Aggregate ROI analytics & CSAT charts</p>
+                    <span class="arch-tech">Chart.js / Data Warehousing</span>
+                  </div>
+                  <div class="status-indicator online"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pipeline Live Metrics and Enterprise Health Indicators -->
+            <div style="display:flex; flex-direction:column; gap:1.5rem;">
+              <!-- Real-Time API Metrics -->
+              <div class="glass" style="padding:1.5rem;">
+                <h4 style="font-size:0.85rem; color:var(--text-muted); text-transform:uppercase; font-weight:600; margin-bottom:1rem; display:flex; justify-content:space-between; align-items:center;">
+                  <span>Pipeline Telemetry Logs</span>
+                  <span class="pulse-dot" style="margin-left:0.5rem;"></span>
+                </h4>
+                <div style="display:flex; flex-direction:column; gap:0.75rem;">
+                  <div style="display:flex; justify-content:space-between; font-size:0.9rem;">
+                    <span style="color:var(--text-secondary);">Request Latency:</span>
+                    <strong style="color:white;" id="arch-latency-val">0ms</strong>
+                  </div>
+                  <div style="display:flex; justify-content:space-between; font-size:0.9rem;">
+                    <span style="color:var(--text-secondary);">LLM processing:</span>
+                    <strong style="color:white;" id="arch-processing-val">0.0s</strong>
+                  </div>
+                  <div style="display:flex; justify-content:space-between; font-size:0.9rem;">
+                    <span style="color:var(--text-secondary);">API requests count:</span>
+                    <strong style="color:white;" id="arch-requests-val">124</strong>
+                  </div>
+                </div>
               </div>
 
-              <!-- Connector Line -->
-              <div class="arch-connector"><div class="arch-pulse"></div></div>
-
-              <!-- Node 2: Workspace Layer -->
-              <div class="arch-card active" id="arch-node-workspace">
-                <div class="arch-icon"><i data-lucide="monitor"></i></div>
-                <div class="arch-details">
-                  <h4>2. Copilot Console UI</h4>
-                  <p>Support Agent client workspace</p>
-                  <span class="arch-tech">Vanilla JS Client Shell</span>
+              <!-- Enterprise Health Status Widget -->
+              <div class="glass" style="padding:1.5rem;">
+                <h4 style="font-size:0.85rem; color:var(--text-muted); text-transform:uppercase; font-weight:600; margin-bottom:1rem;">
+                  Enterprise System Status
+                </h4>
+                <div class="health-status-list" style="display:flex; flex-direction:column; gap:0.75rem;">
+                  <div class="health-status-row">
+                    <span class="health-service">Gemini API Connection</span>
+                    <span class="health-indicator offline" id="health-indicator-gemini">Demo Mode</span>
+                  </div>
+                  <div class="health-status-row">
+                    <span class="health-service">Telemetry DB Cluster</span>
+                    <span class="health-indicator healthy">Healthy</span>
+                  </div>
+                  <div class="health-status-row">
+                    <span class="health-service">Analytics Matrix Engine</span>
+                    <span class="health-indicator healthy">Healthy</span>
+                  </div>
+                  <div class="health-status-row">
+                    <span class="health-service">Rule Recommendation Node</span>
+                    <span class="health-indicator healthy">Healthy</span>
+                  </div>
+                  <div class="health-status-row">
+                    <span class="health-service">Copilot UI Dashboard</span>
+                    <span class="health-indicator running">Running</span>
+                  </div>
+                  <div class="health-status-row">
+                    <span class="health-service">Voice DSP Module</span>
+                    <span class="health-indicator running">Running</span>
+                  </div>
                 </div>
-                <div class="status-indicator online"></div>
               </div>
+            </div>
+          </div>
 
-              <!-- Connector Line -->
-              <div class="arch-connector"><div class="arch-pulse"></div></div>
-
-              <!-- Node 3: Gemini Analysis (Central API) -->
-              <div class="arch-card gemini-node" id="arch-node-gemini">
-                <div class="arch-icon"><i data-lucide="brain"></i></div>
-                <div class="arch-details">
-                  <h4>3. Gemini AI Engine</h4>
-                  <p>Structured LLM analysis & intent extraction</p>
-                  <span class="arch-tech" id="arch-gemini-version">gemini-2.5-flash API</span>
-                </div>
-                <div class="status-indicator offline" id="arch-gemini-status"></div>
-              </div>
-
-              <!-- Connector Line -->
-              <div class="arch-connector"><div class="arch-pulse"></div></div>
-
-              <!-- Node 4: Metric Telemetry -->
-              <div class="arch-card active" id="arch-node-telemetry">
-                <div class="arch-icon"><i data-lucide="gauge"></i></div>
-                <div class="arch-details">
-                  <h4>4. Telemetry Classifiers</h4>
-                  <p>Stress, Risk, Sentiment & Urgency indicators</p>
-                  <span class="arch-tech">Structured JSON Schema parsing</span>
-                </div>
-                <div class="status-indicator online"></div>
-              </div>
-
-              <!-- Connector Line -->
-              <div class="arch-connector"><div class="arch-pulse"></div></div>
-
-              <!-- Node 5: Action Recommendation Center -->
-              <div class="arch-card active" id="arch-node-recommendations">
-                <div class="arch-icon"><i data-lucide="zap"></i></div>
-                <div class="arch-details">
-                  <h4>5. Recommendation Engine</h4>
-                  <p>Discount coupons, managers routes, zoom triggers</p>
-                  <span class="arch-tech">Heuristic Action Mapping</span>
-                </div>
-                <div class="status-indicator online"></div>
-              </div>
-
-              <!-- Connector Line -->
-              <div class="arch-connector"><div class="arch-pulse"></div></div>
-
-              <!-- Node 6: Executive & Analytics -->
-              <div class="arch-card active" id="arch-node-bi">
-                <div class="arch-icon"><i data-lucide="bar-chart-3"></i></div>
-                <div class="arch-details">
-                  <h4>6. Executive BI Dashboard</h4>
-                  <p>Aggregate ROI analytics & CSAT charts</p>
-                  <span class="arch-tech">Chart.js / Data Warehousing</span>
-                </div>
-                <div class="status-indicator online"></div>
-              </div>
-
+          <!-- Structured JSON Code block returned by Gemini -->
+          <div class="glass" style="padding:1.5rem; margin-bottom:1.5rem;">
+            <h4 style="font-size:0.9rem; color:var(--text-muted); text-transform:uppercase; font-weight:600; margin-bottom:1rem; display:flex; justify-content:space-between; align-items:center;">
+              <span>Structured Gemini Schema (JSON Output)</span>
+              <i data-lucide="braces" style="width:16px;"></i>
+            </h4>
+            <div class="preview-code-box" style="margin-bottom:0;" id="arch-json-output">
+{
+  "status": "awaiting_input",
+  "info": "Send a customer message to analyze JSON responses."
+}
             </div>
           </div>
 
@@ -1024,18 +1204,25 @@
   <!-- ========================================== -->
   <!-- GEMINI API CONFIGURATION MODAL             -->
   <!-- ========================================== -->
-  <div class="modal-backdrop" id="api-key-modal" style="display: none;">
+  <div class="modal-backdrop" id="api-key-modal" style="display: none;" role="dialog" aria-modal="true" aria-label="Gemini API Key settings overlay">
     <div class="modal-card glass">
       <div class="modal-header">
         <h3><i data-lucide="settings" style="vertical-align:middle; color:var(--accent-blue); margin-right:6px;"></i> Gemini API Configuration</h3>
-        <button class="modal-close-btn" onclick="toggleApiModal(false)">&times;</button>
+        <button class="modal-close-btn" onclick="toggleApiModal(false)" aria-label="Close settings">&times;</button>
       </div>
       <div class="modal-body">
         <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5; margin-bottom: 1.25rem;">
           Provide a Google Gemini API Key to enable **real-time AI analytics**. Every chat message submitted in the workspace will make direct API calls to Google's models to analyze emotion, risk, and generate scripts.
         </p>
+
+        <!-- Dynamic Modal Status Indicator -->
+        <div id="modal-validation-status" class="modal-status-box demo-mode" style="margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem; padding:0.5rem 0.75rem; border-radius:6px; font-size:0.85rem; font-weight:600;">
+          <i data-lucide="alert-circle" id="modal-status-icon"></i>
+          <span id="modal-status-text">Demo Mode (Mock AI)</span>
+        </div>
+
         <div style="margin-bottom: 1.25rem;">
-          <label style="display:block; font-size:0.8rem; font-weight:600; color:var(--text-secondary); margin-bottom:0.5rem; text-transform:uppercase;">Gemini API Key</label>
+          <label for="input-api-key" style="display:block; font-size:0.8rem; font-weight:600; color:var(--text-secondary); margin-bottom:0.5rem; text-transform:uppercase;">Gemini API Key</label>
           <input type="password" class="chat-input" id="input-api-key" placeholder="AIzaSy..." style="padding-right:1rem;">
         </div>
         <div class="badge" style="background:rgba(59,130,246,0.1); border-color:rgba(59,130,246,0.2); color:#93C5FD; text-transform:none; font-size:0.75rem; margin-bottom:0.5rem; display:block; text-align:left;">
@@ -1047,7 +1234,7 @@
       </div>
       <div class="modal-footer">
         <button class="btn btn-secondary" onclick="toggleApiModal(false)">Cancel</button>
-        <button class="btn btn-primary" onclick="saveApiKey()">Save Settings</button>
+        <button class="btn btn-primary" id="btn-save-api-settings" onclick="saveApiKey()">Save Settings</button>
       </div>
     </div>
   </div>
@@ -1065,29 +1252,72 @@
     </button>
   </div>
 
-  <!-- Autoplay Final Business Outcome Overlay -->
-  <div class="modal-backdrop" id="autoplay-outcome-modal" style="display: none; z-index: 1000;">
-    <div class="modal-card glass" style="max-width:550px; text-align:center; padding:2.5rem;">
-      <div style="width:80px; height:80px; border-radius:50%; background:rgba(34,197,94,0.15); border:1px solid rgba(34,197,94,0.3); display:flex; align-items:center; justify-content:center; margin: 0 auto 1.5rem; color:var(--success);">
-        <i data-lucide="check-circle" style="width:40px; height:40px;"></i>
+  <!-- Autoplay Final Business Outcome Overlay (Executive Summary Management Report) -->
+  <div class="modal-backdrop" id="autoplay-outcome-modal" style="display: none; z-index: 1000;" role="dialog" aria-modal="true" aria-label="Executive Summary Report Overlay">
+    <div class="modal-card glass" style="max-width:680px; padding:2.5rem; position:relative;">
+      <!-- Close button -->
+      <button class="modal-close-btn" onclick="closeOutcomeModal()" style="position:absolute; right:1.5rem; top:1.5rem;">&times;</button>
+      
+      <!-- Executive Letter Header -->
+      <div style="border-bottom:1px dashed rgba(255,255,255,0.1); padding-bottom:1.25rem; margin-bottom:1.5rem; text-align:left;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div style="display:flex; align-items:center; gap:0.5rem; font-family:var(--font-title); font-weight:800; font-size:1.25rem;">
+            <i data-lucide="brain-circuit" style="color:var(--accent-blue);"></i> EmotionAI Core Intelligence
+          </div>
+          <span style="font-size:0.75rem; color:var(--text-muted); font-family:monospace;" id="exec-report-timestamp">REPORT ID: SRH-RET-2026</span>
+        </div>
+        <h3 style="font-family:var(--font-title); font-size:1.5rem; font-weight:800; margin-top:0.75rem;" class="text-gradient">EXECUTIVE INCIDENT SUMMARY</h3>
       </div>
-      <h2 style="font-family:var(--font-title); font-size:2rem; font-weight:800; margin-bottom:0.5rem;" class="text-gradient">SLA Secured & Churn Deflected</h2>
-      <p style="color:var(--text-secondary); font-size:0.95rem; line-height:1.5; margin-bottom:2rem;">
-        The Gemini API successfully detected severe frustration, diagnosed a payment failure lock, and guided the support agent with immediate remedies in less than 2.5 seconds.
-      </p>
 
-      <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1rem; margin-bottom:2rem;">
-        <div style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); padding:1rem; border-radius:12px;">
-          <span style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; font-weight:600; display:block;">Revenue Protected</span>
-          <strong style="font-size:1.5rem; color:var(--success); font-family:var(--font-title);">$2,500/mo</strong>
+      <!-- Report content -->
+      <div style="text-align:left; display:flex; flex-direction:column; gap:1.25rem; font-size:0.95rem; line-height:1.5; color:var(--text-secondary); max-height: 380px; overflow-y: auto; padding-right:0.5rem; margin-bottom:2rem;">
+        
+        <div>
+          <strong style="color:white; display:block; margin-bottom:0.25rem;">Conversation Summary:</strong>
+          <p id="outcome-report-summary">The customer Jenkins, Sarah (Enterprise Tier 2, LTV $12,400) connected via Chat Workspace due to billing Stripe declined failure. AI classified negative frustration state trigger limit blocks.</p>
         </div>
-        <div style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); padding:1rem; border-radius:12px;">
-          <span style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; font-weight:600; display:block;">Resolution SLA</span>
-          <strong style="font-size:1.5rem; color:var(--accent-blue); font-family:var(--font-title);">1.8s</strong>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
+          <div>
+            <strong style="color:white; display:block; margin-bottom:0.25rem;">Detected Emotion:</strong>
+            <span class="tel-badge emotion-frustrated" id="outcome-report-emotion"><i data-lucide="frown"></i> FRUSTRATED (84%)</span>
+          </div>
+          <div>
+            <strong style="color:white; display:block; margin-bottom:0.25rem;">Business Risk Tier:</strong>
+            <span style="color:var(--danger); font-weight:700;" id="outcome-report-risk">CRITICAL CHURN RISK (94%)</span>
+          </div>
         </div>
+
+        <div>
+          <strong style="color:white; display:block; margin-bottom:0.25rem;">Remediation Recommendations Applied:</strong>
+          <ul style="padding-left:1.25rem; list-style-type:square; color:var(--text-primary); font-size:0.9rem; display:flex; flex-direction:column; gap:0.25rem;">
+            <li>Temporary License Override processed: +14-day pipeline token.</li>
+            <li>Apology Code EMOTIONAI15 credit applied: 15% discount for next billing.</li>
+            <li>Priority CRM Ticket escalated: Routed to lead account manager.</li>
+          </ul>
+        </div>
+
         <div style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); padding:1rem; border-radius:12px;">
-          <span style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; font-weight:600; display:block;">Satisfaction Index</span>
-          <strong style="font-size:1.5rem; color:var(--accent-purple); font-family:var(--font-title);">4.9/5.0</strong>
+          <strong style="color:white; display:block; margin-bottom:0.75rem;"><i data-lucide="trending-up" style="width:14px; color:var(--success); vertical-align:middle; margin-right:4px;"></i> Estimated SLA Resolution ROI:</strong>
+          <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1rem; text-align:center;">
+            <div>
+              <span style="font-size:0.65rem; color:var(--text-muted); text-transform:uppercase; font-weight:600; display:block;">Revenue Protected</span>
+              <strong style="font-size:1.25rem; color:var(--success); font-family:var(--font-title);">$2,500/mo</strong>
+            </div>
+            <div>
+              <span style="font-size:0.65rem; color:var(--text-muted); text-transform:uppercase; font-weight:600; display:block;">AI SLA Latency</span>
+              <strong style="font-size:1.25rem; color:var(--accent-blue); font-family:var(--font-title);">1.84s</strong>
+            </div>
+            <div>
+              <span style="font-size:0.65rem; color:var(--text-muted); text-transform:uppercase; font-weight:600; display:block;">Expected Retention</span>
+              <strong style="font-size:1.25rem; color:var(--accent-purple); font-family:var(--font-title);">98.2% CSAT</strong>
+            </div>
+          </div>
+        </div>
+
+        <div style="border-top:1px dashed rgba(255,255,255,0.05); padding-top:1rem; display:flex; justify-content:space-between; align-items:center; font-size:0.8rem; color:var(--text-muted);">
+          <span>Customer Status: <strong style="color:var(--success);">SUCCESSFULLY RETAINED</strong></span>
+          <span>Verified Agent: Alex Gray (Customer Success VP)</span>
         </div>
       </div>
       
