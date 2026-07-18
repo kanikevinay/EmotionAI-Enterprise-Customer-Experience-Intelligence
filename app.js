@@ -1,203 +1,145 @@
 /**
- * EmotionAI — Real-Time Dual-Panel Customer Experience Intelligence
+ * EmotionAI — Support Ops Console
  * app.js — Client Application Logic
  *
- * This file drives the customer chat UI and the live intelligence panel.
- * All emotion/risk analysis is powered by a real backend API call to
- * /api/analyze which proxies to the Anthropic Claude API server-side.
- * The API key is NEVER exposed in this client-side file.
+ * All emotion/risk analysis is powered by a real backend POST to /api/analyze,
+ * which proxies server-side to the Anthropic Claude API.
+ * The ANTHROPIC_API_KEY is NEVER in this file or any client-side code.
  */
-
 'use strict';
 
 // ============================================================
 // STATE
 // ============================================================
 const state = {
-  conversationHistory: [],   // {role: 'user'|'agent', content: string}[]
-  pulsePoints: [],           // sentiment_score values per turn (0–100)
-  totalMessages: 0,
+  history: [],          // [{role, content}]
+  pulseScores: [],      // sentiment_score 0–100 per turn
+  totalMsgs: 0,
   totalRisk: 0,
   highRiskCount: 0,
-  isAnalyzing: false,
-  lastAnalysis: null,
-  currentRecommendation: null,
+  busy: false,
+  currentRec: null,
 };
 
 // ============================================================
-// EMOTION CONFIG
+// EMOTION METADATA
 // ============================================================
-const EMOTION_CONFIG = {
-  Happy:      { emoji: '😊', label: 'Happy',      cssClass: 'happy',      pulseColor: '#22C55E' },
-  Neutral:    { emoji: '😐', label: 'Neutral',    cssClass: 'neutral',    pulseColor: '#14B8A6' },
-  Frustrated: { emoji: '😤', label: 'Frustrated', cssClass: 'frustrated', pulseColor: '#F59E0B' },
-  Angry:      { emoji: '😡', label: 'Angry',      cssClass: 'angry',      pulseColor: '#EF4444' },
-  Confused:   { emoji: '😕', label: 'Confused',   cssClass: 'confused',   pulseColor: '#A78BFA' },
-  Urgent:     { emoji: '🚨', label: 'Urgent',     cssClass: 'urgent',     pulseColor: '#EF4444' },
+const EMOTIONS = {
+  Happy:      { emoji: '😊' },
+  Neutral:    { emoji: '😐' },
+  Frustrated: { emoji: '😤' },
+  Angry:      { emoji: '😡' },
+  Confused:   { emoji: '😕' },
+  Urgent:     { emoji: '🚨' },
 };
 
-const URGENCY_CLASS = {
-  Low: 'low', Medium: 'medium', High: 'high', Critical: 'critical',
-};
+const URGENCY_LEVEL = { Low: 'low', Medium: 'medium', High: 'high', Critical: 'critical' };
 
 // ============================================================
 // DOM HELPERS
 // ============================================================
 function $(id) { return document.getElementById(id); }
 
-function formatTime() {
-  const now = new Date();
-  return now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+function now() {
+  return new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
 }
 
 // ============================================================
 // TOAST
 // ============================================================
-let toastTimer = null;
-function showToast(message, type = 'teal') {
-  const toast = $('toast');
-  toast.textContent = message;
-  toast.className = `toast ${type === 'error' ? 'error-toast' : 'teal-toast'} show`;
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => { toast.className = 'toast'; }, 3200);
+let _toastTimer = null;
+function showToast(msg) {
+  const el = $('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
 }
 
 // ============================================================
-// STATUS PILL
+// STATUS INDICATOR
 // ============================================================
-function setStatus(status, text) {
-  const pill = $('api-status-pill');
-  const statusText = $('api-status-text');
-  statusText.textContent = text;
-  if (status === 'ready') {
-    pill.className = 'status-pill';
-  } else if (status === 'loading') {
-    pill.className = 'status-pill';
-    statusText.textContent = '⏳ Analyzing…';
-  } else if (status === 'error') {
-    pill.className = 'status-pill error';
-  }
+function setStatus(state, label) {
+  const el = $('api-status');
+  $('status-text').textContent = label;
+  el.setAttribute('data-state', state);
 }
 
 // ============================================================
-// CHAT BUBBLE RENDERING
+// ERROR BANNER
+// ============================================================
+function showError(msg) {
+  $('error-banner-text').textContent = msg;
+  $('error-banner').style.display = 'flex';
+  setStatus('error', 'Error');
+}
+
+function dismissError() {
+  $('error-banner').style.display = 'none';
+  setStatus('ready', 'Ready');
+}
+
+// ============================================================
+// CHAT RENDERING
 // ============================================================
 function appendBubble(role, text) {
   const feed = $('chat-feed');
-  const time = formatTime();
+  const row = document.createElement('div');
+  row.className = `msg-row ${role}`;
 
-  const wrapper = document.createElement('div');
-  wrapper.className = `chat-bubble-wrapper ${role}`;
+  const av = document.createElement('div');
+  av.className = `msg-av ${role}-av`;
+  av.textContent = role === 'agent' ? 'AI' : 'C';
 
-  const avatarEl = document.createElement('div');
-  avatarEl.className = `bubble-avatar ${role === 'agent' ? 'agent-av' : 'customer-av'}`;
-  avatarEl.textContent = role === 'agent' ? 'AI' : 'C';
+  const content = document.createElement('div');
+  content.className = 'msg-content';
 
-  const contentEl = document.createElement('div');
-  contentEl.className = 'bubble-content';
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble';
+  bubble.textContent = text;
 
-  const bubbleEl = document.createElement('div');
-  bubbleEl.className = 'bubble';
-  bubbleEl.textContent = text;
+  const t = document.createElement('div');
+  t.className = 'msg-time';
+  t.textContent = now();
 
-  const timeEl = document.createElement('div');
-  timeEl.className = 'bubble-time';
-  timeEl.textContent = time;
-
-  contentEl.appendChild(bubbleEl);
-  contentEl.appendChild(timeEl);
+  content.appendChild(bubble);
+  content.appendChild(t);
 
   if (role === 'customer') {
-    wrapper.appendChild(contentEl);
-    wrapper.appendChild(avatarEl);
+    row.appendChild(content);
+    row.appendChild(av);
   } else {
-    wrapper.appendChild(avatarEl);
-    wrapper.appendChild(contentEl);
+    row.appendChild(av);
+    row.appendChild(content);
   }
 
-  feed.appendChild(wrapper);
+  feed.appendChild(row);
+  feed.scrollTop = feed.scrollHeight;
+}
+
+function appendSysNote(text) {
+  const feed = $('chat-feed');
+  const el = document.createElement('div');
+  el.className = 'sys-note';
+  el.textContent = text;
+  feed.appendChild(el);
   feed.scrollTop = feed.scrollHeight;
 }
 
 // ============================================================
 // TYPING INDICATOR
 // ============================================================
-function showTyping(visible) {
-  $('typing-indicator').style.display = visible ? 'flex' : 'none';
-  if (visible) {
-    const feed = $('chat-feed');
-    feed.scrollTop = feed.scrollHeight;
-  }
+function showTyping(v) {
+  $('typing-row').style.display = v ? 'flex' : 'none';
+  if (v) { const f = $('chat-feed'); f.scrollTop = f.scrollHeight; }
 }
 
 // ============================================================
-// SEND MESSAGE — MAIN ENTRY
+// TEXTAREA AUTO-RESIZE
 // ============================================================
-async function sendMessage() {
-  const input = $('customer-input');
-  const text = input.value.trim();
-  if (!text || state.isAnalyzing) return;
-
-  input.value = '';
-  autoResizeTextarea(input);
-
-  // Show customer bubble
-  appendBubble('customer', text);
-
-  // Add to history
-  state.conversationHistory.push({ role: 'user', content: text });
-
-  // Disable send button & show loading
-  $('send-btn').disabled = true;
-  state.isAnalyzing = true;
-  showTyping(true);
-  setStatus('loading', '⏳ Analyzing…');
-
-  try {
-    const result = await callAnalyzeAPI(state.conversationHistory);
-
-    // Hide typing, show agent reply
-    showTyping(false);
-    appendBubble('agent', result.reply);
-
-    // Add agent reply to history
-    state.conversationHistory.push({ role: 'agent', content: result.reply });
-
-    // Update intelligence panel
-    updateIntelPanel(result);
-
-    // Update session stats
-    state.totalMessages++;
-    state.totalRisk += result.risk_score;
-    if (result.risk_score > 70) state.highRiskCount++;
-    updateSessionStats();
-
-    // Push pulse point
-    state.pulsePoints.push(result.sentiment_score);
-    renderPulseChart(result);
-
-    setStatus('ready', 'Live Analysis Ready');
-    state.lastAnalysis = result;
-
-  } catch (err) {
-    showTyping(false);
-    setStatus('error', 'Analysis failed — retry');
-    showToast(`Analysis failed: ${err.message}`, 'error');
-    // Don't crash UI — still allow retrying
-  } finally {
-    state.isAnalyzing = false;
-    $('send-btn').disabled = false;
-    $('customer-input').focus();
-  }
-}
-
-// ============================================================
-// QUICK SEND HELPER
-// ============================================================
-function sendQuickMessage(text) {
-  const input = $('customer-input');
-  input.value = text;
-  sendMessage();
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 100) + 'px';
 }
 
 // ============================================================
@@ -208,279 +150,261 @@ function handleKeyDown(e) {
     e.preventDefault();
     sendMessage();
   }
-  autoResizeTextarea(e.target);
-}
-
-function autoResizeTextarea(el) {
-  el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
 }
 
 // ============================================================
-// API CALL TO /api/analyze
+// QUICK SEND
+// ============================================================
+function sendQuickMessage(text) {
+  $('cust-input').value = text;
+  autoResize($('cust-input'));
+  sendMessage();
+}
+
+// ============================================================
+// SEND MESSAGE — MAIN FLOW
+// ============================================================
+async function sendMessage() {
+  const input = $('cust-input');
+  const text = input.value.trim();
+  if (!text || state.busy) return;
+
+  // Clear any previous error
+  $('error-banner').style.display = 'none';
+
+  input.value = '';
+  autoResize(input);
+  $('send-btn').disabled = true;
+  state.busy = true;
+
+  // Show customer bubble
+  appendBubble('customer', text);
+  state.history.push({ role: 'user', content: text });
+
+  // Loading states
+  showTyping(true);
+  setStatus('loading', 'Analyzing…');
+
+  try {
+    const data = await callAnalyzeAPI(state.history);
+
+    showTyping(false);
+    appendBubble('agent', data.reply);
+    state.history.push({ role: 'agent', content: data.reply });
+
+    updateOpsPanel(data);
+
+    // Accumulate stats
+    state.totalMsgs++;
+    state.totalRisk += data.risk_score;
+    if (data.risk_score > 70) state.highRiskCount++;
+    updateStats();
+
+    // Pulse chart
+    state.pulseScores.push(data.sentiment_score);
+    renderSparkline();
+
+    setStatus('ready', 'Ready');
+
+  } catch (err) {
+    showTyping(false);
+    appendSysNote('Analysis failed — ' + err.message);
+    showError(err.message.length > 120 ? err.message.slice(0, 120) + '…' : err.message);
+  } finally {
+    state.busy = false;
+    $('send-btn').disabled = false;
+    input.focus();
+  }
+}
+
+// ============================================================
+// API CALL
 // ============================================================
 async function callAnalyzeAPI(messages) {
-  const response = await fetch('/api/analyze', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ messages }),
-  });
-
-  let data;
+  let resp;
   try {
-    data = await response.json();
-  } catch (e) {
-    throw new Error('Server returned an unparseable response.');
+    resp = await fetch('/api/analyze', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages }),
+    });
+  } catch (netErr) {
+    throw new Error('Network error: could not reach /api/analyze. Is the server running?');
   }
 
-  if (!response.ok) {
-    throw new Error(data?.error || `Server error ${response.status}`);
+  let data;
+  try { data = await resp.json(); }
+  catch (_) { throw new Error(`Server returned non-JSON (status ${resp.status})`); }
+
+  if (!resp.ok) {
+    throw new Error(data?.error || `API error ${resp.status}`);
   }
 
   // Validate required fields
-  const required = ['emotion','emotion_score','sentiment','sentiment_score','risk_score','urgency','confidence','recommendation','reply'];
-  for (const field of required) {
-    if (data[field] === undefined || data[field] === null) {
-      throw new Error(`LLM response missing field: ${field}`);
-    }
+  for (const f of ['emotion','emotion_score','sentiment','sentiment_score','risk_score','urgency','confidence','recommendation','reply']) {
+    if (data[f] == null) throw new Error(`LLM response missing field: ${f}`);
   }
 
   return data;
 }
 
 // ============================================================
-// UPDATE INTELLIGENCE PANEL
+// UPDATE OPS PANEL
 // ============================================================
-function updateIntelPanel(data) {
-  const emotionKey = data.emotion;
-  const cfg = EMOTION_CONFIG[emotionKey] || EMOTION_CONFIG['Neutral'];
-  const sentimentScore = Math.max(0, Math.min(100, data.sentiment_score));
-  const riskScore = Math.max(0, Math.min(100, data.risk_score));
-  const urgencyKey = data.urgency;
+function updateOpsPanel(d) {
+  const emotionKey = d.emotion || 'Neutral';
+  const cfg = EMOTIONS[emotionKey] || EMOTIONS['Neutral'];
+  const sentiment = Math.max(0, Math.min(100, d.sentiment_score));
+  const risk = Math.max(0, Math.min(100, d.risk_score));
+  const urgency = (d.urgency || 'Low').toLowerCase();
 
-  // ---- Emotion ----
-  $('emotion-emoji').textContent = cfg.emoji;
-  $('emotion-label').textContent = cfg.label;
-  $('confidence-val').textContent = `${Math.round(data.confidence)}%`;
-  const emotionBadge = $('emotion-badge');
-  emotionBadge.textContent = emotionKey;
-  emotionBadge.className = `intel-card-badge emotion-badge ${cfg.cssClass}`;
+  // Emotion
+  $('emotion-glyph').textContent = cfg.emoji;
+  $('emotion-name').textContent = emotionKey;
+  $('emotion-score-val').textContent = Math.round(d.confidence) + '%';
 
-  // Glow effect on emotion card
-  const emotionCard = $('emotion-card');
-  emotionCard.className = 'intel-card' + (riskScore > 70 ? ' risk-high' : riskScore > 30 ? ' risk-amber' : '');
+  // Sentiment bar
+  $('sentiment-name').textContent = d.sentiment || '—';
+  $('sentiment-fill').style.width = sentiment + '%';
+  $('sentiment-pin').style.left = sentiment + '%';
 
-  // ---- Sentiment ----
-  // Marker position: 0=fully negative, 50=neutral, 100=fully positive
-  const markerPct = sentimentScore; // 0–100
-  $('sentiment-marker').style.left = `${markerPct}%`;
-  $('sentiment-bar').style.width = `${markerPct}%`;
+  // Risk
+  const riskEl = $('risk-num');
+  animateInt(riskEl, parseInt(riskEl.textContent) || 0, Math.round(risk));
+  const riskFill = $('risk-fill');
+  riskFill.style.width = risk + '%';
 
-  const sentimentBadge = $('sentiment-badge');
-  sentimentBadge.textContent = data.sentiment;
-  sentimentBadge.style.color = sentimentScore < 35 ? '#EF4444' : sentimentScore > 65 ? '#22C55E' : '#94A3B8';
-
-  // ---- Risk ----
-  const riskNum = $('risk-score-num');
-  const riskBar = $('risk-bar');
-  animateNumber(riskNum, parseInt(riskNum.textContent) || 0, Math.round(riskScore));
-  riskBar.style.width = `${riskScore}%`;
-
-  if (riskScore > 70) {
-    riskBar.className = 'risk-bar-fill red';
-    riskNum.style.color = '#EF4444';
-  } else if (riskScore > 30) {
-    riskBar.className = 'risk-bar-fill amber';
-    riskNum.style.color = '#F59E0B';
+  if (risk > 70) {
+    riskFill.style.background = '#B03030';
+    riskEl.style.color = 'var(--risk-high)';
+    $('risk-card').style.background = 'var(--risk-high-bg)';
+  } else if (risk > 30) {
+    riskFill.style.background = '#C8860A';
+    riskEl.style.color = 'var(--risk-mid)';
+    $('risk-card').style.background = 'var(--risk-mid-bg)';
   } else {
-    riskBar.className = 'risk-bar-fill';
-    riskNum.style.color = '#22C55E';
+    riskFill.style.background = '#2A7A40';
+    riskEl.style.color = 'var(--risk-low)';
+    $('risk-card').style.background = 'var(--risk-low-bg)';
   }
 
-  // ---- Urgency ----
-  const urgBadge = $('urgency-badge');
-  urgBadge.textContent = urgencyKey;
-  urgBadge.className = `urgency-badge ${(URGENCY_CLASS[urgencyKey] || 'low')}`;
+  // Urgency tag
+  const uTag = $('urgency-tag');
+  uTag.textContent = d.urgency || 'Low';
+  uTag.setAttribute('data-level', URGENCY_LEVEL[d.urgency] || 'low');
 
-  // ---- Recommendation ----
-  $('recommendation-text').textContent = data.recommendation;
-  state.currentRecommendation = data.recommendation;
-  const applyBtn = $('apply-action-btn');
-  applyBtn.disabled = false;
-
-  // Pulse chart color
-  document.querySelector('.pulse-chart-svg').style.setProperty('--pulse-color', cfg.pulseColor);
+  // Recommendation
+  $('rec-text').textContent = d.recommendation || '—';
+  state.currentRec = d.recommendation;
+  $('apply-btn').disabled = false;
 }
 
 // ============================================================
-// ANIMATE NUMBER
+// ANIMATE INTEGER
 // ============================================================
-function animateNumber(el, from, to) {
-  const duration = 600;
-  const start = performance.now();
-  function update(now) {
-    const progress = Math.min((now - start) / duration, 1);
-    const eased = 1 - Math.pow(1 - progress, 3);
+function animateInt(el, from, to) {
+  const dur = 500, start = performance.now();
+  (function tick(now) {
+    const t = Math.min((now - start) / dur, 1);
+    const eased = 1 - Math.pow(1 - t, 3);
     el.textContent = Math.round(from + (to - from) * eased);
-    if (progress < 1) requestAnimationFrame(update);
-  }
-  requestAnimationFrame(update);
+    if (t < 1) requestAnimationFrame(tick);
+  })(start);
 }
 
 // ============================================================
-// EMOTIONAL PULSE CHART (SVG)
+// SPARKLINE (plain — no fill, no glow)
 // ============================================================
-function renderPulseChart(latestData) {
-  const points = state.pulsePoints;
-  const n = points.length;
+function renderSparkline() {
+  const pts = state.pulseScores;
+  const n = pts.length;
 
-  // Update turn count
-  $('pulse-turn-count').textContent = `${n} turn${n !== 1 ? 's' : ''}`;
+  $('spark-turns').textContent = n;
 
-  // Remove placeholder
-  const placeholder = $('pulse-placeholder');
+  const placeholder = $('spark-placeholder');
   if (placeholder) placeholder.style.display = 'none';
 
-  // SVG dimensions
-  const W = 400;
-  const H = 80;
-  const paddingX = 16;
-  const paddingY = 10;
-  const plotW = W - paddingX * 2;
-  const plotH = H - paddingY * 2;
+  // SVG coordinate space: viewBox="0 0 460 60"
+  // Y axis: 5 (positive top) → 30 (neutral mid) → 55 (negative bottom)
+  // sentiment 100 → y=5, 50 → y=30, 0 → y=55
+  const W_START = 42;      // left margin after Y labels
+  const W_END   = 456;
+  const plotW   = W_END - W_START;
 
-  // Map sentiment_score (0–100) to y: 0 (top=very positive) or bottom (very negative)
-  // We invert: high score → low y (top), low score → high y (bottom)
   function toY(score) {
-    return paddingY + (1 - score / 100) * plotH;
+    // score 0–100 → y 55..5
+    return 55 - (score / 100) * 50;
   }
 
-  function toX(index) {
-    if (n === 1) return W / 2;
-    return paddingX + (index / (n - 1)) * plotW;
+  function toX(i) {
+    if (n === 1) return (W_START + W_END) / 2;
+    return W_START + (i / (n - 1)) * plotW;
   }
 
-  // Build path
-  let linePath = '';
-  let areaPath = '';
-  const coords = points.map((score, i) => ({ x: toX(i), y: toY(score) }));
+  const coords = pts.map((s, i) => ({ x: toX(i), y: toY(s) }));
 
+  // Build path (simple polyline, no curves — real sparkline style)
+  let d = '';
   if (n === 1) {
-    // Just a circle
-    linePath = `M ${coords[0].x} ${coords[0].y}`;
-    areaPath = '';
+    d = `M ${coords[0].x} ${coords[0].y}`;
   } else {
-    // Smooth cubic bezier curves
-    linePath = `M ${coords[0].x} ${coords[0].y}`;
-    for (let i = 1; i < n; i++) {
-      const prev = coords[i - 1];
-      const curr = coords[i];
-      const cpX = (prev.x + curr.x) / 2;
-      linePath += ` C ${cpX} ${prev.y} ${cpX} ${curr.y} ${curr.x} ${curr.y}`;
-    }
-
-    // Area fill: same path but close down to bottom
-    areaPath = linePath;
-    areaPath += ` L ${coords[n-1].x} ${H} L ${coords[0].x} ${H} Z`;
+    d = coords.map((p, i) => (i === 0 ? `M ${p.x} ${p.y}` : `L ${p.x} ${p.y}`)).join(' ');
   }
 
-  $('pulse-line').setAttribute('d', linePath);
-  $('pulse-area').setAttribute('d', areaPath);
+  $('spark-line').setAttribute('d', d);
 
-  // Draw data points
-  const pointsGroup = $('pulse-points');
-  pointsGroup.innerHTML = '';
-
-  const cfg = EMOTION_CONFIG[latestData.emotion] || EMOTION_CONFIG['Neutral'];
-  coords.forEach((pt, i) => {
+  // Dots
+  const dotsG = $('spark-dots');
+  dotsG.innerHTML = '';
+  coords.forEach(({ x, y }, i) => {
+    const isLast = i === n - 1;
     const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    const isLatest = i === n - 1;
-    circle.setAttribute('cx', pt.x);
-    circle.setAttribute('cy', pt.y);
-    circle.setAttribute('r', isLatest ? '5' : '3.5');
-    circle.setAttribute('fill', isLatest ? cfg.pulseColor : 'rgba(255,255,255,0.5)');
-    circle.setAttribute('stroke', isLatest ? 'white' : 'transparent');
-    circle.setAttribute('stroke-width', isLatest ? '1.5' : '0');
-
-    if (isLatest) {
-      // Pulsing outer ring
-      const outerCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-      outerCircle.setAttribute('cx', pt.x);
-      outerCircle.setAttribute('cy', pt.y);
-      outerCircle.setAttribute('r', '8');
-      outerCircle.setAttribute('fill', 'none');
-      outerCircle.setAttribute('stroke', cfg.pulseColor);
-      outerCircle.setAttribute('stroke-width', '1');
-      outerCircle.setAttribute('opacity', '0.4');
-      pointsGroup.appendChild(outerCircle);
-    }
-
-    pointsGroup.appendChild(circle);
+    circle.setAttribute('cx', x);
+    circle.setAttribute('cy', y);
+    circle.setAttribute('r', isLast ? '3.5' : '2');
+    circle.setAttribute('fill', 'var(--ink-blue)');
+    circle.setAttribute('opacity', isLast ? '1' : '0.45');
+    dotsG.appendChild(circle);
   });
 }
 
 // ============================================================
 // SESSION STATS
 // ============================================================
-function updateSessionStats() {
-  $('stat-messages').textContent = state.totalMessages;
-  $('stat-avg-risk').textContent = state.totalMessages > 0
-    ? Math.round(state.totalRisk / state.totalMessages)
+function updateStats() {
+  $('stat-msgs').textContent = state.totalMsgs;
+  $('stat-avg-risk').textContent = state.totalMsgs > 0
+    ? Math.round(state.totalRisk / state.totalMsgs)
     : '—';
-  $('stat-high-risk').textContent = state.highRiskCount;
+  $('stat-highrisk').textContent = state.highRiskCount;
 }
 
 // ============================================================
-// APPLY ACTION BUTTON
+// APPLY ACTION
 // ============================================================
 function applyAction() {
-  if (!state.currentRecommendation) return;
-  const btn = $('apply-action-btn');
-  btn.textContent = '✓ Action Applied';
+  if (!state.currentRec) return;
+  const btn = $('apply-btn');
+  btn.textContent = 'Applied ✓';
   btn.disabled = true;
-  btn.style.color = '#22C55E';
-  btn.style.borderColor = 'rgba(34,197,94,0.4)';
-  btn.style.background = 'rgba(34,197,94,0.1)';
-  showToast(`Action applied: ${state.currentRecommendation}`, 'teal');
-
-  // Reset button after 4 seconds if new recommendations come in
+  showToast('Action applied: ' + state.currentRec);
   setTimeout(() => {
-    if (btn.disabled) {
-      btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="16" height="16"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Apply Action`;
-      btn.disabled = true;
-      btn.style.color = '';
-      btn.style.borderColor = '';
-      btn.style.background = '';
-    }
-  }, 4000);
+    btn.textContent = 'Apply action';
+    // Keep disabled until next analysis provides a new recommendation
+  }, 3500);
 }
 
 // ============================================================
-// INIT ON DOMContentLoaded
+// INIT
 // ============================================================
 document.addEventListener('DOMContentLoaded', () => {
-  // Set textarea auto-resize
-  const textarea = $('customer-input');
-  textarea.addEventListener('input', () => autoResizeTextarea(textarea));
+  // Auto-resize on input
+  $('cust-input').addEventListener('input', (e) => autoResize(e.target));
 
-  // Initial status check — try a lightweight ping to confirm server is live
-  setStatus('ready', 'Live Analysis Ready');
+  // Set a randomised session ID
+  const sid = 'SID-' + new Date().toISOString().slice(5, 10).replace('-', '') + '-' +
+    Math.floor(Math.random() * 900 + 100);
+  $('session-id').textContent = sid;
 
-  // Add welcome system message in chat
-  addSystemMessage('Session started. Type a customer message or use the quick-send buttons to begin emotion analysis.');
+  appendSysNote('Session started. Use the quick-send buttons or type a message.');
 });
-
-function addSystemMessage(text) {
-  const feed = $('chat-feed');
-  const msg = document.createElement('div');
-  msg.style.cssText = `
-    text-align: center;
-    font-size: 0.72rem;
-    color: #78716C;
-    padding: 0.5rem 1rem;
-    font-style: italic;
-    animation: bubbleIn 0.4s ease;
-  `;
-  msg.textContent = text;
-  feed.appendChild(msg);
-}

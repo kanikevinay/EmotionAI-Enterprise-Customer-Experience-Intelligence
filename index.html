@@ -3,266 +3,244 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EmotionAI – Real-Time Customer Experience Intelligence</title>
-  <meta name="description" content="Enterprise emotion detection and customer intelligence powered by real LLM analysis. Dual-panel support demo with live sentiment, risk scoring, and AI recommendations.">
+  <title>EmotionAI — Support Ops Console</title>
+  <meta name="description" content="Internal support ops console with real-time emotion and risk analysis powered by Claude AI.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- ================================================ -->
-  <!-- TOP STATUS BAR                                    -->
-  <!-- ================================================ -->
-  <header class="top-bar" id="top-bar">
-    <div class="top-bar-logo">
-      <svg class="logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z" fill="currentColor"/>
-      </svg>
-      <span class="logo-text">EmotionAI</span>
-      <span class="logo-tag">Enterprise</span>
+  <!-- ============================================================
+       TOPBAR — minimal chrome, fixed
+  ============================================================ -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="topbar-product">EmotionAI</span>
+      <span class="topbar-sep">/</span>
+      <span class="topbar-section">Support Console</span>
     </div>
 
-    <div class="top-bar-center">
-      <div class="session-info">
-        <span class="session-label">LIVE SESSION</span>
-        <span class="session-id">SID-2026-1807</span>
-      </div>
+    <div class="topbar-center">
+      <span class="session-chip">
+        <span class="session-chip-label">SESSION</span>
+        <span class="session-chip-id" id="session-id">SID-1807-001</span>
+      </span>
     </div>
 
-    <div class="top-bar-right">
-      <div class="status-pill" id="api-status-pill">
-        <span class="status-dot" id="api-status-dot"></span>
-        <span id="api-status-text">Live Analysis Ready</span>
+    <div class="topbar-right">
+      <div class="api-status-indicator" id="api-status" data-state="ready">
+        <span class="status-light" id="status-light"></span>
+        <span class="status-text" id="status-text">Ready</span>
       </div>
-      <div class="agent-badge">
-        <div class="agent-avatar">AG</div>
-        <span class="agent-name">Alex Gray</span>
+      <div class="agent-tag">
+        <span class="agent-initials">AG</span>
+        <span class="agent-label">Alex Gray</span>
       </div>
     </div>
   </header>
 
-  <!-- ================================================ -->
-  <!-- MAIN DUAL-PANEL LAYOUT                            -->
-  <!-- ================================================ -->
-  <main class="app-container">
+  <!-- ============================================================
+       ERROR BANNER — shown when API key is missing / call fails
+  ============================================================ -->
+  <div class="error-banner" id="error-banner" style="display:none;">
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M8 4.5v4M8 11v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    <span id="error-banner-text">Error</span>
+    <button class="error-banner-close" onclick="dismissError()">✕</button>
+  </div>
 
-    <!-- ============================================== -->
-    <!-- LEFT PANEL — CUSTOMER CHAT                      -->
-    <!-- ============================================== -->
-    <section class="chat-panel" aria-label="Customer Chat">
-      <div class="chat-panel-header">
-        <div class="chat-panel-user">
-          <div class="customer-avatar" id="customer-avatar">C</div>
-          <div class="customer-info">
-            <h2 class="customer-name" id="customer-name">Customer</h2>
-            <div class="customer-status">
-              <span class="online-dot"></span>
-              <span>Connected now</span>
-            </div>
+  <!-- ============================================================
+       MAIN LAYOUT — two panels separated by hairline
+  ============================================================ -->
+  <main class="console-layout">
+
+    <!-- ==========================================================
+         LEFT — CUSTOMER CHAT PANEL
+    ========================================================== -->
+    <section class="chat-panel">
+
+      <!-- Chat header -->
+      <div class="chat-header">
+        <div class="chat-header-user">
+          <div class="cust-avatar" id="cust-avatar">C</div>
+          <div class="cust-meta">
+            <span class="cust-name" id="cust-name">Customer</span>
+            <span class="cust-status"><span class="live-dot"></span>Live session</span>
           </div>
         </div>
-        <div class="chat-panel-label">Customer View</div>
+        <span class="panel-label">Customer view</span>
       </div>
 
-      <!-- Quick-send sample buttons -->
-      <div class="quick-send-bar" id="quick-send-bar">
-        <span class="quick-send-label">Quick send:</span>
-        <button class="quick-btn" onclick="sendQuickMessage('My payment keeps failing and I cannot access my account.')">💳 Payment failed</button>
-        <button class="quick-btn" onclick="sendQuickMessage(&quot;I've tried three times now and I still can't get this to work. This is really frustrating.&quot;)">😤 I've tried 3 times</button>
-        <button class="quick-btn" onclick="sendQuickMessage('This is absolutely ridiculous. I want a full refund right now or I am cancelling everything.')">🔥 Refund me now</button>
+      <!-- Quick-send presets -->
+      <div class="quicksend-row">
+        <span class="quicksend-label">Quick send</span>
+        <button class="preset-btn" onclick="sendQuickMessage('My payment keeps failing and I cannot access my account.')">Payment failed</button>
+        <button class="preset-btn" onclick="sendQuickMessage(&quot;I've tried three times already and it still doesn't work. This is really frustrating.&quot;)">Tried 3× already</button>
+        <button class="preset-btn" onclick="sendQuickMessage('This is ridiculous. I want a full refund immediately or I am cancelling my subscription.')">Demand refund</button>
       </div>
 
-      <!-- Chat messages feed -->
-      <div class="chat-messages-feed" id="chat-feed" role="log" aria-live="polite" aria-label="Chat messages">
-        <!-- Populated by JS -->
+      <!-- Messages feed -->
+      <div class="messages-feed" id="chat-feed" role="log" aria-live="polite" aria-label="Chat messages">
+        <!-- populated by JS -->
       </div>
 
       <!-- Typing indicator -->
-      <div class="typing-indicator" id="typing-indicator" style="display:none;" aria-live="polite">
-        <div class="typing-avatar">AI</div>
-        <div class="typing-bubble">
-          <span class="typing-dot"></span>
-          <span class="typing-dot"></span>
-          <span class="typing-dot"></span>
-        </div>
-        <span class="typing-label">Agent is responding…</span>
+      <div class="typing-row" id="typing-row" style="display:none;" aria-live="polite">
+        <span class="typing-av">AI</span>
+        <span class="typing-dots">
+          <span></span><span></span><span></span>
+        </span>
+        <span class="typing-label">Agent responding…</span>
       </div>
 
-      <!-- Input area -->
-      <div class="chat-input-area">
-        <div class="chat-input-wrapper">
-          <textarea
-            id="customer-input"
-            class="customer-textarea"
-            placeholder="Type your message here…"
-            rows="2"
-            aria-label="Customer message input"
-            onkeydown="handleKeyDown(event)"
-          ></textarea>
-          <button class="send-btn" id="send-btn" onclick="sendMessage()" aria-label="Send message">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M22 2L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </button>
-        </div>
-        <p class="input-hint">Press Enter to send, Shift+Enter for new line</p>
-      </div>
-    </section>
-
-    <!-- ============================================== -->
-    <!-- DIVIDER                                         -->
-    <!-- ============================================== -->
-    <div class="panel-divider" aria-hidden="true"></div>
-
-    <!-- ============================================== -->
-    <!-- RIGHT PANEL — LIVE INTELLIGENCE                 -->
-    <!-- ============================================== -->
-    <section class="intel-panel" aria-label="Live Intelligence Dashboard">
-      <div class="intel-panel-header">
-        <h2 class="intel-panel-title">
-          <svg class="intel-icon" viewBox="0 0 24 24" fill="none">
-            <path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- Input bar -->
+      <div class="chat-inputbar">
+        <textarea
+          id="cust-input"
+          class="cust-textarea"
+          placeholder="Type message…"
+          rows="2"
+          onkeydown="handleKeyDown(event)"
+          oninput="autoResize(this)"
+          aria-label="Customer message input"
+        ></textarea>
+        <button class="send-btn" id="send-btn" onclick="sendMessage()" aria-label="Send">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+            <path d="M22 2L11 13M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
-          Live Intelligence
-        </h2>
-        <div class="intel-panel-label">Agent View Only</div>
-      </div>
-
-      <!-- ---- Emotion Row ---- -->
-      <div class="intel-card" id="emotion-card">
-        <div class="intel-card-header">
-          <span class="intel-card-title">Current Emotion</span>
-          <span class="intel-card-badge emotion-badge" id="emotion-badge">—</span>
-        </div>
-        <div class="emotion-display">
-          <span class="emotion-emoji" id="emotion-emoji">🔍</span>
-          <div class="emotion-details">
-            <span class="emotion-label" id="emotion-label">Awaiting input…</span>
-            <div class="confidence-row">
-              <span class="confidence-label">Confidence</span>
-              <span class="confidence-val" id="confidence-val">—</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ---- Sentiment Bar ---- -->
-      <div class="intel-card">
-        <div class="intel-card-header">
-          <span class="intel-card-title">Sentiment</span>
-          <span class="intel-card-badge" id="sentiment-badge">—</span>
-        </div>
-        <div class="bar-row">
-          <span class="bar-side-label neg">😠</span>
-          <div class="sentiment-bar-track">
-            <div class="sentiment-bar-fill" id="sentiment-bar" style="width:50%; left:0;"></div>
-            <div class="sentiment-bar-marker" id="sentiment-marker" style="left:50%;"></div>
-          </div>
-          <span class="bar-side-label pos">😊</span>
-        </div>
-        <div class="bar-labels">
-          <span>Negative</span>
-          <span>Neutral</span>
-          <span>Positive</span>
-        </div>
-      </div>
-
-      <!-- ---- Risk Score ---- -->
-      <div class="intel-card">
-        <div class="intel-card-header">
-          <span class="intel-card-title">Churn Risk Score</span>
-          <span class="urgency-badge" id="urgency-badge">Low</span>
-        </div>
-        <div class="risk-row">
-          <span class="risk-score-num" id="risk-score-num">0</span>
-          <div class="risk-bar-track">
-            <div class="risk-bar-fill" id="risk-bar" style="width:0%;"></div>
-          </div>
-          <span class="risk-score-max">/100</span>
-        </div>
-        <div class="risk-legend">
-          <span class="risk-zone green">Low &lt;30</span>
-          <span class="risk-zone amber">Moderate 30–70</span>
-          <span class="risk-zone red">High &gt;70</span>
-        </div>
-      </div>
-
-      <!-- ---- AI Recommendation ---- -->
-      <div class="intel-card recommendation-card" id="recommendation-card">
-        <div class="intel-card-header">
-          <span class="intel-card-title">AI Recommendation</span>
-          <span class="rec-label">Human review required</span>
-        </div>
-        <p class="recommendation-text" id="recommendation-text">Send a customer message to receive AI-powered recommendations.</p>
-        <button class="apply-action-btn" id="apply-action-btn" onclick="applyAction()" disabled>
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
-            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          Apply Action
         </button>
       </div>
 
-      <!-- ---- Emotional Pulse Chart ---- -->
-      <div class="intel-card pulse-card">
-        <div class="intel-card-header">
-          <span class="intel-card-title">Emotional Pulse</span>
-          <span class="pulse-card-label" id="pulse-turn-count">0 turns</span>
+    </section><!-- /chat-panel -->
+
+    <!-- hairline divider -->
+    <div class="hairline" aria-hidden="true"></div>
+
+    <!-- ==========================================================
+         RIGHT — OPS / INTELLIGENCE PANEL
+    ========================================================== -->
+    <section class="ops-panel">
+
+      <div class="ops-header">
+        <span class="ops-title">Intelligence</span>
+        <span class="panel-label">Agent view only</span>
+      </div>
+
+      <!-- ---- Row: Emotion + Sentiment ---- -->
+      <div class="ops-row two-col">
+
+        <div class="ops-card" id="emotion-card">
+          <div class="ops-card-label">EMOTION</div>
+          <div class="emotion-row">
+            <span class="emotion-glyph" id="emotion-glyph">—</span>
+            <div class="emotion-data">
+              <span class="emotion-name" id="emotion-name">Awaiting input</span>
+              <span class="emotion-score-line">
+                <span class="mono-val" id="emotion-score-val">—</span>
+                <span class="score-unit">confidence</span>
+              </span>
+            </div>
+          </div>
         </div>
-        <div class="pulse-chart-container">
-          <svg id="pulse-chart" class="pulse-chart-svg" viewBox="0 0 400 80" preserveAspectRatio="none" aria-label="Emotional pulse line chart">
-            <defs>
-              <linearGradient id="pulseGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="var(--pulse-color, #14B8A6)" stop-opacity="0.3"/>
-                <stop offset="100%" stop-color="var(--pulse-color, #14B8A6)" stop-opacity="0"/>
-              </linearGradient>
-            </defs>
-            <!-- Grid lines -->
-            <line x1="0" y1="20" x2="400" y2="20" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
-            <line x1="0" y1="40" x2="400" y2="40" stroke="rgba(255,255,255,0.07)" stroke-width="1" stroke-dasharray="4,4"/>
-            <line x1="0" y1="60" x2="400" y2="60" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
-            <!-- Neutral zone label -->
-            <text x="4" y="38" fill="rgba(255,255,255,0.2)" font-size="7" font-family="Inter,sans-serif">Neutral</text>
-            <!-- Area fill -->
-            <path id="pulse-area" d="" fill="url(#pulseGradient)" opacity="0.6"/>
-            <!-- Pulse line -->
-            <path id="pulse-line" d="" fill="none" stroke="var(--pulse-color, #14B8A6)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <!-- Data points -->
-            <g id="pulse-points"></g>
-            <!-- Placeholder text -->
-            <text id="pulse-placeholder" x="200" y="44" text-anchor="middle" fill="rgba(255,255,255,0.2)" font-size="11" font-family="Inter,sans-serif">Send a message to start tracking</text>
-          </svg>
+
+        <div class="ops-card">
+          <div class="ops-card-label">SENTIMENT</div>
+          <div class="sentiment-display">
+            <span class="sentiment-name" id="sentiment-name">—</span>
+            <div class="sentiment-track">
+              <div class="sentiment-fill" id="sentiment-fill" style="width:50%"></div>
+              <div class="sentiment-pin" id="sentiment-pin" style="left:50%"></div>
+            </div>
+            <div class="sentiment-endlabels">
+              <span>Negative</span><span>Positive</span>
+            </div>
+          </div>
         </div>
-        <div class="pulse-legend">
-          <span class="pulse-legend-item teal">😌 Calm</span>
-          <span class="pulse-legend-item amber">😤 Stressed</span>
-          <span class="pulse-legend-item red">😡 High Risk</span>
+
+      </div>
+
+      <!-- ---- Row: Risk + Urgency ---- -->
+      <div class="ops-row two-col">
+
+        <div class="ops-card" id="risk-card">
+          <div class="ops-card-label">CHURN RISK</div>
+          <div class="risk-row">
+            <span class="risk-num mono-val" id="risk-num">0</span>
+            <span class="risk-denom">/100</span>
+          </div>
+          <div class="risk-track">
+            <div class="risk-fill" id="risk-fill" style="width:0%"></div>
+          </div>
+          <div class="risk-zones-legend">
+            <span class="zone-label z-low">Low &lt;30</span>
+            <span class="zone-label z-mid">Moderate 30–70</span>
+            <span class="zone-label z-high">High &gt;70</span>
+          </div>
+        </div>
+
+        <div class="ops-card">
+          <div class="ops-card-label">URGENCY</div>
+          <span class="urgency-tag" id="urgency-tag" data-level="low">Low</span>
+          <div class="ops-card-sublabel" style="margin-top:0.75rem;">RECOMMENDATION</div>
+          <p class="rec-text" id="rec-text">—</p>
+          <button class="apply-btn" id="apply-btn" onclick="applyAction()" disabled>Apply action</button>
+        </div>
+
+      </div>
+
+      <!-- ---- Row: Pulse Chart (sparkline) ---- -->
+      <div class="ops-row">
+        <div class="ops-card sparkline-card">
+          <div class="sparkline-header">
+            <span class="ops-card-label">SENTIMENT PULSE</span>
+            <div class="sparkline-meta">
+              <span class="mono-val" id="spark-turns">0</span>
+              <span class="score-unit">turns</span>
+            </div>
+          </div>
+          <div class="sparkline-box" id="sparkline-box">
+            <svg id="sparkline-svg" class="sparkline-svg" viewBox="0 0 460 60" preserveAspectRatio="none" aria-label="Sentiment pulse sparkline">
+              <!-- Y-axis tick lines -->
+              <line x1="38" y1="5"  x2="460" y2="5"  stroke="var(--tick-line)" stroke-width="0.5"/>
+              <line x1="38" y1="30" x2="460" y2="30" stroke="var(--tick-line)" stroke-width="1" stroke-dasharray="3,3"/>
+              <line x1="38" y1="55" x2="460" y2="55" stroke="var(--tick-line)" stroke-width="0.5"/>
+              <!-- Y labels -->
+              <text x="0"  y="8"  class="spark-tick-label">+</text>
+              <text x="0"  y="33" class="spark-tick-label">0</text>
+              <text x="0"  y="58" class="spark-tick-label">−</text>
+              <!-- Placeholder -->
+              <text id="spark-placeholder" x="249" y="33" text-anchor="middle" class="spark-placeholder">Send a message to begin</text>
+              <!-- Spark line -->
+              <path id="spark-line" d="" fill="none" stroke="var(--ink-blue)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <!-- Data dots -->
+              <g id="spark-dots"></g>
+            </svg>
+          </div>
         </div>
       </div>
 
-      <!-- ---- Session Stats ---- -->
-      <div class="session-stats-footer">
-        <div class="stat-item">
-          <span class="stat-val" id="stat-messages">0</span>
-          <span class="stat-label">Messages</span>
+      <!-- ---- Session stats row ---- -->
+      <div class="ops-row stats-row">
+        <div class="stat-cell">
+          <span class="stat-num mono-val" id="stat-msgs">0</span>
+          <span class="stat-lbl">Messages</span>
         </div>
-        <div class="stat-divider"></div>
-        <div class="stat-item">
-          <span class="stat-val" id="stat-avg-risk">—</span>
-          <span class="stat-label">Avg Risk</span>
+        <div class="stat-cell">
+          <span class="stat-num mono-val" id="stat-avg-risk">—</span>
+          <span class="stat-lbl">Avg risk</span>
         </div>
-        <div class="stat-divider"></div>
-        <div class="stat-item">
-          <span class="stat-val danger-val" id="stat-high-risk">0</span>
-          <span class="stat-label">High-Risk Moments</span>
+        <div class="stat-cell">
+          <span class="stat-num mono-val danger-num" id="stat-highrisk">0</span>
+          <span class="stat-lbl">High-risk turns</span>
         </div>
       </div>
-    </section>
+
+    </section><!-- /ops-panel -->
+
   </main>
 
-  <!-- Toast notification -->
+  <!-- Toast -->
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script src="app.js"></script>
