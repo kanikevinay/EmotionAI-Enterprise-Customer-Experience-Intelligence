@@ -39,28 +39,28 @@
         <span>EmotionAI</span>
       </div>
       <div class="cta-group">
-        <button class="btn btn-secondary scale-hover" onclick="showDemo(true)">Watch AI Analysis</button>
-        <button class="btn btn-primary scale-hover" onclick="showDemo()">Start Demo <i data-lucide="arrow-right"></i></button>
+        <button class="btn btn-secondary scale-hover" onclick="showDemo(true)">Run Auto Demo</button>
+        <button class="btn btn-primary scale-hover" onclick="showDemo()">Launch Console <i data-lucide="arrow-right"></i></button>
       </div>
     </nav>
 
     <header class="hero">
       <div class="badge">
-        <i data-lucide="sparkles"></i> Next-Gen Customer Experience
+        <i data-lucide="sparkles"></i> Next-Gen Enterprise Customer Intelligence
       </div>
       <h1>
         <span class="text-gradient">Enterprise Emotion</span><br>
         <span class="text-gradient-purple">Customer Intelligence</span>
       </h1>
       <p>
-        Understand customer emotions before they become business problems. Traditional AI chatbots only answer questions. EmotionAI understands customer emotions, predicts frustration before escalation, and equips agents with real-time analytics.
+        Traditional AI chatbots only answer questions. EmotionAI understands customer emotions, predicts frustration before escalation, routes real-time script guides to agents, and visualizes enterprise-wide telemetry.
       </p>
       <div class="cta-group">
         <button class="btn btn-primary btn-lg scale-hover" onclick="showDemo()">
           Launch Agent Dashboard <i data-lucide="terminal"></i>
         </button>
         <button class="btn btn-secondary btn-lg scale-hover" onclick="showDemo(true)">
-          Watch AI Simulator
+          Start Guided AI Demo
         </button>
       </div>
     </header>
@@ -158,6 +158,12 @@
               <span>Voice AI Assistant</span>
             </div>
           </li>
+          <li>
+            <div class="nav-item" onclick="switchTab('architecture')" id="nav-architecture" style="border-top: 1px dashed rgba(255,255,255,0.08); margin-top:0.5rem; padding-top:0.8rem;">
+              <i data-lucide="workflow" style="color:var(--accent-blue);"></i>
+              <span style="font-weight:600; color:var(--text-primary);">System Architecture</span>
+            </div>
+          </li>
         </ul>
       </div>
 
@@ -183,6 +189,11 @@
         </div>
         
         <div class="header-actions">
+          <!-- Setup Gemini Key Icon Trigger -->
+          <button class="icon-btn active" id="btn-api-config" title="Configure Gemini API Settings" onclick="toggleApiModal(true)">
+            <i data-lucide="settings-2"></i>
+          </button>
+          
           <div class="customer-selector-container">
             <span style="font-size:0.8rem; color:var(--text-secondary); font-weight:600;">ACTIVE CUSTOMER:</span>
             <select class="customer-dropdown" id="global-customer-select" onchange="onCustomerChange(this.value)">
@@ -327,7 +338,7 @@
                 <div class="typing-dot"></div>
                 <div class="typing-dot"></div>
                 <div class="typing-dot"></div>
-                <span style="font-size: 0.8rem; color: var(--text-muted); margin-left: 0.5rem;">Customer typing...</span>
+                <span style="font-size: 0.8rem; color: var(--text-muted); margin-left: 0.5rem;" id="chat-typing-text">Customer typing...</span>
               </div>
 
               <!-- Input Bar -->
@@ -350,7 +361,7 @@
               </div>
               
               <div class="telemetry-grid">
-                <div class="tel-card glass">
+                <div class="tel-card glass" id="tel-card-emotion">
                   <div class="tel-label">
                     <span>Emotion Score</span>
                     <i data-lucide="heart-pulse" style="color: var(--accent-purple);"></i>
@@ -364,7 +375,7 @@
                   </div>
                 </div>
 
-                <div class="tel-card glass">
+                <div class="tel-card glass" id="tel-card-stress">
                   <div class="tel-label">
                     <span>Stress Level</span>
                     <i data-lucide="gauge" style="color: var(--danger);"></i>
@@ -377,7 +388,7 @@
                   </div>
                 </div>
 
-                <div class="tel-card glass">
+                <div class="tel-card glass" id="tel-card-sentiment">
                   <div class="tel-label">
                     <span>Sentiment State</span>
                     <i data-lucide="smile" style="color: var(--accent-blue);"></i>
@@ -387,7 +398,7 @@
                   </div>
                 </div>
 
-                <div class="tel-card glass">
+                <div class="tel-card glass" id="tel-card-intent">
                   <div class="tel-label">
                     <span>Buying Intent</span>
                     <i data-lucide="shopping-cart" style="color: var(--success);"></i>
@@ -402,7 +413,7 @@
               </div>
 
               <!-- Additional Analytics Details -->
-              <div class="glass" style="padding: 1.5rem;">
+              <div class="glass" style="padding: 1.5rem;" id="tel-card-diagnostics">
                 <h4 style="font-size:0.9rem; color:var(--text-muted); text-transform:uppercase; font-weight:600; margin-bottom:1rem;">AI Alert & Diagnostics</h4>
                 <div style="display:flex; flex-direction:column; gap:1rem;">
                   <div>
@@ -617,7 +628,7 @@
               </div>
             </div>
             
-            <!-- Frustration Heatmap & Agent Leaderboard -->
+            <!-- Heatmap Hotspots -->
             <div class="chart-card glass" style="height:auto;">
               <div class="chart-header">
                 <div class="chart-title">
@@ -897,8 +908,194 @@
           </div>
         </div>
 
+        <!-- ========================================== -->
+        <!-- VIEW: SYSTEM ARCHITECTURE VISUALIZER       -->
+        <!-- ========================================== -->
+        <div id="view-architecture" class="view-pane">
+          <div class="glass" style="padding: 2rem; margin-bottom: 2rem;">
+            <h3 style="font-family:var(--font-title); font-weight:700; margin-bottom:0.5rem;">Enterprise Real-Time Pipeline</h3>
+            <p style="color:var(--text-secondary); font-size:0.9rem;">Trace how customer vocal/text telemetry runs through the Gemini AI layer and feeds the BI recommendation dashboard.</p>
+            
+            <div class="arch-flowchart">
+              
+              <!-- Left Side: Input Node -->
+              <div class="arch-card active" id="arch-node-customer">
+                <div class="arch-icon"><i data-lucide="user"></i></div>
+                <div class="arch-details">
+                  <h4>1. Customer Interaction</h4>
+                  <p>Vocal streams & chat message packets</p>
+                  <span class="arch-tech">Websocket / Audio Stream</span>
+                </div>
+                <div class="status-indicator online"></div>
+              </div>
+
+              <!-- Connector Line -->
+              <div class="arch-connector"><div class="arch-pulse"></div></div>
+
+              <!-- Node 2: Workspace Layer -->
+              <div class="arch-card active" id="arch-node-workspace">
+                <div class="arch-icon"><i data-lucide="monitor"></i></div>
+                <div class="arch-details">
+                  <h4>2. Copilot Console UI</h4>
+                  <p>Support Agent client workspace</p>
+                  <span class="arch-tech">Vanilla JS Client Shell</span>
+                </div>
+                <div class="status-indicator online"></div>
+              </div>
+
+              <!-- Connector Line -->
+              <div class="arch-connector"><div class="arch-pulse"></div></div>
+
+              <!-- Node 3: Gemini Analysis (Central API) -->
+              <div class="arch-card gemini-node" id="arch-node-gemini">
+                <div class="arch-icon"><i data-lucide="brain"></i></div>
+                <div class="arch-details">
+                  <h4>3. Gemini AI Engine</h4>
+                  <p>Structured LLM analysis & intent extraction</p>
+                  <span class="arch-tech" id="arch-gemini-version">gemini-2.5-flash API</span>
+                </div>
+                <div class="status-indicator offline" id="arch-gemini-status"></div>
+              </div>
+
+              <!-- Connector Line -->
+              <div class="arch-connector"><div class="arch-pulse"></div></div>
+
+              <!-- Node 4: Metric Telemetry -->
+              <div class="arch-card active" id="arch-node-telemetry">
+                <div class="arch-icon"><i data-lucide="gauge"></i></div>
+                <div class="arch-details">
+                  <h4>4. Telemetry Classifiers</h4>
+                  <p>Stress, Risk, Sentiment & Urgency indicators</p>
+                  <span class="arch-tech">Structured JSON Schema parsing</span>
+                </div>
+                <div class="status-indicator online"></div>
+              </div>
+
+              <!-- Connector Line -->
+              <div class="arch-connector"><div class="arch-pulse"></div></div>
+
+              <!-- Node 5: Action Recommendation Center -->
+              <div class="arch-card active" id="arch-node-recommendations">
+                <div class="arch-icon"><i data-lucide="zap"></i></div>
+                <div class="arch-details">
+                  <h4>5. Recommendation Engine</h4>
+                  <p>Discount coupons, managers routes, zoom triggers</p>
+                  <span class="arch-tech">Heuristic Action Mapping</span>
+                </div>
+                <div class="status-indicator online"></div>
+              </div>
+
+              <!-- Connector Line -->
+              <div class="arch-connector"><div class="arch-pulse"></div></div>
+
+              <!-- Node 6: Executive & Analytics -->
+              <div class="arch-card active" id="arch-node-bi">
+                <div class="arch-icon"><i data-lucide="bar-chart-3"></i></div>
+                <div class="arch-details">
+                  <h4>6. Executive BI Dashboard</h4>
+                  <p>Aggregate ROI analytics & CSAT charts</p>
+                  <span class="arch-tech">Chart.js / Data Warehousing</span>
+                </div>
+                <div class="status-indicator online"></div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Developer Diagnostics Panel -->
+          <div class="glass" style="padding: 1.5rem;">
+            <h4 style="font-size:0.9rem; color:var(--text-muted); text-transform:uppercase; font-weight:600; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
+              <i data-lucide="terminal" style="color:var(--accent-purple);"></i> Technical Diagnostics Logs
+            </h4>
+            <div style="background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.05); border-radius:8px; padding:1rem; font-family:'Courier New', Courier, monospace; font-size:0.85rem; color:#A5B4FC; line-height:1.5; max-height:200px; overflow-y:auto;" id="developer-terminal-logs">
+              [SYSTEM] Telemetry pipeline initialized.<br>
+              [SYSTEM] Connection stable on http://localhost:8000.<br>
+              [SYSTEM] UI Render cycles completed.<br>
+              [DATABASE] 3 core customer profiles loaded.<br>
+              [AI] Awaiting connection token key. Live Gemini pipeline disabled (Falling back to simulated classification).
+            </div>
+          </div>
+        </div>
+
       </div>
     </main>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- GEMINI API CONFIGURATION MODAL             -->
+  <!-- ========================================== -->
+  <div class="modal-backdrop" id="api-key-modal" style="display: none;">
+    <div class="modal-card glass">
+      <div class="modal-header">
+        <h3><i data-lucide="settings" style="vertical-align:middle; color:var(--accent-blue); margin-right:6px;"></i> Gemini API Configuration</h3>
+        <button class="modal-close-btn" onclick="toggleApiModal(false)">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5; margin-bottom: 1.25rem;">
+          Provide a Google Gemini API Key to enable **real-time AI analytics**. Every chat message submitted in the workspace will make direct API calls to Google's models to analyze emotion, risk, and generate scripts.
+        </p>
+        <div style="margin-bottom: 1.25rem;">
+          <label style="display:block; font-size:0.8rem; font-weight:600; color:var(--text-secondary); margin-bottom:0.5rem; text-transform:uppercase;">Gemini API Key</label>
+          <input type="password" class="chat-input" id="input-api-key" placeholder="AIzaSy..." style="padding-right:1rem;">
+        </div>
+        <div class="badge" style="background:rgba(59,130,246,0.1); border-color:rgba(59,130,246,0.2); color:#93C5FD; text-transform:none; font-size:0.75rem; margin-bottom:0.5rem; display:block; text-align:left;">
+          <i data-lucide="shield-check" style="width:14px; height:14px; vertical-align:middle;"></i> Stored locally in your browser's local storage.
+        </div>
+        <p style="font-size:0.75rem; color:var(--text-muted); line-height:1.4;">
+          No API key? No problem. The dashboard automatically falls back to high-fidelity simulated outputs so the presentation works perfectly out of the box!
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="toggleApiModal(false)">Cancel</button>
+        <button class="btn btn-primary" onclick="saveApiKey()">Save Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- AUTOPLAY PRESENTATION OVERLAY OVERLAYS     -->
+  <!-- ========================================== -->
+  <div id="autoplay-banner" style="display: none;">
+    <div style="display:flex; align-items:center; gap:0.75rem; flex:1;">
+      <div class="pulse-dot" style="background-color: var(--accent-purple); box-shadow: 0 0 15px var(--accent-purple);"></div>
+      <span style="font-weight:600; font-size:0.9rem;" id="autoplay-banner-step">Demo Mode Active: Step 1 of 5</span>
+    </div>
+    <button class="btn btn-primary btn-sm" id="autoplay-banner-action" style="padding:0.4rem 1rem; font-size:0.8rem; background:var(--accent-purple);" onclick="cancelAutoplayDemo()">
+      Cancel Demo
+    </button>
+  </div>
+
+  <!-- Autoplay Final Business Outcome Overlay -->
+  <div class="modal-backdrop" id="autoplay-outcome-modal" style="display: none; z-index: 1000;">
+    <div class="modal-card glass" style="max-width:550px; text-align:center; padding:2.5rem;">
+      <div style="width:80px; height:80px; border-radius:50%; background:rgba(34,197,94,0.15); border:1px solid rgba(34,197,94,0.3); display:flex; align-items:center; justify-content:center; margin: 0 auto 1.5rem; color:var(--success);">
+        <i data-lucide="check-circle" style="width:40px; height:40px;"></i>
+      </div>
+      <h2 style="font-family:var(--font-title); font-size:2rem; font-weight:800; margin-bottom:0.5rem;" class="text-gradient">SLA Secured & Churn Deflected</h2>
+      <p style="color:var(--text-secondary); font-size:0.95rem; line-height:1.5; margin-bottom:2rem;">
+        The Gemini API successfully detected severe frustration, diagnosed a payment failure lock, and guided the support agent with immediate remedies in less than 2.5 seconds.
+      </p>
+
+      <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1rem; margin-bottom:2rem;">
+        <div style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); padding:1rem; border-radius:12px;">
+          <span style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; font-weight:600; display:block;">Revenue Protected</span>
+          <strong style="font-size:1.5rem; color:var(--success); font-family:var(--font-title);">$2,500/mo</strong>
+        </div>
+        <div style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); padding:1rem; border-radius:12px;">
+          <span style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; font-weight:600; display:block;">Resolution SLA</span>
+          <strong style="font-size:1.5rem; color:var(--accent-blue); font-family:var(--font-title);">1.8s</strong>
+        </div>
+        <div style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); padding:1rem; border-radius:12px;">
+          <span style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; font-weight:600; display:block;">Satisfaction Index</span>
+          <strong style="font-size:1.5rem; color:var(--accent-purple); font-family:var(--font-title);">4.9/5.0</strong>
+        </div>
+      </div>
+      
+      <div style="display:flex; gap:1rem;">
+        <button class="btn btn-secondary scale-hover" style="flex:1;" onclick="closeOutcomeModal()">Back to Workspace</button>
+        <button class="btn btn-primary scale-hover" style="flex:1;" onclick="closeOutcomeModal(); switchTab('executive');">View Executive Impact</button>
+      </div>
+    </div>
   </div>
 
   <script src="app.js"></script>

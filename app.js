@@ -1,5 +1,5 @@
 // EmotionAI - Enterprise Customer Experience Intelligence
-// Application Controller & Mock Data Engine
+// Application Controller & AI Integration Engine
 
 // Global State
 let activeCustomer = 'sarah';
@@ -9,6 +9,10 @@ let chatSimulationTimer = null;
 let voiceAITimer = null;
 let voiceWaveformActive = false;
 let voiceWaveformAnimationFrame = null;
+
+// Autoplay Demo State
+let autoplayTimer = null;
+let isAutoplayActive = false;
 
 // Mock Customer Dataset
 const customerData = {
@@ -237,7 +241,30 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Create all dynamic charts
   initCharts();
+
+  // Load API Key from LocalStorage and sync interface statuses
+  loadApiKeySettings();
 });
+
+// Developer Console Log Helper
+function writeTerminalLog(type, text) {
+  const terminal = document.getElementById('developer-terminal-logs');
+  if (!terminal) return;
+  
+  const timestamp = new Date().toLocaleTimeString();
+  const colorMap = {
+    SYSTEM: '#818CF8', // Indigo
+    DATABASE: '#34D399', // Green
+    AI: '#C084FC', // Purple
+    ERROR: '#F87171' // Red
+  };
+
+  const color = colorMap[type] || '#F3F4F6';
+  const rawLine = `[<span style="color:${color}; font-weight:600;">${type}</span>] (${timestamp}) ${text}<br>`;
+  
+  terminal.insertAdjacentHTML('beforeend', rawLine);
+  terminal.scrollTop = terminal.scrollHeight;
+}
 
 // Tab Router
 function switchTab(tabId) {
@@ -278,7 +305,8 @@ function switchTab(tabId) {
     analytics: { title: 'CX Analytics Dashboard', icon: 'bar-chart-3', color: 'var(--accent-blue)' },
     insights: { title: 'AI Insights Diagnostics', icon: 'lightbulb', color: 'var(--warning)' },
     profile: { title: 'Customer Profile Hub', icon: 'user', color: 'var(--accent-blue)' },
-    'voice-ai': { title: 'Voice AI Voice Stream', icon: 'mic', color: 'var(--accent-purple)' }
+    'voice-ai': { title: 'Voice AI Voice Stream', icon: 'mic', color: 'var(--accent-purple)' },
+    architecture: { title: 'Pipeline Architecture visualizer', icon: 'workflow', color: 'var(--accent-blue)' }
   };
 
   const headerInfo = titleMap[tabId];
@@ -294,7 +322,6 @@ function switchTab(tabId) {
 
   // Handle specific tab loading callbacks
   if (tabId === 'analytics') {
-    // Redraw charts due to container dimensions
     setTimeout(renderAnalyticsCharts, 50);
   } else if (tabId === 'executive') {
     setTimeout(renderExecutiveCharts, 50);
@@ -310,16 +337,14 @@ function returnToLanding() {
 }
 
 // Show the demo dashboard workspace
-function showDemo(runSimulate = false) {
+function showDemo(runAutoplay = false) {
   document.getElementById('landing-page').style.display = 'none';
   document.getElementById('app-workspace').style.display = 'flex';
   
-  switchTab('conversation');
-  
-  if (runSimulate) {
-    setTimeout(() => {
-      triggerSimulation();
-    }, 400);
+  if (runAutoplay) {
+    startAutoplayDemo();
+  } else {
+    switchTab('executive');
   }
 }
 
@@ -352,6 +377,8 @@ function onCustomerChange(val) {
 
   // Update Executive Summary Metrics in Real-Time
   updateExecutiveScores(custData);
+
+  writeTerminalLog('DATABASE', `Switched customer context to: ${custData.fullName}`);
 }
 
 // Dynamic Telemetry Updater
@@ -399,7 +426,7 @@ function updateTelemetry(emotion, stress, comm, intent, ltv, risk, sentiment) {
   const riskBadge = document.getElementById('telemetry-risk-badge');
   if (riskBadge) {
     riskBadge.innerText = risk;
-    riskBadge.style.color = risk === 'HIGH RISK' ? 'var(--danger)' : 'var(--success)';
+    riskBadge.style.color = (risk.includes('HIGH') || risk.includes('CRITICAL')) ? 'var(--danger)' : 'var(--success)';
   }
 }
 
@@ -437,6 +464,7 @@ function triggerSimulation() {
     // Show typing animation if customer is speaking next
     if (msg.sender === 'customer') {
       const typingIndicator = document.getElementById('chat-typing-indicator');
+      document.getElementById('chat-typing-text').innerText = 'Customer typing...';
       typingIndicator.style.display = 'flex';
 
       setTimeout(() => {
@@ -523,7 +551,8 @@ function handleChatInput(e) {
   }
 }
 
-function sendCustomAgentMessage() {
+// Sends support agent custom messages and immediately runs analysis on customer followups
+async function sendCustomAgentMessage() {
   const inputEl = document.getElementById('chat-user-input');
   const txt = inputEl.value.trim();
   if (!txt) return;
@@ -539,6 +568,233 @@ function sendCustomAgentMessage() {
   
   appendChatMessage(customMsg);
   inputEl.value = '';
+
+  // Simulate customer response after 2 seconds, which will trigger Gemini API
+  setTimeout(simulateCustomerResponseAfterAgent, 2000);
+}
+
+function simulateCustomerResponseAfterAgent() {
+  const typingIndicator = document.getElementById('chat-typing-indicator');
+  document.getElementById('chat-typing-text').innerText = 'Customer typing...';
+  typingIndicator.style.display = 'flex';
+
+  setTimeout(async () => {
+    typingIndicator.style.display = 'none';
+    
+    // Auto-generate customer response based on key words in history
+    let replyText = "Fine, but please double check if the system applied the EMOTIONAI15 coupon. I want an confirmation mail.";
+    if (activeCustomer === 'michael') {
+      replyText = "Okay, I scheduled the Sales Zoom meeting. Did you make sure the temporary rate buffer is active on our sandbox?";
+    } else if (activeCustomer === 'elena') {
+      replyText = "Thank you, that is perfect! I will check the billing dashboard now.";
+    }
+
+    const now = new Date();
+    const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    const customerMsg = {
+      sender: 'customer',
+      text: replyText,
+      time: timeStr
+    };
+
+    appendChatMessage(customerMsg);
+
+    // Call Real-time Gemini API or mock parser on this message
+    await triggerLiveAILayer(replyText);
+
+  }, 1500);
+}
+
+// Core LLM API call engine
+async function triggerLiveAILayer(text) {
+  writeTerminalLog('AI', `Routing message packet to Gemini layer: "${text}"`);
+  
+  // Toggle loading pulse state in architecture page
+  const archNode = document.getElementById('arch-node-gemini');
+  const statusIndicator = document.getElementById('arch-gemini-status');
+  
+  if (archNode) archNode.classList.add('gemini-node', 'active');
+  if (statusIndicator) {
+    statusIndicator.className = 'status-indicator active-live';
+  }
+
+  // Load telemetry skeleton visual effects
+  toggleSkeletonState(true);
+
+  // Send request
+  try {
+    const analysis = await analyzeMessageWithGemini(text);
+    writeTerminalLog('AI', `Gemini returned structured JSON successfully. Confidence: ${analysis.confidence}%`);
+    
+    // Apply analysis results
+    applyGeminiAnalysisToDashboard(analysis);
+  } catch (err) {
+    writeTerminalLog('ERROR', `Gemini API invocation failed: ${err.message}. Gracefully falling back to baseline models.`);
+    // Fallback logic
+    handleMockFallback(text);
+  } finally {
+    toggleSkeletonState(false);
+    
+    // Sync architecture node back
+    if (statusIndicator) {
+      const key = localStorage.getItem('gemini_api_key');
+      statusIndicator.className = key ? 'status-indicator online' : 'status-indicator offline';
+    }
+  }
+}
+
+// Calls Generative API using raw HTTP fetch
+async function analyzeMessageWithGemini(message) {
+  const key = localStorage.getItem('gemini_api_key');
+  if (!key) {
+    throw new Error("No Gemini API key supplied");
+  }
+
+  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`;
+  
+  const payload = {
+    contents: [{
+      parts: [{
+        text: `Analyze the following customer support message. Output a raw JSON object containing the following keys:
+- "emotion" (string, e.g. Frustrated, Anxious, Satisfied, Neutral)
+- "sentiment" (string, Positive, Negative, or Neutral)
+- "urgency" (string, Low, Medium, High, or Critical)
+- "confidence" (number between 0 and 100)
+- "risk" (string, Low, Medium, High, or Critical)
+- "intent" (string, concise summary of what user wants)
+- "recommendation" (string, recommended script action)
+- "reason" (string, explanation of sentiment classification)
+
+Customer Message: "${message}"
+
+Do not wrap the JSON output inside markdown codeblocks (no \`\`\`json). Output the JSON directly.`
+      }]
+    }],
+    generationConfig: {
+      responseMimeType: "application/json"
+    }
+  };
+
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+
+  if (!response.ok) {
+    const errText = await response.text();
+    throw new Error(`HTTP ${response.status}: ${errText}`);
+  }
+
+  const resJson = await response.json();
+  const rawText = resJson.candidates[0].content.parts[0].text;
+  
+  return JSON.parse(rawText.trim());
+}
+
+// Parse Gemini structured response and update all telemetry dials in real-time
+function applyGeminiAnalysisToDashboard(analysis) {
+  // Convert text metrics to coordinates for dial progress
+  const emotionMap = {
+    frustrated: 88, angry: 96, anxious: 65, neutral: 40, satisfied: 15, happy: 8, positive: 10
+  };
+  const emotionVal = emotionMap[analysis.emotion.toLowerCase()] || 50;
+
+  const stressMap = {
+    critical: 94, high: 84, medium: 52, low: 14
+  };
+  const stressVal = stressMap[analysis.urgency.toLowerCase()] || 50;
+
+  // 1. Update Workspace Telemetry Dials
+  updateTelemetry(
+    emotionVal,
+    stressVal,
+    customerData[activeCustomer].commStyle,
+    analysis.intent,
+    customerData[activeCustomer].ltv,
+    `${analysis.risk.toUpperCase()} RISK`,
+    analysis.sentiment.toUpperCase()
+  );
+
+  // 2. Generate a custom recommendation card matching the AI response
+  const customRecs = [
+    {
+      id: 'rec-gemini-generated',
+      title: analysis.intent,
+      desc: analysis.recommendation,
+      priority: analysis.urgency.toLowerCase(),
+      confidence: `${analysis.confidence}%`,
+      satisfactionGain: '+35%',
+      ctaText: 'Execute Recommended Action',
+      outputTitle: 'AI Recommendation Executed',
+      outputContent: `Recommendation Reason: ${analysis.reason}\nAction Status: COMPLETED\nSystem Event log: Dispatched Apology Script email sequence.`
+    }
+  ];
+
+  // Append default baseline recommendations to this new card
+  const combinedRecs = customRecs.concat(customerData[activeCustomer].recommendations);
+  renderRecommendations(combinedRecs);
+
+  // Write details to Recommendations Center apology preview box
+  const playPane = document.getElementById('recommendation-playground');
+  playPane.classList.add('active');
+  document.getElementById('playground-title').innerText = `Gemini Apology Script Generator`;
+  document.getElementById('playground-content').innerText = `Response Script:\n"Thank you for your feedback. We see that you are experiencing issues regarding ${analysis.intent}. Under our client protocol, I have processed the suggested action: ${analysis.recommendation}. Thank you for your patience while we verify this."`;
+
+  // 3. Highlight nodes in the System Architecture Pipeline
+  triggerArchitecturePipelineAnimation();
+}
+
+function handleMockFallback(text) {
+  // Graceful simulation fallback
+  setTimeout(() => {
+    const isAngry = text.toLowerCase().includes('cancel') || text.toLowerCase().includes('billing') || text.toLowerCase().includes('angry');
+    const mockAnalysis = {
+      emotion: isAngry ? 'Frustrated' : 'Satisfied',
+      sentiment: isAngry ? 'Negative' : 'Positive',
+      urgency: isAngry ? 'High' : 'Low',
+      confidence: 96,
+      risk: isAngry ? 'High' : 'Low',
+      intent: isAngry ? 'Billing Pipeline Lock' : 'Resolution Acknowledgment',
+      recommendation: isAngry ? 'Bypass Limit Lock + 15% discount coupon' : 'Request feedback SLA audit',
+      reason: 'Syntax keywords matched high urgency billing structures.'
+    };
+    applyGeminiAnalysisToDashboard(mockAnalysis);
+  }, 1000);
+}
+
+// Telemetry visual loader toggle
+function toggleSkeletonState(isLoading) {
+  const cards = ['tel-card-emotion', 'tel-card-stress', 'tel-card-sentiment', 'tel-card-intent', 'tel-card-diagnostics'];
+  cards.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (isLoading) {
+      el.classList.add('skeleton');
+    } else {
+      el.classList.remove('skeleton');
+    }
+  });
+}
+
+// Visual Pipeline Animations in Architecture View
+function triggerArchitecturePipelineAnimation() {
+  const nodes = ['arch-node-customer', 'arch-node-workspace', 'arch-node-gemini', 'arch-node-telemetry', 'arch-node-recommendations', 'arch-node-bi'];
+  
+  // Highlight nodes chronologically to show active calculation
+  nodes.forEach((id, idx) => {
+    setTimeout(() => {
+      const nodeEl = document.getElementById(id);
+      if (nodeEl) {
+        nodeEl.classList.add('active');
+        // If gemini node
+        if (id === 'arch-node-gemini') {
+          const key = localStorage.getItem('gemini_api_key');
+          if (key) nodeEl.classList.add('active-live');
+        }
+      }
+    }, idx * 300);
+  });
 }
 
 // AI Recommendations Card Renderer
@@ -587,7 +843,21 @@ function renderRecommendations(recs) {
 // Action button inside recommendation centers
 function triggerRecommendationAction(recId) {
   const custData = customerData[activeCustomer];
-  const selectedRec = custData.recommendations.find(r => r.id === recId);
+  
+  // Try to find in custom recommendations first
+  let selectedRec = null;
+  const container = document.getElementById('rec-container');
+  // Check baseline recs
+  selectedRec = custData.recommendations.find(r => r.id === recId);
+  
+  // Check if it's the custom Gemini recommendation
+  if (!selectedRec && recId === 'rec-gemini-generated') {
+    selectedRec = {
+      outputTitle: 'Custom Action Executed',
+      outputContent: 'Apology script email pushed to queue.\nCode applied: MANUAL-OVERRIDE-GMN\nNotification dispatch status: SENT.'
+    };
+  }
+
   if (!selectedRec) return;
 
   const playPane = document.getElementById('recommendation-playground');
@@ -596,7 +866,6 @@ function triggerRecommendationAction(recId) {
   document.getElementById('playground-title').innerText = selectedRec.outputTitle;
   document.getElementById('playground-content').innerText = selectedRec.outputContent;
   
-  // Smooth scroll to view action outputs
   playPane.scrollIntoView({ behavior: 'smooth' });
 }
 
@@ -634,7 +903,6 @@ function injectDraftToChat() {
 
 // Timeline State controller
 function updateTimelineProgress(nodes) {
-  // Let's decide which node is currently active (e.g. state 5: Emotion Detected)
   const activeIdx = activeCustomer === 'sarah' ? 5 : (activeCustomer === 'michael' ? 6 : 7);
   
   // Set timeline progress line width percentage
@@ -673,20 +941,20 @@ function showTimelineNodeDetail(idx) {
   const node = custData.timelineNodes[idx];
   if (!node) return;
 
-  const detailArea = document.getElementById('timeline-details-area');
-  
   let badgeHtml = '';
   if (node.badgeClass === 'emotion-frustrated') {
-    badgeHtml = `<span class="tel-badge emotion-frustrated"><i data-lucide="frown"></i> FRUSTRATED ALERT</span>`;
+    badgeHtml = `<span class="tel-badge emotion-frustrated" id="timeline-detail-badge"><i data-lucide="frown"></i> FRUSTRATED ALERT</span>`;
   } else if (node.badgeClass === 'emotion-anxious') {
-    badgeHtml = `<span class="tel-badge emotion-anxious"><i data-lucide="alert-circle"></i> ANXIETY FLAG</span>`;
+    badgeHtml = `<span class="tel-badge emotion-anxious" id="timeline-detail-badge"><i data-lucide="alert-circle"></i> ANXIETY FLAG</span>`;
   } else if (node.badgeClass === 'emotion-satisfied') {
-    badgeHtml = `<span class="tel-badge emotion-satisfied"><i data-lucide="check-circle"></i> SYSTEM STABLE</span>`;
+    badgeHtml = `<span class="tel-badge emotion-satisfied" id="timeline-detail-badge"><i data-lucide="check-circle"></i> SYSTEM STABLE</span>`;
   } else {
-    badgeHtml = `<span class="tel-badge emotion-neutral"><i data-lucide="activity"></i> NEUTRAL LOG</span>`;
+    badgeHtml = `<span class="tel-badge emotion-neutral" id="timeline-detail-badge"><i data-lucide="activity"></i> NEUTRAL LOG</span>`;
   }
 
-  document.getElementById('timeline-detail-badge').outerHTML = badgeHtml;
+  const badgeEl = document.getElementById('timeline-detail-badge');
+  if (badgeEl) badgeEl.outerHTML = badgeHtml;
+
   document.getElementById('timeline-detail-title').innerText = node.title;
   document.getElementById('timeline-detail-time').innerText = `Logged Timestamp: ${node.time}`;
   document.getElementById('timeline-detail-log').innerText = node.log;
@@ -703,7 +971,7 @@ function renderCustomerProfile(cust) {
   document.getElementById('profile-meta-ltv').innerText = cust.ltv;
   document.getElementById('profile-meta-risk').innerText = cust.riskLevel;
   
-  const riskColor = cust.riskLevel === 'HIGH RISK' ? 'var(--danger)' : 'var(--success)';
+  const riskColor = cust.riskLevel.includes('HIGH') ? 'var(--danger)' : 'var(--success)';
   document.getElementById('profile-meta-risk').style.color = riskColor;
   
   document.getElementById('profile-meta-style').innerText = cust.commStyle;
@@ -744,7 +1012,6 @@ function renderCustomerProfile(cust) {
 }
 
 function updateExecutiveScores(cust) {
-  // Simulating slightly different CEO aggregates depending on customer selected to show dynamic variations
   const trustScoreEl = document.getElementById('exec-trust-score');
   if (cust.id === 'sarah') {
     trustScoreEl.innerText = '94.2%';
@@ -761,7 +1028,6 @@ function initCharts() {
   Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.05)';
   Chart.defaults.font.family = "'Inter', sans-serif";
 
-  // Create Executive Charts initially
   renderExecutiveCharts();
 }
 
@@ -937,7 +1203,6 @@ function initVoiceWaveformCanvas() {
 
   const ctx = canvas.getContext('2d');
   
-  // Set dimensions based on client bounds
   canvas.width = canvas.parentElement.clientWidth;
   canvas.height = canvas.parentElement.clientHeight;
 
@@ -945,7 +1210,6 @@ function initVoiceWaveformCanvas() {
 
   function draw() {
     if (!voiceWaveformActive) {
-      // Stream is offline - draw a flat line with micro noise
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.beginPath();
       ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
@@ -960,24 +1224,20 @@ function initVoiceWaveformCanvas() {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    // Determine gradient/color depending on active client's stress
     const currentStress = customerData[activeCustomer].stressLevel;
     const isFrustrated = currentStress > 70;
     
     const grad = ctx.createLinearGradient(0, 0, canvas.width, 0);
     if (isFrustrated) {
-      // Fire red/yellow waves for angry customer
       grad.addColorStop(0, '#EF4444');
       grad.addColorStop(0.5, '#F59E0B');
       grad.addColorStop(1, '#EF4444');
     } else {
-      // Purple/blue waves for neutral/satisfied
       grad.addColorStop(0, '#3B82F6');
       grad.addColorStop(0.5, '#7C3AED');
       grad.addColorStop(1, '#3B82F6');
     }
 
-    // Draw 3 layers of overlapping sine waves
     drawSineWave(ctx, canvas.width, canvas.height, waveOffset, grad, 1.5, isFrustrated ? 30 : 15, 0.015);
     drawSineWave(ctx, canvas.width, canvas.height, waveOffset + 2, 'rgba(124, 58, 237, 0.25)', 1.0, isFrustrated ? 20 : 8, 0.025);
     drawSineWave(ctx, canvas.width, canvas.height, waveOffset + 4, 'rgba(59, 130, 246, 0.15)', 0.5, isFrustrated ? 45 : 22, 0.008);
@@ -986,12 +1246,10 @@ function initVoiceWaveformCanvas() {
     voiceWaveformAnimationFrame = requestAnimationFrame(draw);
   }
 
-  // Cancel previous frame loops before restarting
   if (voiceWaveformAnimationFrame) {
     cancelAnimationFrame(voiceWaveformAnimationFrame);
   }
 
-  // Start rendering
   voiceWaveformAnimationFrame = requestAnimationFrame(draw);
 }
 
@@ -1019,7 +1277,6 @@ function toggleVoiceAIAssistant() {
   const micIcon = document.getElementById('voice-mic-icon');
   
   if (voiceWaveformActive) {
-    // Turn off
     voiceWaveformActive = false;
     card.classList.remove('active');
     heading.innerText = 'Voice Stream Offline';
@@ -1027,7 +1284,6 @@ function toggleVoiceAIAssistant() {
     micIcon.setAttribute('data-lucide', 'mic');
     lucide.createIcons();
 
-    // Clear transcript timer
     if (voiceAITimer) {
       clearTimeout(voiceAITimer);
       voiceAITimer = null;
@@ -1038,7 +1294,6 @@ function toggleVoiceAIAssistant() {
     document.getElementById('voice-conf-val').innerText = '0.0%';
     document.getElementById('voice-rate-val').innerText = '0 WPM';
   } else {
-    // Turn on
     voiceWaveformActive = true;
     card.classList.add('active');
     heading.innerText = 'Listening Voice Stream...';
@@ -1046,7 +1301,6 @@ function toggleVoiceAIAssistant() {
     micIcon.setAttribute('data-lucide', 'square');
     lucide.createIcons();
 
-    // Begin speech-to-text simulation
     simulateVoiceTranscription();
   }
 }
@@ -1085,4 +1339,145 @@ function startSimulatedVoiceInput() {
   setTimeout(() => {
     inputBar.value = 'I am looking at your billing account now, and I can bypass the velocity block by applying a temporary extension license token.';
   }, 1200);
+}
+
+// -----------------------------------------------
+// GEMINI CONFIGURATION MODAL HANDLERS
+// -----------------------------------------------
+function toggleApiModal(show) {
+  const modal = document.getElementById('api-key-modal');
+  modal.style.display = show ? 'flex' : 'none';
+  if (show) {
+    document.getElementById('input-api-key').value = localStorage.getItem('gemini_api_key') || '';
+  }
+}
+
+function saveApiKey() {
+  const keyVal = document.getElementById('input-api-key').value.trim();
+  if (keyVal) {
+    localStorage.setItem('gemini_api_key', keyVal);
+    writeTerminalLog('SYSTEM', 'Saved Gemini API key settings.');
+  } else {
+    localStorage.removeItem('gemini_api_key');
+    writeTerminalLog('SYSTEM', 'Removed Gemini API key configurations.');
+  }
+  loadApiKeySettings();
+  toggleApiModal(false);
+}
+
+function loadApiKeySettings() {
+  const key = localStorage.getItem('gemini_api_key');
+  const indicator = document.getElementById('arch-gemini-status');
+  const versionTag = document.getElementById('arch-gemini-version');
+  const apiBtn = document.getElementById('btn-api-config');
+  
+  if (key) {
+    if (indicator) indicator.className = 'status-indicator online';
+    if (versionTag) versionTag.innerText = 'Gemini Live API Connected';
+    if (apiBtn) apiBtn.style.borderColor = 'var(--success)';
+    writeTerminalLog('AI', 'Gemini Live AI core integration configured. Awaiting workspace inputs.');
+  } else {
+    if (indicator) indicator.className = 'status-indicator offline';
+    if (versionTag) versionTag.innerText = 'gemini-2.5-flash API';
+    if (apiBtn) apiBtn.style.borderColor = 'var(--border-card)';
+    writeTerminalLog('AI', 'Gemini key offline. Falling back to structured baseline model simulator.');
+  }
+}
+
+// -----------------------------------------------
+// PRESENTER AUTOPLAY DEMO SEQUENCE
+// -----------------------------------------------
+function startAutoplayDemo() {
+  if (isAutoplayActive) return;
+  isAutoplayActive = true;
+
+  // Clear previous timers
+  if (autoplayTimer) clearTimeout(autoplayTimer);
+
+  // Sync customer to sarah first (high value target)
+  onCustomerChange('sarah');
+
+  // Trigger presenting banner
+  const banner = document.getElementById('autoplay-banner');
+  const stepText = document.getElementById('autoplay-banner-step');
+  if (banner) banner.style.display = 'flex';
+  
+  // Step 1: Switch to live workspace
+  stepText.innerText = 'Step 1 of 5: Initializing Copilot Console';
+  switchTab('conversation');
+  writeTerminalLog('SYSTEM', 'Autoplay demonstration launched.');
+
+  // Step 2: Show customer typing a highly frustrated message
+  autoplayTimer = setTimeout(() => {
+    stepText.innerText = 'Step 2 of 5: Customer is typing...';
+    const typingIndicator = document.getElementById('chat-typing-indicator');
+    document.getElementById('chat-typing-text').innerText = 'Sarah Jenkins is typing...';
+    if (typingIndicator) typingIndicator.style.display = 'flex';
+    
+    autoplayTimer = setTimeout(() => {
+      if (typingIndicator) typingIndicator.style.display = 'none';
+      
+      const angryMsgText = "I am extremely angry! My credit card was charged $2500 but the system says our API license is expired. Fix this now or I cancellation!";
+      const now = new Date();
+      const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+      
+      appendChatMessage({
+        sender: 'customer',
+        text: angryMsgText,
+        time: timeStr
+      });
+
+      // Step 3: Trigger analysis loading state
+      stepText.innerText = 'Step 3 of 5: Triggering Gemini Analysis...';
+      triggerLiveAILayer(angryMsgText);
+
+      // Step 4: Show Recommendation Action Workspace
+      autoplayTimer = setTimeout(() => {
+        stepText.innerText = 'Step 4 of 5: AI Recommendation Center Generated';
+        switchTab('recommendations');
+
+        autoplayTimer = setTimeout(() => {
+          // Highlight first recommendation
+          const firstRecBtn = document.querySelector('#rec-container button');
+          if (firstRecBtn) firstRecBtn.click();
+          
+          stepText.innerText = 'Step 5 of 5: Dispatching Resolution Script';
+          
+          autoplayTimer = setTimeout(() => {
+            // Inject script to chat
+            injectDraftToChat();
+            
+            autoplayTimer = setTimeout(() => {
+              // Final Step: Outcome modal showing protected SLA metrics
+              if (banner) banner.style.display = 'none';
+              isAutoplayActive = false;
+              
+              const outcomeModal = document.getElementById('autoplay-outcome-modal');
+              if (outcomeModal) outcomeModal.style.display = 'flex';
+              
+              writeTerminalLog('SYSTEM', 'Autoplay demo successfully completed.');
+            }, 1500);
+
+          }, 2000);
+        }, 2000);
+
+      }, 3500);
+
+    }, 2500);
+
+  }, 1500);
+}
+
+function cancelAutoplayDemo() {
+  if (autoplayTimer) clearTimeout(autoplayTimer);
+  isAutoplayActive = false;
+  
+  const banner = document.getElementById('autoplay-banner');
+  if (banner) banner.style.display = 'none';
+  
+  writeTerminalLog('SYSTEM', 'Autoplay demonstration cancelled.');
+}
+
+function closeOutcomeModal() {
+  document.getElementById('autoplay-outcome-modal').style.display = 'none';
 }
