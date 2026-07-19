@@ -21,6 +21,26 @@ import urllib.request
 import urllib.error
 import datetime
 
+# ── Auto-load .env file ────────────────────────────────────
+def _load_dotenv():
+    env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
+    if not os.path.exists(env_path):
+        return
+    with open(env_path, "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            if "=" not in line:
+                continue
+            key, _, val = line.partition("=")
+            key = key.strip()
+            val = val.strip()
+            if key and not os.environ.get(key):
+                os.environ[key] = val
+
+_load_dotenv()
+
 PORT = int(os.environ.get("PORT", 8000))
 
 GEMINI_MODEL = "gemini-2.0-flash-lite"
