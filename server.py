@@ -43,7 +43,7 @@ _load_dotenv()
 
 PORT = int(os.environ.get("PORT", 8000))
 
-GEMINI_MODEL = "gemini-2.0-flash-lite"
+GEMINI_MODEL = "gemini-2.0-flash"
 GEMINI_API_URL = (
     "https://generativelanguage.googleapis.com/v1beta/models/"
     + GEMINI_MODEL
